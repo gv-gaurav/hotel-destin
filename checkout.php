@@ -8,12 +8,12 @@ use Razorpay\Api\Api;
 if (isset($_POST['action']) && $_POST['action'] === 'apply_coupon') {
     header('Content-Type: application/json');
     $coupon_code = isset($_POST['code']) ? strtoupper(trim($_POST['code'])) : '';
-    
+
     try {
         $stmt = $pdo->prepare("SELECT * FROM coupons WHERE code = ? AND status = 'active' AND expiry_date >= CURDATE()");
         $stmt->execute([$coupon_code]);
         $coupon = $stmt->fetch();
-        
+
         if ($coupon) {
             echo json_encode([
                 'success' => true,
@@ -32,14 +32,15 @@ if (isset($_POST['action']) && $_POST['action'] === 'apply_coupon') {
     exit;
 }
 
-function get_matrix_room_price($room, $adults, $meal_plan) {
+function get_matrix_room_price($room, $adults, $meal_plan)
+{
     if (!$room) {
         return 0.00;
     }
     $occupancy = ($adults >= 2) ? 'double' : 'single';
     $plan = strtolower(trim($meal_plan)); // 'ep', 'cp', or 'map'
     $column = "price_" . $occupancy . "_" . $plan;
-    
+
     return isset($room[$column]) ? (float)$room[$column] : (float)$room['price'];
 }
 
@@ -106,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         $booked_stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE room_id = ? AND check_in < ? AND check_out > ? AND booking_status != 'cancelled'");
         $booked_stmt->execute([$room['id'], $check_out, $check_in]);
         $booked_count = (int)$booked_stmt->fetchColumn();
-        
+
         $available_count = $total_inventory - $booked_count;
         if ($available_count <= 0) {
             $booking_error = 'We are sold out of this room category for your selected dates. Please search another category or different stay dates.';
@@ -163,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     base_amount, tax_amount, discount_amount, total_amount, 
                     payment_status, booking_status, special_request, razorpay_order_id
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
-                
+
                 $ins_stmt->execute([
                     $booking_id,
                     $name,
@@ -194,14 +195,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         } else {
             try {
                 $api = new Api($key_id, $key_secret);
-                
+
                 $orderData = [
                     'receipt'         => $booking_id,
                     'amount'          => round($total_amount * 100),
                     'currency'        => 'INR',
                     'payment_capture' => 1
                 ];
-                
+
                 $razorpayOrder = $api->order->create($orderData);
                 $razorpay_order_id = $razorpayOrder['id'];
                 $total_amount_paise = $orderData['amount'];
@@ -213,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     base_amount, tax_amount, discount_amount, total_amount, 
                     payment_status, booking_status, special_request, razorpay_order_id
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
-                
+
                 $ins_stmt->execute([
                     $booking_id,
                     $name,
@@ -241,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 error_log("Razorpay Order creation failed, falling back to Sandbox simulation: " . $e->getMessage());
                 $is_sandbox_simulation = true;
                 $razorpay_order_id = 'order_sandbox_' . rand(100000, 999999);
-                
+
                 $ins_stmt = $pdo->prepare("INSERT INTO bookings (
                     booking_id, customer_name, customer_email, customer_phone, 
                     check_in, check_out, guests, meal_plan, adults, children, 
@@ -249,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     base_amount, tax_amount, discount_amount, total_amount, 
                     payment_status, booking_status, special_request, razorpay_order_id
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
-                
+
                 $ins_stmt->execute([
                     $booking_id,
                     $name,
@@ -280,6 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -287,19 +289,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
     <title>Room Checkout - Hotel Destin Gwalior</title>
-    
+
     <style>
         .checkout-container {
             padding: 30px 0 60px 0;
-            background-color: #f7f9fc;
+            background-color: #F3EDE2;
         }
+
         .checkout-card {
             background: #ffffff;
             border-radius: 16px;
             padding: 20px;
             border: 1px solid #cbd5e1;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
         }
+
         .summary-card {
             background: #ffffff;
             border-radius: 16px;
@@ -308,6 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             position: sticky;
             top: 100px;
         }
+
         .price-row {
             display: flex;
             justify-content: space-between;
@@ -316,6 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             color: #555;
             font-weight: 500;
         }
+
         .price-total {
             display: flex;
             justify-content: space-between;
@@ -327,11 +333,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             color: #15803d;
             margin-bottom: 15px;
         }
+
         .coupon-box {
             display: flex;
             gap: 8px;
             margin-bottom: 15px;
         }
+
         .form-control-custom {
             height: 40px !important;
             border-radius: 8px !important;
@@ -343,11 +351,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             font-weight: 500 !important;
             color: #0f172a !important;
         }
+
         .form-control-custom:focus {
             border-color: #9c6047 !important;
             box-shadow: 0 0 0 3px rgba(156, 96, 71, 0.1) !important;
             outline: none !important;
         }
+
         .form-label-custom {
             font-size: 10.5px !important;
             text-transform: uppercase !important;
@@ -357,6 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             margin-bottom: 4px !important;
             display: block !important;
         }
+
         .btn-payment {
             background: #0f172a;
             color: #ffffff;
@@ -373,18 +384,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             gap: 8px;
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
         }
+
         .btn-payment:hover {
             background: #9c6047;
             color: #ffffff;
             transform: translateY(-1px);
             box-shadow: 0 6px 15px rgba(156, 96, 71, 0.2);
         }
+
         .btn-payment:active {
             transform: translateY(0);
         }
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
+
 <body>
 
     <?php include("include/header.php"); ?>
@@ -468,7 +482,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                             <textarea class="form-control-custom" name="special_request" rows="3" placeholder="Double bed, tea kettle preferences, airport transfer scheduling..."></textarea>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Hidden Inputs -->
                                     <input type="hidden" id="hiddenCouponCode" name="coupon_code" value="">
                                     <input type="hidden" name="submit_booking" value="1">
@@ -527,7 +541,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                     <span>Total Payable</span>
                                     <span>₹<span id="grandTotal"><?= number_format($room['price'] * 1.05, 2) ?></span></span>
                                 </div>
-                                
+
                                 <button class="btn-payment" type="submit">
                                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
@@ -543,7 +557,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
     </main>
 
     <?php include("include/footer.php"); ?>
-    
+
     <!-- Razorpay payment client script integration -->
     <?php if (!empty($razorpay_order_id)): ?>
         <?php if ($is_sandbox_simulation): ?>
@@ -553,7 +567,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(156, 96, 71, 0.08); color: #9c6047; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 24px;">🔒</div>
                     <h3 style="font-size: 19px; font-weight: 850; color: #0f172a; margin-bottom: 6px;">Razorpay Sandbox Simulator</h3>
                     <p style="font-size: 13px; color: #64748b; margin-bottom: 22px; line-height: 1.5;">Test your stay checkouts securely. Click success to finalize mock payments.</p>
-                    
+
                     <div style="background: #fafaf9; border-radius: 12px; padding: 16px; margin-bottom: 25px; border: 1px solid #f0f0ed; text-align: left;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
                             <span style="color:#64748b; font-weight:550;">Booking Ref:</span>
@@ -571,21 +585,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     </div>
                 </div>
             </div>
-            
+
             <script>
                 function triggerSandboxPayment(success) {
                     if (success) {
                         var form = document.createElement('form');
                         form.setAttribute('method', 'POST');
                         form.setAttribute('action', 'payment-callback.php');
-                        
+
                         var fields = {
                             'razorpay_payment_id': 'pay_sandbox_' + Math.floor(Math.random() * 899999 + 100000),
                             'razorpay_order_id': "<?= $razorpay_order_id ?>",
                             'razorpay_signature': 'sig_sandbox_' + Math.floor(Math.random() * 899999 + 100000),
                             'booking_id': "<?= $booking_id ?>"
                         };
-                        
+
                         for (var key in fields) {
                             if (fields.hasOwnProperty(key)) {
                                 var hiddenField = document.createElement('input');
@@ -595,7 +609,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                 form.appendChild(hiddenField);
                             }
                         }
-                        
+
                         document.body.appendChild(form);
                         form.submit();
                     } else {
@@ -616,18 +630,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     "description": "Secure Room Stay Booking",
                     "image": "assets/imgs/template/logo-destin.png",
                     "order_id": "<?= $razorpay_order_id ?>",
-                    "handler": function (response){
+                    "handler": function(response) {
                         var form = document.createElement('form');
                         form.setAttribute('method', 'POST');
                         form.setAttribute('action', 'payment-callback.php');
-                        
+
                         var fields = {
                             'razorpay_payment_id': response.razorpay_payment_id,
                             'razorpay_order_id': response.razorpay_order_id,
                             'razorpay_signature': response.razorpay_signature,
                             'booking_id': "<?= $booking_id ?>"
                         };
-                        
+
                         for (var key in fields) {
                             if (fields.hasOwnProperty(key)) {
                                 var hiddenField = document.createElement('input');
@@ -637,7 +651,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                 form.appendChild(hiddenField);
                             }
                         }
-                        
+
                         document.body.appendChild(form);
                         form.submit();
                     },
@@ -651,7 +665,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     }
                 };
                 var rzp1 = new Razorpay(options);
-                rzp1.on('payment.failed', function (response){
+                rzp1.on('payment.failed', function(response) {
                     alert("Payment failed: " + response.error.description);
                 });
                 rzp1.open();
@@ -661,7 +675,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
     <script src="assets/js/vendor/jquery-3.7.1.min.js"></script>
     <script src="assets/js/vendor/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         $(document).ready(function() {
             var roomPrice = <?= (float)$room['price'] ?>;
@@ -757,7 +771,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 // Look up price from matrix
                 var ratePerNight = pricingMatrix[occupancy][mealPlan] || <?= floatval($room['price']) ?>;
                 $('#ratePerNight').text(ratePerNight.toFixed(2));
-                
+
                 var basePrice = ratePerNight * nights;
                 $('#basePrice').text(basePrice.toFixed(2));
 
@@ -780,10 +794,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 $('#taxAmount').text(taxAmount.toFixed(2));
                 $('#grandTotal').text(grandTotal.toFixed(2));
             }
-            
+
             // Initial execution on page load
             recalculatePrices();
         });
     </script>
 </body>
+
 </html>

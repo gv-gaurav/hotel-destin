@@ -26,7 +26,7 @@ if (!$booking) {
 // Load dynamic hotel contact details from database
 $hotel_name = get_setting('hotel_name') ?: 'Hotel Destin';
 $hotel_phone = get_setting('hotel_phone') ?: '+91 70000 00000';
-$hotel_email = get_setting('hotel_email') ?: 'info@hoteldestin.com';
+$hotel_email = get_setting('hotel_email') ?: 'info@hoteldestin.in';
 $hotel_address = get_setting('hotel_address') ?: 'Sachin Tendulkar Road, Kailash Nagar, Gwalior, MP, India';
 ?>
 <!DOCTYPE html>

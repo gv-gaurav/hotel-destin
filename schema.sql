@@ -177,7 +177,7 @@ INSERT INTO `settings` (`key_name`, `val_content`) VALUES
 ('google_analytics', ''),
 ('hotel_name', 'Hotel Destin'),
 ('hotel_phone', '+91 70000 00000'),
-('hotel_email', 'info@hoteldestin.com'),
+('hotel_email', 'info@hoteldestin.in'),
 ('hotel_address', 'Sachin Tendulkar Road, Kailash Nagar, Gwalior, MP, India'),
 ('razorpay_key_id', 'rzp_test_YourKeyHere'),
 ('razorpay_key_secret', 'YourSecretHere')

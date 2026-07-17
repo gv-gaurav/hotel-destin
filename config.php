@@ -20,7 +20,7 @@ if (empty($_SESSION['csrf_token'])) {
 
 // System Constants
 define('SITE_NAME', 'Hotel Destin Gwalior');
-define('SITE_URL', 'http://localhost/travila-demos.vercel.app');
+define('SITE_URL', 'https://hoteldestin.in');
 
 // Database Credentials (Laragon default MySQL)
 define('DB_HOST', '127.0.0.1');

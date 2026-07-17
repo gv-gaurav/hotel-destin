@@ -64,7 +64,7 @@ try {
     $stmt = $pdo->prepare("SELECT * FROM gallery ORDER BY id DESC");
     $stmt->execute();
     $db_gallery = $stmt->fetchAll();
-    
+
     if (count($db_gallery) > 0) {
         foreach ($db_gallery as $g) {
             $gallery_items[] = [
@@ -95,6 +95,7 @@ $category_names = [
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -117,7 +118,7 @@ $category_names = [
             color: #0e0e0e;
             text-transform: uppercase;
         }
-        
+
         .box-gallery-header p {
             font-size: 16px !important;
             line-height: 1.7 !important;
@@ -131,8 +132,9 @@ $category_names = [
                 font-size: 26px;
                 letter-spacing: -0.3px;
             }
+
             .box-gallery-header p {
-                font-size: 14.5px !important;
+                font-size: 11px !important;
                 line-height: 1.6 !important;
             }
         }
@@ -175,9 +177,10 @@ $category_names = [
                 margin-bottom: 30px;
                 padding: 0 10px;
             }
+
             .gallery-filter-btn {
-                padding: 8px 16px;
-                font-size: 13px;
+                padding: 3px 8px;
+                font-size: 10px;
             }
         }
 
@@ -190,7 +193,7 @@ $category_names = [
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             margin-bottom: 30px;
-            border: 1px solid rgba(0,0,0,0.03);
+            border: 1px solid rgba(0, 0, 0, 0.03);
         }
 
         .gallery-card:hover {
@@ -206,7 +209,7 @@ $category_names = [
             background-color: #f1f2f6;
         }
 
-        .gallery-img-wrapper img, 
+        .gallery-img-wrapper img,
         .gallery-img-wrapper video {
             width: 100%;
             height: 100%;
@@ -329,116 +332,119 @@ $category_names = [
         }
     </style>
     <?php include("include/head-scripts.php"); ?>
-  </head>
-  <body>
-    
+</head>
+
+<body>
+
     <!-- Header Include -->
     <?php include("include/header.php"); ?>
 
     <main class="main">
-      <!-- Breadcrumb Section -->
-      <section class="box-section box-breadcrumb background-100">
-        <div class="container"> 
-          <ul class="breadcrumbs"> 
-            <li> <a href="index.php">Home</a><span class="arrow-right"> 
-                <svg width="7" height="12" viewbox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 11L6 6L1 1" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg></span></li>
-            <li> <span class="text-breadcrumb">Gallery</span></li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- Gallery Header -->
-      <section class="section-box box-gallery-header background-body pt-40 pb-15">
-        <div class="container">
-          <div class="text-center wow fadeInUp">
-            <h1 class="gallery-title-main mb-20 font-heading">Explore Our Premium Spaces</h1>
-            <p class="text-lg neutral-500 max-width-600 mx-auto">
-              Take a virtual tour of our beautifully designed rooms, expansive banquet halls, and ambient restaurants where fine memories are made.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Gallery Grid & Filters -->
-      <section class="section-box box-gallery-grid background-body pb-80">
-        <div class="container">
-          <?php if (count($gallery_items) > 0): ?>
-            <!-- Category Filters -->
-            <div class="gallery-filter-container wow fadeInUp" id="galleryFilters">
-              <button class="gallery-filter-btn active" data-filter="all">All Photos</button>
-              <?php foreach ($categories as $cat): ?>
-                <button class="gallery-filter-btn" data-filter="<?php echo $cat; ?>">
-                  <?php echo isset($category_names[$cat]) ? $category_names[$cat] : ucfirst($cat); ?>
-                </button>
-              <?php endforeach; ?>
+        <!-- Breadcrumb Section -->
+        <section class="box-section box-breadcrumb background-100">
+            <div class="container">
+                <ul class="breadcrumbs">
+                    <li> <a href="index.php">Home</a><span class="arrow-right">
+                            <svg width="7" height="12" viewbox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 11L6 6L1 1" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg></span></li>
+                    <li> <span class="text-breadcrumb">Gallery</span></li>
+                </ul>
             </div>
+        </section>
 
-            <!-- Gallery Items Grid -->
-            <div class="row gallery-grid">
-              <?php foreach ($gallery_items as $index => $item): ?>
-                <?php
-                $file_path = $item['image'];
-                $ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
-                $is_video = in_array($ext, ['mp4', 'webm', 'mov', 'm4v']);
-                ?>
-                <div class="col-lg-4 col-md-6 col-sm-12 gallery-grid-item" data-category="<?php echo $item['category']; ?>">
-                  <div class="gallery-card wow fadeInUp">
-                    <?php if ($is_video): ?>
-                      <!-- Video Popup Link targeting inline hidden modal -->
-                      <a href="#video-modal-<?= $index ?>" class="gallery-video-popup" title="<?php echo htmlspecialchars($item['title']); ?>">
-                        <div class="gallery-img-wrapper">
-                          <video src="<?php echo $file_path; ?>" muted loop autoplay playsinline></video>
-                          
-                          <div class="video-play-btn">
-                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                          </div>
-                        </div>
-                        
-                        <div class="gallery-overlay">
-                          <h3 class="gallery-title" style="transform: translateY(0); margin-bottom: 0;"><?php echo htmlspecialchars($item['title']); ?></h3>
-                        </div>
-                      </a>
-
-                      <!-- Hidden Inline Video Modal Markup -->
-                      <div id="video-modal-<?= $index ?>" class="mfp-hide white-popup-block">
-                          <video src="<?php echo $file_path; ?>" controls style="width: 100%; height: auto; display: block; border-radius: 8px;"></video>
-                          <h3 style="color: #fff; margin-top: 15px; font-size: 18px; font-weight: 700;"><?= htmlspecialchars($item['title']) ?></h3>
-                          <?php if (!empty($item['description'])): ?>
-                              <p style="color: #ccc; font-size: 14.5px; margin-top: 8px; line-height: 1.5;"><?= htmlspecialchars($item['description']) ?></p>
-                          <?php endif; ?>
-                      </div>
-
-                    <?php else: ?>
-                      <!-- Image Popup Link -->
-                      <a href="<?php echo $item['image']; ?>" class="gallery-image-popup" title="<?php echo htmlspecialchars($item['title']); ?>">
-                        <div class="gallery-img-wrapper">
-                          <img src="<?php echo $item['image']; ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" loading="lazy">
-                        </div>
-                        
-                        <div class="gallery-overlay">
-                          <h3 class="gallery-title" style="transform: translateY(0); margin-bottom: 0;"><?php echo htmlspecialchars($item['title']); ?></h3>
-                        </div>
-                      </a>
-                    <?php endif; ?>
-                  </div>
+        <!-- Gallery Header -->
+        <section class="section-box box-gallery-header background-body pt-10 pb-15">
+            <div class="container">
+                <div class="text-center wow fadeInUp">
+                    <h1 class="gallery-title-main mb-20 font-heading">Explore Our Premium Spaces</h1>
+                    <p class="text-lg neutral-500 max-width-600 mx-auto">
+                        Take a virtual tour of our beautifully designed rooms, expansive banquet halls, and ambient restaurants where fine memories are made.
+                    </p>
                 </div>
-              <?php endforeach; ?>
             </div>
-          <?php else: ?>
-            <div class="text-center py-5 wow fadeInUp">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#a17a42" stroke-width="1.5" style="margin-bottom: 20px; opacity: 0.8;">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                </svg>
-                <h3 class="neutral-1000 font-heading mb-10" style="font-size: 20px;">No Gallery Items Found</h3>
-                <p class="neutral-500 max-width-400 mx-auto" style="font-size: 14.5px;">We are currently updating our gallery with new photos. Please check back soon!</p>
+        </section>
+
+        <!-- Gallery Grid & Filters -->
+        <section class="section-box box-gallery-grid background-body pb-80">
+            <div class="container">
+                <?php if (count($gallery_items) > 0): ?>
+                    <!-- Category Filters -->
+                    <div class="gallery-filter-container wow fadeInUp" id="galleryFilters">
+                        <button class="gallery-filter-btn active" data-filter="all">All Photos</button>
+                        <?php foreach ($categories as $cat): ?>
+                            <button class="gallery-filter-btn" data-filter="<?php echo $cat; ?>">
+                                <?php echo isset($category_names[$cat]) ? $category_names[$cat] : ucfirst($cat); ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Gallery Items Grid -->
+                    <div class="row gallery-grid">
+                        <?php foreach ($gallery_items as $index => $item): ?>
+                            <?php
+                            $file_path = $item['image'];
+                            $ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+                            $is_video = in_array($ext, ['mp4', 'webm', 'mov', 'm4v']);
+                            ?>
+                            <div class="col-lg-4 col-md-6 col-sm-12 gallery-grid-item" data-category="<?php echo $item['category']; ?>">
+                                <div class="gallery-card wow fadeInUp">
+                                    <?php if ($is_video): ?>
+                                        <!-- Video Popup Link targeting inline hidden modal -->
+                                        <a href="#video-modal-<?= $index ?>" class="gallery-video-popup" title="<?php echo htmlspecialchars($item['title']); ?>">
+                                            <div class="gallery-img-wrapper">
+                                                <video src="<?php echo $file_path; ?>" muted loop autoplay playsinline></video>
+
+                                                <div class="video-play-btn">
+                                                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M8 5v14l11-7z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <div class="gallery-overlay">
+                                                <h3 class="gallery-title" style="transform: translateY(0); margin-bottom: 0;"><?php echo htmlspecialchars($item['title']); ?></h3>
+                                            </div>
+                                        </a>
+
+                                        <!-- Hidden Inline Video Modal Markup -->
+                                        <div id="video-modal-<?= $index ?>" class="mfp-hide white-popup-block">
+                                            <video src="<?php echo $file_path; ?>" controls style="width: 100%; height: auto; display: block; border-radius: 8px;"></video>
+                                            <h3 style="color: #fff; margin-top: 15px; font-size: 18px; font-weight: 700;"><?= htmlspecialchars($item['title']) ?></h3>
+                                            <?php if (!empty($item['description'])): ?>
+                                                <p style="color: #ccc; font-size: 14.5px; margin-top: 8px; line-height: 1.5;"><?= htmlspecialchars($item['description']) ?></p>
+                                            <?php endif; ?>
+                                        </div>
+
+                                    <?php else: ?>
+                                        <!-- Image Popup Link -->
+                                        <a href="<?php echo $item['image']; ?>" class="gallery-image-popup" title="<?php echo htmlspecialchars($item['title']); ?>">
+                                            <div class="gallery-img-wrapper">
+                                                <img src="<?php echo $item['image']; ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" loading="lazy">
+                                            </div>
+
+                                            <div class="gallery-overlay">
+                                                <h3 class="gallery-title" style="transform: translateY(0); margin-bottom: 0;"><?php echo htmlspecialchars($item['title']); ?></h3>
+                                            </div>
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="text-center py-5 wow fadeInUp">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#a17a42" stroke-width="1.5" style="margin-bottom: 20px; opacity: 0.8;">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                        <h3 class="neutral-1000 font-heading mb-10" style="font-size: 20px;">No Gallery Items Found</h3>
+                        <p class="neutral-500 max-width-400 mx-auto" style="font-size: 14.5px;">We are currently updating our gallery with new photos. Please check back soon!</p>
+                    </div>
+                <?php endif; ?>
             </div>
-          <?php endif; ?>
-        </div>
-      </section>
+        </section>
     </main>
 
     <!-- Footer Include -->
@@ -470,81 +476,82 @@ $category_names = [
 
     <!-- Dynamic Filter and Magnific Lightbox Script -->
     <script>
-      $(document).ready(function() {
-          // Initialize Magnific Popup for Images
-          function initImageLightbox() {
-              $('a.gallery-image-popup').off('click');
-              $('a.gallery-image-popup:visible').magnificPopup({
-                  type: 'image',
-                  gallery: {
-                      enabled: true,
-                      navigateByImgClick: true,
-                      preload: [0, 1]
-                  },
-                  image: {
-                      tError: '<a href="%url%">The image</a> could not be loaded.',
-                      titleSrc: function(item) {
-                          return item.el.closest('.gallery-card').find('.gallery-title').text();
-                      }
-                  },
-                  mainClass: 'mfp-fade',
-                  removalDelay: 300
-              });
-          }
+        $(document).ready(function() {
+            // Initialize Magnific Popup for Images
+            function initImageLightbox() {
+                $('a.gallery-image-popup').off('click');
+                $('a.gallery-image-popup:visible').magnificPopup({
+                    type: 'image',
+                    gallery: {
+                        enabled: true,
+                        navigateByImgClick: true,
+                        preload: [0, 1]
+                    },
+                    image: {
+                        tError: '<a href="%url%">The image</a> could not be loaded.',
+                        titleSrc: function(item) {
+                            return item.el.closest('.gallery-card').find('.gallery-title').text();
+                        }
+                    },
+                    mainClass: 'mfp-fade',
+                    removalDelay: 300
+                });
+            }
 
-          // Initialize Magnific Popup for Inline Videos
-          function initVideoLightbox() {
-              $('a.gallery-video-popup').off('click');
-              $('a.gallery-video-popup:visible').magnificPopup({
-                  type: 'inline',
-                  gallery: {
-                      enabled: true
-                  },
-                  mainClass: 'mfp-fade',
-                  removalDelay: 300,
-                  callbacks: {
-                      open: function() {
-                          var video = this.content.find('video')[0];
-                          if (video) {
-                              video.currentTime = 0;
-                              video.play();
-                          }
-                      },
-                      close: function() {
-                          $('video').each(function() {
-                              this.pause();
-                          });
-                      }
-                  }
-              });
-          }
+            // Initialize Magnific Popup for Inline Videos
+            function initVideoLightbox() {
+                $('a.gallery-video-popup').off('click');
+                $('a.gallery-video-popup:visible').magnificPopup({
+                    type: 'inline',
+                    gallery: {
+                        enabled: true
+                    },
+                    mainClass: 'mfp-fade',
+                    removalDelay: 300,
+                    callbacks: {
+                        open: function() {
+                            var video = this.content.find('video')[0];
+                            if (video) {
+                                video.currentTime = 0;
+                                video.play();
+                            }
+                        },
+                        close: function() {
+                            $('video').each(function() {
+                                this.pause();
+                            });
+                        }
+                    }
+                });
+            }
 
-          // Trigger Lightboxes
-          initImageLightbox();
-          initVideoLightbox();
+            // Trigger Lightboxes
+            initImageLightbox();
+            initVideoLightbox();
 
-          // Filtering Logic
-          $('#galleryFilters .gallery-filter-btn').on('click', function() {
-              // Toggle active class
-              $('#galleryFilters .gallery-filter-btn').removeClass('active');
-              $(this).addClass('active');
+            // Filtering Logic
+            $('#galleryFilters .gallery-filter-btn').on('click', function() {
+                // Toggle active class
+                $('#galleryFilters .gallery-filter-btn').removeClass('active');
+                $(this).addClass('active');
 
-              var filterValue = $(this).attr('data-filter');
-              
-              if (filterValue === 'all') {
-                  $('.gallery-grid-item').fadeIn(400);
-              } else {
-                  $('.gallery-grid-item').hide();
-                  $('.gallery-grid-item[data-category="' + filterValue + '"]').fadeIn(400);
-              }
-              
-              // Re-initialize lightboxes to scan only currently visible elements
-              setTimeout(function() {
-                  initImageLightbox();
-                  initVideoLightbox();
-              }, 450);
-          });
-      });
+                var filterValue = $(this).attr('data-filter');
+
+                if (filterValue === 'all') {
+                    $('.gallery-grid-item').fadeIn(400);
+                } else {
+                    $('.gallery-grid-item').hide();
+                    $('.gallery-grid-item[data-category="' + filterValue + '"]').fadeIn(400);
+                }
+
+                // Re-initialize lightboxes to scan only currently visible elements
+                setTimeout(function() {
+                    initImageLightbox();
+                    initVideoLightbox();
+                }, 450);
+            });
+        });
     </script>
-  </body>
+</body>
+
 </html>

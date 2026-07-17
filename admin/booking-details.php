@@ -59,9 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 header("Location: booking-details.php?id=" . $booking_id . "&error=db");
                 exit;
             }
-        } 
-        
-        else if ($action === 'check_in') {
+        } else if ($action === 'check_in') {
             try {
                 $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'checked_in' WHERE id = ?");
                 $upd->execute([$booking_id]);
@@ -71,9 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 header("Location: booking-details.php?id=" . $booking_id . "&error=db");
                 exit;
             }
-        } 
-        
-        else if ($action === 'check_out') {
+        } else if ($action === 'check_out') {
             try {
                 $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'checked_out' WHERE id = ?");
                 $upd->execute([$booking_id]);
@@ -83,9 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 header("Location: booking-details.php?id=" . $booking_id . "&error=db");
                 exit;
             }
-        } 
-        
-        else if ($action === 'cancel_refund') {
+        } else if ($action === 'cancel_refund') {
             $refund_tx_id = isset($_POST['refund_tx_id']) ? htmlspecialchars(trim($_POST['refund_tx_id'])) : 'REFUND-MOCK-' . rand(1000, 9999);
             try {
                 $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'cancelled', payment_status = 'refunded', refund_tx_id = ? WHERE id = ?");
@@ -111,8 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         border-radius: 12px;
         padding: 24px 30px;
         position: relative;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
     }
+
     .timeline-step {
         display: flex;
         flex-direction: column;
@@ -123,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         text-align: center;
         position: relative;
     }
+
     .step-num {
         width: 32px;
         height: 32px;
@@ -138,11 +134,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         border: 2px solid #ffffff;
         box-shadow: 0 0 0 2px #cbd5e1;
     }
+
     .step-label {
         font-size: 12px;
         font-weight: 700;
         color: #64748b;
     }
+
     .timeline-line {
         height: 3px;
         background: #cbd5e1;
@@ -150,19 +148,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         margin-bottom: 22px;
         z-index: 1;
     }
+
     .timeline-step.active .step-num {
         background: #018acd;
         color: #ffffff;
         box-shadow: 0 0 0 2px #018acd, 0 0 0 5px rgba(156, 96, 71, 0.15);
     }
+
     .timeline-step.active .step-label {
         color: #018acd;
-        font-weight: 800;
+        font-weight: 600;
     }
+
     .timeline-line.active {
         background: #018acd;
     }
-    
+
     /* Layout styling */
     .grid-info-col {
         background: #ffffff;
@@ -170,8 +171,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         border-radius: 12px;
         padding: 24px;
         margin-bottom: 24px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
     }
+
     .grid-info-col h3 {
         font-size: 16px;
         font-weight: 800;
@@ -181,6 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         /* padding-bottom: 12px; */
         letter-spacing: -0.3px;
     }
+
     .meta-row {
         display: flex;
         justify-content: space-between;
@@ -188,14 +191,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         padding: 10px 0;
         border-bottom: 1px solid #f8fafc;
     }
+
     .meta-row:last-child {
         border-bottom: none;
     }
+
     .meta-label {
         font-size: 13px;
         font-weight: 600;
         color: #64748b;
     }
+
     .meta-value {
         font-size: 13px;
         font-weight: 700;
@@ -269,7 +275,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <div class="col-lg-8">
         <div class="grid-info-col">
             <h3>Stay Particulars & Billing</h3>
-            
+
             <div class="row">
                 <div class="col-md-6">
                     <div class="meta-row">
@@ -312,7 +318,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     </div>
                 </div>
             </div>
-            
+
             <div class="row mt-25 pt-20" style="border-top:1px solid #cbd5e1;">
                 <div class="col-md-6 offset-md-6">
                     <div style="background: #fafaf9; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 22px;">
@@ -376,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         <?php if ($booking['booking_status'] !== 'cancelled'): ?>
             <div class="grid-info-col">
                 <h3>Stay Operations</h3>
-                
+
                 <div class="d-flex flex-column gap-12">
                     <!-- Confirm Reservation -->
                     <?php if ($booking['booking_status'] === 'pending'): ?>
@@ -429,7 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     <?php if ($booking['booking_status'] !== 'checked_out'): ?>
                         <div class="mt-15 pt-15" style="border-top:1px solid #f1f5f9;">
                             <button class="btn btn-outline-danger w-100 py-10" onclick="showCancelForm()" style="border-radius:8px; font-weight:700; font-size:13px; border-color:#fecaca;">Cancel & Issue Refund</button>
-                            
+
                             <div id="cancelFormContainer" style="display:none;" class="mt-10 p-15" style="background:#fef2f2; border:1px solid #fee2e2; border-radius:8px;">
                                 <form action="booking-details.php?id=<?= $booking_id ?>" method="POST" style="margin:0;">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">

@@ -11,7 +11,8 @@ $search_adults = isset($_GET['adults']) ? intval($_GET['adults']) : 2;
 $search_children = isset($_GET['children']) ? intval($_GET['children']) : 0;
 $has_search_dates = (!empty($search_checkin) && !empty($search_checkout));
 
-function get_amenity_icon($name) {
+function get_amenity_icon($name)
+{
     $n = strtolower(trim($name));
     if (strpos($n, 'ac') !== false || strpos($n, 'air') !== false || strpos($n, 'conditioner') !== false) {
         return 'assets/imgs/page/room/air-conditioner.svg';
@@ -128,7 +129,7 @@ try {
     $stmt = $pdo->prepare("SELECT * FROM rooms WHERE status = 'active' ORDER BY price ASC");
     $stmt->execute();
     $db_rooms = $stmt->fetchAll();
-    
+
     if (count($db_rooms) > 0) {
         foreach ($db_rooms as $r) {
             // Count active inventory rooms in this category
@@ -146,9 +147,9 @@ try {
             $f_stmt = $pdo->prepare("SELECT facility_name FROM room_facilities WHERE room_id = ?");
             $f_stmt->execute([$r['id']]);
             $facilities = $f_stmt->fetchAll(PDO::FETCH_COLUMN);
-            
+
             $specs = [];
-            
+
             // Limit facilities to maximum 5, or pad to 5 if fewer
             $card_facilities = $facilities;
             if (count($card_facilities) > 5) {
@@ -162,11 +163,11 @@ try {
                     }
                 }
             }
-            
+
             foreach ($card_facilities as $f) {
                 $specs[] = ['icon' => 'check', 'label' => $f];
             }
-            
+
             // Fetch gallery images for this room to build cards slider
             $all_images = [];
             if (!empty($r['image_path'])) {
@@ -176,13 +177,13 @@ try {
             $g_stmt->execute([$r['id']]);
             $gallery_imgs = $g_stmt->fetchAll(PDO::FETCH_COLUMN);
             $all_images = array_merge($all_images, $gallery_imgs);
-            
+
             // Limit to a maximum of 3 images
             $all_images = array_slice($all_images, 0, 3);
             if (empty($all_images)) {
                 $all_images[] = 'assets/imgs/page/room/banner-room.png';
             }
-            
+
             $type_badge = strtoupper($r['type']);
             $status_badge = $r['status_badge'] ?: 'POPULAR';
             $rating = $r['rating'] ?: 'G 4.8 ★';
@@ -203,7 +204,7 @@ try {
                 $more_count = count($facilities) - 2;
                 $tags[] = ['text' => '+' . $more_count . ' more', 'style' => 'green'];
             }
-            
+
             $rooms[] = [
                 'id' => $r['slug'],
                 'db_id' => $r['id'],
@@ -234,7 +235,7 @@ try {
 }
 
 // Standardize sorting order: Standard, Executive, Premium
-usort($rooms, function($a, $b) {
+usort($rooms, function ($a, $b) {
     $order = ['standard' => 1, 'executive' => 2, 'premium' => 3];
     $typeA = strtolower($a['type_badge'] ?? '');
     $typeB = strtolower($b['type_badge'] ?? '');
@@ -246,6 +247,7 @@ usort($rooms, function($a, $b) {
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -273,12 +275,14 @@ usort($rooms, function($a, $b) {
             height: 100%;
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
+
         .card-images-wrapper img {
             flex: 0 0 100%;
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+
         .card-room-destin:hover .image-box img {
             transform: none !important;
         }
@@ -338,6 +342,7 @@ usort($rooms, function($a, $b) {
             background: #ffffff;
             border-bottom: 1px solid #f2f2f2;
             padding: 24px 0;
+            position: relative;
         }
 
         .inclusion-item {
@@ -382,10 +387,65 @@ usort($rooms, function($a, $b) {
             color: #ffffff;
         }
 
-        @media (min-width: 992px) {
-            .col-lg-2-4 {
-                flex: 0 0 20%;
-                max-width: 20%;
+        @media (min-width: 768px) {
+            .inclusions-strip [class*="col-"] {
+                flex: 0 0 20% !important;
+                max-width: 20% !important;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .inclusions-strip {
+                padding: 12px 0;
+                overflow: hidden;
+            }
+            /* Visual fade-out effect on the right to indicate more content */
+            .inclusions-strip::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 40px;
+                background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95));
+                pointer-events: none;
+                z-index: 5;
+            }
+            .inclusions-strip .row {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+                justify-content: flex-start !important;
+                padding: 4px 20px 10px 20px !important; /* Added bottom padding for custom scrollbar, side padding for buffer */
+                margin-left: -15px !important;
+                margin-right: -15px !important;
+                gap: 10px;
+                scrollbar-width: thin; /* Firefox */
+                scrollbar-color: #c5a880 rgba(0, 0, 0, 0.05); /* Firefox thumb/track */
+            }
+            .inclusions-strip .row::-webkit-scrollbar {
+                display: block !important;
+                height: 3px !important; /* Elegant thin scrollbar */
+            }
+            .inclusions-strip .row::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.03) !important;
+                border-radius: 10px !important;
+            }
+            .inclusions-strip .row::-webkit-scrollbar-thumb {
+                background: #c5a880 !important; /* Theme gold accent */
+                border-radius: 10px !important;
+            }
+            .inclusions-strip [class*="col-"] {
+                flex: 0 0 auto !important;
+                width: auto !important;
+                max-width: none !important;
+                padding: 0 !important;
+            }
+            .inclusion-item {
+                padding: 8px 14px;
+                font-size: 13px;
+                white-space: nowrap;
             }
         }
 
@@ -409,7 +469,7 @@ usort($rooms, function($a, $b) {
             background-color: #fafafa;
             border-radius: 20px;
             padding: 20px;
-            border: 1px solid rgba(0,0,0,0.06);
+            border: 1px solid rgba(0, 0, 0, 0.06);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.01);
             max-width: 900px;
             margin: 0 auto;
@@ -437,12 +497,14 @@ usort($rooms, function($a, $b) {
             position: relative;
             width: 100%;
         }
+
         .box-calendar-date input[type="date"] {
             position: relative;
             padding-right: 24px;
             -webkit-appearance: none;
             appearance: none;
         }
+
         .box-calendar-date input[type="date"]::-webkit-calendar-picker-indicator {
             position: absolute;
             top: 0;
@@ -461,9 +523,10 @@ usort($rooms, function($a, $b) {
            JS injects <span class="date-ph"> which is shown/hidden via class.
         ────────────────────────────────────────────────────────────────── */
         .date-ph {
-            display: none; /* hidden on desktop — browser shows native hint */
+            display: none;
+            /* hidden on desktop — browser shows native hint */
             position: absolute;
-            left: 0;
+            left: 24px;
             top: 50%;
             transform: translateY(-50%);
             color: #a0aec0;
@@ -474,11 +537,16 @@ usort($rooms, function($a, $b) {
             white-space: nowrap;
             z-index: 2;
         }
+
         @media (max-width: 767px) {
-            .date-ph { display: block; }
+            .date-ph {
+                display: block;
+            }
+
             .box-calendar-date input[type="date"].date-empty {
                 color: transparent !important;
             }
+
             .box-calendar-date input[type="date"].date-empty:focus {
                 color: inherit !important;
             }
@@ -507,9 +575,9 @@ usort($rooms, function($a, $b) {
             top: 0 !important;
             margin-bottom: 0 !important;
             padding: 0 !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            border: 1px solid rgba(161, 122, 66, 0.2) !important;
             border-radius: 16px !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+            box-shadow: 0 12px 36px rgba(161, 122, 66, 0.08), 0 4px 12px rgba(0,0,0,0.03) !important;
             overflow: visible !important;
         }
 
@@ -529,7 +597,7 @@ usort($rooms, function($a, $b) {
             padding: 5px 20px !important;
             border: none !important;
             position: relative;
-            border-right: 1px solid #e2e8f0 !important;
+            border-right: 1px solid rgba(161, 122, 66, 0.12) !important;
         }
 
         .rooms-search-wrapper .box-bottom-search .item-search::before {
@@ -539,6 +607,57 @@ usort($rooms, function($a, $b) {
         .rooms-search-wrapper .box-bottom-search .item-search:nth-child(3) {
             width: 29% !important;
             border-right: none !important;
+        }
+
+        .rooms-search-wrapper .box-bottom-search .item-search label {
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            color: #a17a42 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px !important;
+            display: block !important;
+        }
+
+        .rooms-search-wrapper .box-bottom-search .item-search .search-input,
+        .rooms-search-wrapper .box-bottom-search .item-search input[type="date"] {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            padding: 0 !important;
+        }
+
+        .rooms-search-wrapper .box-bottom-search .item-search .guests-summary-text {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+        }
+
+        .rooms-search-wrapper .box-bottom-search .item-search svg {
+            stroke: #a17a42 !important;
+        }
+
+        .rooms-search-wrapper .box-bottom-search .btn-black-lg {
+            background: linear-gradient(135deg, #a17a42 0%, #bd9961 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(161, 122, 66, 0.25) !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            height: 46px !important;
+            border: none !important;
+            transition: all 0.2s ease !important;
+        }
+        
+        .rooms-search-wrapper .box-bottom-search .btn-black-lg:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 6px 18px rgba(161, 122, 66, 0.35) !important;
+        }
+
+        .rooms-search-wrapper .box-bottom-search .btn-black-lg:active {
+            transform: translateY(0) !important;
         }
 
         /* ===================================================
@@ -570,8 +689,9 @@ usort($rooms, function($a, $b) {
                The native date picker opens as an OS-level overlay, also not clipped. */
             .rooms-search-wrapper .box-search-advance {
                 border-radius: 20px !important;
-                border: none !important;
-                box-shadow: 0 8px 32px rgba(156, 96, 71, 0.13), 0 2px 8px rgba(0,0,0,0.07) !important;
+                border: 1px solid rgba(161, 122, 66, 0.2) !important;
+                box-shadow: 0 12px 36px rgba(161, 122, 66, 0.08), 0 4px 12px rgba(0,0,0,0.03) !important;
+                background: #ffffff !important;
                 overflow: hidden !important;
                 width: 100% !important;
                 max-width: 100% !important;
@@ -581,11 +701,11 @@ usort($rooms, function($a, $b) {
             /* Mobile header gradient bar */
             .mobile-search-header {
                 display: block !important;
-                background: linear-gradient(135deg, #9c6047 0%, #c5a880 100%);
-                color: #ffffff;
+                background: linear-gradient(135deg, #a17a42 0%, #c29d66 100%) !important;
+                color: #ffffff !important;
                 font-size: 12px;
-                font-weight: 700;
-                letter-spacing: 0.3px;
+                font-weight: 800;
+                letter-spacing: 0.5px;
                 padding: 12px 16px;
                 text-align: center;
                 width: 100%;
@@ -622,8 +742,8 @@ usort($rooms, function($a, $b) {
                 padding: 12px 12px !important;
                 border: none !important;
                 border-right: none !important;
-                border-bottom: 1px solid #f1f5f9 !important;
-                background: #ffffff;
+                border-bottom: 1px solid rgba(161, 122, 66, 0.12) !important;
+                background: #ffffff !important;
                 position: relative;
             }
 
@@ -631,7 +751,7 @@ usort($rooms, function($a, $b) {
             .rooms-search-wrapper .box-bottom-search .item-search:nth-child(1) {
                 grid-column: 1 !important;
                 grid-row: 1 !important;
-                border-right: 1px solid #f1f5f9 !important;
+                border-right: 1px solid rgba(161, 122, 66, 0.12) !important;
             }
 
             /* Check-out: right column */
@@ -647,7 +767,7 @@ usort($rooms, function($a, $b) {
                 grid-row: 2 !important;
                 width: 100% !important;
                 border-right: none !important;
-                border-bottom: 1px solid #f1f5f9 !important;
+                border-bottom: 1px solid rgba(161, 122, 66, 0.12) !important;
             }
 
             /* Hide the ::before pseudo-element on item-search */
@@ -659,7 +779,7 @@ usort($rooms, function($a, $b) {
             .rooms-search-wrapper .box-bottom-search .item-search label {
                 font-size: 9px !important;
                 font-weight: 800 !important;
-                color: #9c6047 !important;
+                color: #a17a42 !important;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
                 margin-bottom: 4px !important;
@@ -685,6 +805,7 @@ usort($rooms, function($a, $b) {
                 flex-shrink: 0 !important;
                 width: 14px !important;
                 height: 14px !important;
+                stroke: #a17a42 !important;
             }
 
             /* Date input — fills remaining space, never overflows */
@@ -696,7 +817,7 @@ usort($rooms, function($a, $b) {
                 max-width: 100% !important;
                 font-size: 12px !important;
                 font-weight: 700 !important;
-                color: #0e0e0e !important;
+                color: #1e293b !important;
                 background: transparent !important;
                 border: none !important;
                 outline: none !important;
@@ -716,8 +837,14 @@ usort($rooms, function($a, $b) {
                 overflow: hidden !important;
             }
 
+            .rooms-search-wrapper .box-bottom-search .item-search .dropdown-toggle svg {
+                stroke: #a17a42 !important;
+            }
+
             .rooms-search-wrapper .box-bottom-search .item-search .guests-summary-text {
                 font-size: 12px !important;
+                font-weight: 700 !important;
+                color: #1e293b !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
@@ -747,8 +874,8 @@ usort($rooms, function($a, $b) {
                 font-size: 13px !important;
                 font-weight: 800 !important;
                 letter-spacing: 0.3px;
-                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
-                box-shadow: 0 4px 14px rgba(15, 23, 42, 0.28) !important;
+                background: linear-gradient(135deg, #a17a42 0%, #bd9961 100%) !important;
+                box-shadow: 0 4px 14px rgba(161, 122, 66, 0.25) !important;
                 border: none !important;
                 color: #ffffff !important;
                 white-space: nowrap !important;
@@ -764,7 +891,7 @@ usort($rooms, function($a, $b) {
                 overflow-y: auto !important;
                 z-index: 99999 !important;
                 border-radius: 16px !important;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.18) !important;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18) !important;
                 border: 1px solid #e2e8f0 !important;
                 pointer-events: all !important;
             }
@@ -778,15 +905,18 @@ usort($rooms, function($a, $b) {
                 padding: 16px !important;
                 gap: 4px;
             }
+
             .rooms-search-wrapper .box-bottom-search .item-search {
                 border-right: none !important;
                 border-bottom: 1px solid #e2e8f0 !important;
                 padding: 14px 12px !important;
                 width: 100% !important;
             }
+
             .rooms-search-wrapper .box-bottom-search .item-search:last-of-type {
                 border-bottom: none !important;
             }
+
             .rooms-search-wrapper .box-bottom-search .search-submit-wrapper {
                 width: 100% !important;
                 justify-content: center !important;
@@ -794,6 +924,7 @@ usort($rooms, function($a, $b) {
                 padding: 0 !important;
                 min-width: unset !important;
             }
+
             .rooms-search-wrapper .box-bottom-search .btn-black-lg {
                 width: 100% !important;
                 height: 48px !important;
@@ -804,16 +935,17 @@ usort($rooms, function($a, $b) {
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
+
 <body>
-    
+
     <!-- Header Include -->
     <?php include("include/header.php"); ?>
 
     <main class="main">
-        
 
 
-        
+
+
 
         <!-- Room Listing Showcase Section -->
         <section class="section-box pt-60 pb-60">
@@ -823,7 +955,7 @@ usort($rooms, function($a, $b) {
                     <p class="text-md neutral-500 max-width-600 mx-auto mt-10">
                         Book direct online to lock in the absolute lowest nightly rates and enjoy flexible stay cancellation.
                     </p>
-                    
+
                     <!-- Search availability form -->
                     <div class="rooms-search-wrapper">
                         <div class="box-search-advance background-card">
@@ -849,7 +981,7 @@ usort($rooms, function($a, $b) {
                                             <input class="search-input" type="date" name="checkin" min="<?= date('Y-m-d') ?>" value="<?= htmlspecialchars($search_checkin) ?>" required style="padding-left: 0; background: transparent; border: none; font-weight: 700; color: var(--bs-neutral-1000); cursor: pointer; outline: none; width: 100%;">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="item-search">
                                         <label class="text-sm-bold neutral-500" style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 6px; display: block;">Check-out Date</label>
                                         <div class="box-calendar-date d-flex align-items-center gap-2">
@@ -905,7 +1037,7 @@ usort($rooms, function($a, $b) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="d-flex align-items-center justify-content-between mt-3 pt-3 border-top">
                                                     <button class="btn btn-sm btn-outline-success add-room-btn" type="button" style="border-color: #28a745; color: #28a745; border-radius: 20px; font-size: 12px; font-weight: 600; padding: 6px 16px;">Add Room</button>
                                                     <button class="btn btn-sm btn-done-guests close-dropdown-btn" type="button" style="background: #fd5c22; color: #fff; border-radius: 20px; border: none; font-size: 12px; font-weight: 600; padding: 6px 20px;">Done</button>
@@ -917,7 +1049,7 @@ usort($rooms, function($a, $b) {
                                     <div class="d-flex justify-content-end align-items-center search-submit-wrapper" style="padding: 0 10px; min-width: 170px;">
                                         <button type="submit" class="btn btn-black-lg text-nowrap d-flex align-items-center justify-content-center" style="background: #0f172a; color: #ffffff; border-radius: 10px; font-weight: 700; padding: 12px 20px; border: none; height: 46px; width: 100%;">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
-                                                <path d="M9 11L12 14L22 4M21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M9 11L12 14L22 4M21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>Check Availability
                                         </button>
                                     </div>
@@ -925,28 +1057,28 @@ usort($rooms, function($a, $b) {
                             </form>
                         </div>
                     </div>
-                        <?php if ($has_search_dates): ?>
-                            <div class="mt-15 text-start text-sm text-neutral-500 d-flex justify-content-between align-items-center">
-                                <span>Showing availability for: <strong><?= date('d M Y', strtotime($search_checkin)) ?></strong> to <strong><?= date('d M Y', strtotime($search_checkout)) ?></strong></span>
-                                <a href="rooms.php" class="text-danger" style="text-decoration: underline; font-weight:600;">Clear Dates</a>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+                    <?php if ($has_search_dates): ?>
+                        <div class="mt-15 text-start text-sm text-neutral-500 d-flex justify-content-between align-items-center">
+                            <span>Showing availability for: <strong><?= date('d M Y', strtotime($search_checkin)) ?></strong> to <strong><?= date('d M Y', strtotime($search_checkout)) ?></strong></span>
+                            <a href="rooms.php" class="text-danger" style="text-decoration: underline; font-weight:600;">Clear Dates</a>
+                        </div>
+                    <?php endif; ?>
+                </div>
 
                 <!-- Responsive Grid: stacks on mobile, 2 cols on tablets, 3 cols on desktop -->
                 <div class="row g-4">
                     <?php foreach ($rooms as $room): ?>
                         <div class="col-12 col-md-6 col-lg-4">
-                            <div class="card-room-destin wow fadeInUp" style="margin-bottom: 0;"> 
-                                <div class="image-box"> 
+                            <div class="card-room-destin wow fadeInUp" style="margin-bottom: 0;">
+                                <div class="image-box">
                                     <span class="badge-premier"><?= htmlspecialchars($room['type_badge']) ?></span>
                                     <span class="badge-discount"><?= htmlspecialchars($room['status_badge']) ?></span>
-                                    
+
                                     <?php if (count($room['images']) > 1): ?>
                                         <!-- Navigation Arrows Overlay -->
                                         <div class="nav-arrow left" onclick="prevCardImg(this, event)">&lt;</div>
                                         <div class="nav-arrow right" onclick="nextCardImg(this, event)">&gt;</div>
-                                        
+
                                         <!-- Pagination Dots Overlay -->
                                         <div class="dots-container">
                                             <?php foreach ($room['images'] as $idx => $img_path): ?>
@@ -966,11 +1098,11 @@ usort($rooms, function($a, $b) {
                                     <div class="title-row">
                                         <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>"><?= htmlspecialchars($room['name']) ?></a>
                                     </div>
-                                    
+
                                     <div class="meta-row">
                                         <div class="location-text">
                                             <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M6 0C2.68 0 0 2.68 0 6C0 10.5 6 14 6 14C6 14 12 10.5 12 6C12 2.68 9.32 0 6 0ZM6 8.5C4.62 8.5 3.5 7.38 3.5 6C3.5 4.62 4.62 3.5 6 3.5C7.38 3.5 8.5 4.62 8.5 6C8.5 7.38 7.38 8.5 6 8.5Z" fill="#64748B"/>
+                                                <path d="M6 0C2.68 0 0 2.68 0 6C0 10.5 6 14 6 14C6 14 12 10.5 12 6C12 2.68 9.32 0 6 0ZM6 8.5C4.62 8.5 3.5 7.38 3.5 6C3.5 4.62 4.62 3.5 6 3.5C7.38 3.5 8.5 4.62 8.5 6C8.5 7.38 7.38 8.5 6 8.5Z" fill="#64748B" />
                                             </svg>
                                             <?= htmlspecialchars($room['location']) ?>
                                         </div>
@@ -1007,7 +1139,7 @@ usort($rooms, function($a, $b) {
                                             </div>
                                             <div class="current-price">₹<?= number_format($room['price']) ?> <span>/ night</span></div>
                                         </div>
-                                        
+
                                         <?php if (isset($room['available_count']) && $room['available_count'] <= 0): ?>
                                             <button class="book-btn" disabled style="background-color: #cbd5e1 !important; color: #64748b !important; border: none; cursor: not-allowed; padding: 10px 20px !important;">Sold Out</button>
                                         <?php else: ?>
@@ -1058,7 +1190,7 @@ usort($rooms, function($a, $b) {
                             <span>Air Conditioned</span>
                         </div>
                     </div>
-                    <div class="col-6 col-md-3 col-lg-2-4 d-none d-lg-block">
+                    <div class="col-6 col-md-3 col-lg-2-4">
                         <div class="inclusion-item">
                             <span class="inclusion-icon">🚿</span>
                             <span>Premium Bathroom</span>
@@ -1097,12 +1229,12 @@ usort($rooms, function($a, $b) {
             var imgs = wrapper.find('img');
             var dots = box.find('.dot');
             var index = parseInt(wrapper.data('current-index')) || 0;
-            
+
             index--;
             if (index < 0) {
                 index = imgs.length - 1;
             }
-            
+
             slideCardTo(wrapper, dots, index);
         }
 
@@ -1114,12 +1246,12 @@ usort($rooms, function($a, $b) {
             var imgs = wrapper.find('img');
             var dots = box.find('.dot');
             var index = parseInt(wrapper.data('current-index')) || 0;
-            
+
             index++;
             if (index >= imgs.length) {
                 index = 0;
             }
-            
+
             slideCardTo(wrapper, dots, index);
         }
 
@@ -1129,14 +1261,14 @@ usort($rooms, function($a, $b) {
             var box = $(dot).closest('.image-box');
             var wrapper = box.find('.card-images-wrapper');
             var dots = box.find('.dot');
-            
+
             slideCardTo(wrapper, dots, index);
         }
 
         function slideCardTo(wrapper, dots, index) {
             wrapper.data('current-index', index);
             wrapper.css('transform', 'translateX(-' + (index * 100) + '%)');
-            
+
             dots.removeClass('active');
             dots.eq(index).addClass('active');
         }
@@ -1214,14 +1346,14 @@ usort($rooms, function($a, $b) {
                 e.preventDefault();
                 e.stopPropagation();
                 $(this).closest('.room-block').remove();
-                
+
                 // Re-index remaining rooms
                 $('#roomsContainer .room-block').each(function(index) {
                     var newId = index + 1;
                     $(this).attr('data-room-id', newId);
                     $(this).find('h6').text('Room ' + newId);
                 });
-                
+
                 updateGuestsRoomsSummary();
             });
 
@@ -1235,22 +1367,22 @@ usort($rooms, function($a, $b) {
                 var totalRooms = $('#roomsContainer .room-block').length;
                 var totalAdults = 0;
                 var totalChildren = 0;
-                
+
                 $('#roomsContainer .room-block').each(function() {
                     var adults = parseInt($(this).find('.adult-count').text()) || 0;
                     var children = parseInt($(this).find('.child-count').text()) || 0;
                     totalAdults += adults;
                     totalChildren += children;
                 });
-                
+
                 // Update hidden inputs
                 $('#hidden_adults').val(totalAdults);
                 $('#hidden_children').val(totalChildren);
-                
+
                 var totalGuests = totalAdults + totalChildren;
                 var roomsText = totalRooms + (totalRooms === 1 ? ' Room' : ' Rooms');
                 var guestsText = totalGuests + (totalGuests === 1 ? ' Guest' : ' Guests');
-                
+
                 $('#dropdownGuestsBtn .guests-summary-text').text(roomsText + ', ' + guestsText);
             }
             // =========================================================
@@ -1266,7 +1398,7 @@ usort($rooms, function($a, $b) {
             var $guestsBtn = $('#dropdownGuestsBtn');
             var $guestsMenu = $guestsBtn.next('.dropdown-menu-guests');
             var $menuOriginalParent = null; // stores original DOM parent
-            var $menuNextSibling = null;    // stores original DOM position
+            var $menuNextSibling = null; // stores original DOM position
 
             // BEFORE dropdown opens — intercept Bootstrap's show event
             $guestsBtn.on('show.bs.dropdown', function(e) {
@@ -1289,9 +1421,9 @@ usort($rooms, function($a, $b) {
 
                 var btnRect = $guestsBtn[0].getBoundingClientRect();
                 var viewportHeight = window.innerHeight;
-                var viewportWidth  = window.innerWidth;
-                var menuWidth      = Math.min(viewportWidth - 24, 360);
-                var leftPos        = (viewportWidth - menuWidth) / 2;
+                var viewportWidth = window.innerWidth;
+                var menuWidth = Math.min(viewportWidth - 24, 360);
+                var leftPos = (viewportWidth - menuWidth) / 2;
 
                 // Measure menu height after it's in the DOM
                 $guestsMenu.css({
@@ -1307,9 +1439,9 @@ usort($rooms, function($a, $b) {
                     'pointer-events': 'all'
                 });
 
-                var menuHeight  = $guestsMenu.outerHeight();
-                var spaceBelow  = viewportHeight - btnRect.bottom - 10;
-                var spaceAbove  = btnRect.top - 10;
+                var menuHeight = $guestsMenu.outerHeight();
+                var spaceBelow = viewportHeight - btnRect.bottom - 10;
+                var spaceAbove = btnRect.top - 10;
                 var topPos;
 
                 if (spaceBelow >= menuHeight || spaceBelow >= spaceAbove) {
@@ -1393,8 +1525,8 @@ usort($rooms, function($a, $b) {
                 }
 
                 inp.addEventListener('change', refresh);
-                inp.addEventListener('input',  refresh);
-                inp.addEventListener('focus',  function() {
+                inp.addEventListener('input', refresh);
+                inp.addEventListener('focus', function() {
                     ph.style.display = 'none';
                     inp.classList.remove('date-empty');
                 });
@@ -1402,9 +1534,9 @@ usort($rooms, function($a, $b) {
                 refresh(); // run immediately on page load
             });
         })();
-
     </script>
 
 
 </body>
+
 </html>

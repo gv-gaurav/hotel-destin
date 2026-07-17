@@ -96,14 +96,61 @@
 
     /* Homepage search form layout overrides for 4 columns */
     .box-search-advance .box-bottom-search {
+      position: relative;
       display: flex;
       flex-wrap: nowrap !important;
       align-items: center;
       justify-content: space-between;
       padding: 12px 20px !important;
       border-radius: 16px;
-      border: 1px solid var(--bs-border-color) !important;
-      background: #ffffff !important;
+      border: 1px solid transparent;
+      background: rgba(6, 9, 14, 0.82) !important;
+      backdrop-filter: blur(10px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+      box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -1px 0 rgba(224, 184, 93, 0.08);
+
+      z-index: 1;
+    }
+
+    .box-search-advance .box-bottom-search::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 1.5px;
+      border-radius: inherit;
+
+      background: linear-gradient(120deg,
+          #F2D487,
+          #EBC878,
+          #E0B85C,
+          #F2D487,
+          #EBC878,
+          #E0B85C);
+
+      background-size: 300% 300%;
+      animation: borderGlow 6s linear infinite;
+
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+
+      pointer-events: none;
+    }
+
+    @keyframes borderGlow {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 300% 50%;
+      }
     }
 
     .box-search-advance .box-bottom-search .item-search {
@@ -119,7 +166,7 @@
     }
 
     .box-search-advance .box-bottom-search .item-search:nth-child(3) {
-      width: 29% !important;
+      width: 35% !important;
       border-right: none !important;
     }
 
@@ -133,7 +180,7 @@
       .box-search-advance .box-bottom-search .item-search {
         border-right: none !important;
         border-bottom: 1px solid #e2e8f0 !important;
-        padding: 12px 10px !important;
+        padding: 4px 10px !important;
         width: 100% !important;
       }
 
@@ -162,9 +209,10 @@
       <div class="container-banner-home7">
         <div class="box-swiper">
           <div class="item-banner-slide" style="background-image: url(<?= htmlspecialchars(get_setting('hero_bg_image', 'assets/imgs/page/homepage7/banner.png')) ?>)">
-            <div class="container">
-              <h1 class="mt-20 color-white"><?= htmlspecialchars(get_setting('hero_title', 'Experience Luxury & Comfort')) ?></h1>
-              <h5 class="color-white mt-1"><?= htmlspecialchars(get_setting('hero_subtitle', 'in the heart of Gwalior')) ?></h5>
+            <div class="container upper-space">
+              <p class="upper-top-bar">Welcome to Hotel Destin</p>
+              <h1 class="mt-10 color-white"><?= htmlspecialchars(get_setting('hero_title', 'Experience Luxury & Comfort')) ?></h1>
+              <h5 class="heading-sub mt-1"><?= htmlspecialchars(get_setting('hero_subtitle', 'in the heart of Gwalior')) ?></h5>
               <ul class="list-ticks-green">
                 <li>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -201,7 +249,7 @@
       </div>
       <div class="container-search-advance">
         <div class="container">
-          <div class="box-search-advance background-card wow fadeInUp">
+          <div class="box-search-advance wow fadeInUp">
             <form method="GET" action="rooms.php" style="width: 100%;">
               <input type="hidden" name="adults" id="hidden_adults" value="2">
               <input type="hidden" name="children" id="hidden_children" value="0">
@@ -216,7 +264,7 @@
                       <line x1="8" y1="2" x2="8" y2="6"></line>
                       <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <input class="search-input" type="date" id="checkin_date" name="checkin" min="<?php echo date('Y-m-d'); ?>" style="padding-left: 0; background: transparent; border: none; font-weight: 700; color: var(--bs-neutral-1000); cursor: pointer; outline: none; width: 100%;">
+                    <input class="search-input" type="date" id="checkin_date" name="checkin" min="<?php echo date('Y-m-d'); ?>" style="padding-left: 0; background: transparent; border: none; font-weight: 700; color: #e5e5e5; cursor: pointer; outline: none; width: 100%;">
                   </div>
                 </div>
                 <div class="item-search item-search-2">
@@ -228,7 +276,7 @@
                       <line x1="8" y1="2" x2="8" y2="6"></line>
                       <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <input class="search-input" type="date" id="checkout_date" name="checkout" min="<?php echo date('Y-m-d'); ?>" style="padding-left: 0; background: transparent; border: none; font-weight: 700; color: var(--bs-neutral-1000); cursor: pointer; outline: none; width: 100%;">
+                    <input class="search-input" type="date" id="checkout_date" name="checkout" min="<?php echo date('Y-m-d'); ?>" style="padding-left: 0; background: transparent; border: none; font-weight: 700; color: #e5e5e5; cursor: pointer; outline: none; width: 100%;">
                   </div>
                 </div>
                 <div class="item-search item-search-3">
@@ -240,7 +288,7 @@
                         <circle cx="9" cy="7" r="4"></circle>
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
                       </svg>
-                      <span class="guests-summary-text" style="font-weight: 700; color: var(--bs-neutral-1000);">1 Room, 2 Guests</span>
+                      <span class="guests-summary-text" style="font-weight: 700; color: #e5e5e5;">1 Room, 2 Guests</span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-guests p-4" aria-labelledby="dropdownGuestsBtn" style="min-width: 280px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 12px; border: 1px solid #e2e8f0;">
                       <div id="roomsContainer">
@@ -405,7 +453,7 @@
                         </div>
                         <div class="current-price">₹1,700 <span>/ night</span></div>
                       </div>
-                      <a href="room-details.html" class="book-btn">Book Room</a>
+                      <a href="room-detail.php?room=standard-room&checkin=&checkout=&adults=2&children=0" class="book-btn">Book Room</a>
                     </div>
                   </div>
                 </div>
@@ -489,7 +537,7 @@
                         </div>
                         <div class="current-price">₹1,700 <span>/ night</span></div>
                       </div>
-                      <a href="room-details.html" class="book-btn">Book Room</a>
+                      <a href="room-detail.php?room=executive-room&checkin=&checkout=&adults=2&children=0" class="book-btn">Book Room</a>
                     </div>
                   </div>
                 </div>
@@ -573,7 +621,7 @@
                         </div>
                         <div class="current-price">₹2,550 <span>/ night</span></div>
                       </div>
-                      <a href="room-details.html" class="book-btn">Book Room</a>
+                      <a href="room-detail.php?room=premium-room&checkin=&checkout=&adults=2&children=0" class="book-btn">Book Room</a>
                     </div>
                   </div>
                 </div>
@@ -603,7 +651,7 @@
 
 
 
-    <section class="section-box box-slide-banner background-body mt-30">
+    <section class="section-box box-slide-banner background-body pt-30">
       <div class="container">
         <div class="row">
           <!-- Card 1: Fine Dining Experience -->
@@ -760,7 +808,7 @@
 
     <section class="section-box box-why-book-travila-4 background-body">
       <div class="container">
-        <div class="text-center mb-40 mt-40 wow fadeInUp">
+        <div class="text-center mb-40 pt-30 wow fadeInUp">
           <h2 class="neutral-1000">Why Choose Hotel Destin?</h2>
           <p class="text-xl-medium neutral-500">We value your comfort, cleanliness, and convenience above all.</p>
         </div>
@@ -1606,8 +1654,8 @@
             gap: 16px;
             padding-bottom: 20px;
             padding-left: 15px;
-            padding-right: 15px;
-            margin-left: -15px;
+            /* padding-right: 15px; */
+            /* margin-left: -15px; */
             margin-right: -15px;
           }
 

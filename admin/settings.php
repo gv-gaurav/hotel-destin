@@ -138,7 +138,7 @@ try {
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label-custom">Contact Email Address * <span style="font-weight:normal; font-size:11.5px; color:#64748b;">(Separate multiples with commas)</span></label>
-                            <input class="form-control-custom" type="text" name="hotel_email" value="<?= htmlspecialchars($settings['hotel_email']) ?>" placeholder="e.g. info@hoteldestin.com, bookings@hoteldestin.com" required>
+                            <input class="form-control-custom" type="text" name="hotel_email" value="<?= htmlspecialchars($settings['hotel_email']) ?>" placeholder="e.g. info@hoteldestin.in, bookings@hoteldestin.in" required>
                         </div>
                     </div>
                     <div class="col-md-6">

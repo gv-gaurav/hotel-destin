@@ -1,156 +1,181 @@
 <style>
-/* Premium Footer Custom Styles */
-.footer {
-  background-color: #0e0e0e !important;
-  color: #c4c4c4 !important;
-  padding: 40px 0px 0px 0px !important;
-}
-.footer h6 {
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  font-size: 16px !important;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  position: relative;
-  padding-bottom: 12px;
-  margin-bottom: 25px !important;
-}
-.footer h6::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 35px;
-  height: 2px;
-  background-color: #a17a42; /* Gold accent color */
-}
-.footer .menu-footer {
-  padding-left: 0;
-  margin-bottom: 0;
-}
-.footer .menu-footer li {
-  margin-bottom: 12px !important;
-  list-style: none;
-}
-.footer .menu-footer li a {
-  color: #b0b0b0 !important;
-  font-size: 15px !important;
-  text-decoration: none !important;
-  transition: all 0.25s ease-in-out;
-  display: inline-block;
-}
-.footer .menu-footer li a:hover {
-  color: #a17a42 !important;
-  transform: translateX(5px);
-}
-.footer-top {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  padding-bottom: 30px !important;
-  margin-bottom: 40px !important;
-}
-.footer .footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-  padding: 30px 0px 20px 0px !important;
-  margin-top: 40px !important;
-}
-.need-help {
-  color: #b0b0b0 !important;
-  text-decoration: none !important;
-  transition: color 0.2s ease;
-  font-size: 15px;
-}
-.need-help:hover {
-  color: #a17a42 !important;
-}
-.phone-support {
-  color: #a17a42 !important;
-  font-weight: 700 !important;
-  font-size: 22px !important;
-  margin-left: 15px;
-  text-decoration: none !important;
-  transition: transform 0.2s ease, color 0.2s ease;
-  display: inline-block;
-}
-.phone-support:hover {
-  color: #ffffff !important;
-  transform: scale(1.03);
-}
-/* Socials styling */
-.box-socials-footer {
-  margin-top: 15px;
-}
-.box-socials-footer a.icon-socials {
-  background-color: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  width: 38px !important;
-  height: 38px !important;
-  border-radius: 50% !important;
-  transition: all 0.3s ease !important;
-  margin-right: 8px !important;
-}
-.box-socials-footer a.icon-socials svg {
-  fill: #b0b0b0 !important;
-  transition: fill 0.3s ease !important;
-}
-.box-socials-footer a.icon-socials:hover {
-  background-color: #a17a42 !important;
-  border-color: #a17a42 !important;
-  transform: translateY(-4px) !important;
-  box-shadow: 0 4px 12px rgba(161, 122, 66, 0.3);
-}
-.box-socials-footer a.icon-socials:hover svg {
-  fill: #ffffff !important;
-}
-.footer-contact-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.footer-contact-item svg {
-  color: #a17a42;
-  margin-top: 4px;
-  flex-shrink: 0;
-}
-.footer-contact-item span {
-  font-size: 14px;
-  color: #b0b0b0;
-  line-height: 1.6;
-}
-.menu-bottom-footer {
-  padding-left: 0;
-  margin-bottom: 0;
-  list-style: none;
-}
-.menu-bottom-footer li {
-  display: inline-block;
-  margin-left: 20px;
-}
-.menu-bottom-footer li a {
-  color: #b0b0b0 !important;
-  font-size: 14px !important;
-  text-decoration: none !important;
-  transition: color 0.2s ease;
-}
-.menu-bottom-footer li a:hover {
-  color: #a17a42 !important;
-}
+  /* Premium Footer Custom Styles */
+  .footer {
+    background-color: #0e0e0e !important;
+    color: #c4c4c4 !important;
+    padding: 40px 0px 0px 0px !important;
+  }
+
+  .footer h6 {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 16px !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 12px;
+    margin-bottom: 25px !important;
+  }
+
+  .footer h6::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 35px;
+    height: 2px;
+    background-color: #a17a42;
+    /* Gold accent color */
+  }
+
+  .footer .menu-footer {
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+
+  .footer .menu-footer li {
+    margin-bottom: 12px !important;
+    list-style: none;
+  }
+
+  .footer .menu-footer li a {
+    color: #b0b0b0 !important;
+    font-size: 15px !important;
+    text-decoration: none !important;
+    transition: all 0.25s ease-in-out;
+    display: inline-block;
+  }
+
+  .footer .menu-footer li a:hover {
+    color: #a17a42 !important;
+    transform: translateX(5px);
+  }
+
+  .footer-top {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 30px !important;
+    margin-bottom: 40px !important;
+  }
+
+  .footer .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 30px 0px 20px 0px !important;
+    margin-top: 40px !important;
+  }
+
+  .need-help {
+    color: #b0b0b0 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease;
+    font-size: 15px;
+  }
+
+  .need-help:hover {
+    color: #a17a42 !important;
+  }
+
+  .phone-support {
+    color: #a17a42 !important;
+    font-weight: 700 !important;
+    font-size: 22px !important;
+    margin-left: 15px;
+    text-decoration: none !important;
+    transition: transform 0.2s ease, color 0.2s ease;
+    display: inline-block;
+  }
+
+  .phone-support:hover {
+    color: #ffffff !important;
+    transform: scale(1.03);
+  }
+
+  /* Socials styling */
+  .box-socials-footer {
+    margin-top: 15px;
+  }
+
+  .box-socials-footer a.icon-socials {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    transition: all 0.3s ease !important;
+    margin-right: 8px !important;
+  }
+
+  .box-socials-footer a.icon-socials svg {
+    fill: #b0b0b0 !important;
+    transition: fill 0.3s ease !important;
+  }
+
+  .box-socials-footer a.icon-socials:hover {
+    background-color: #a17a42 !important;
+    border-color: #a17a42 !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 4px 12px rgba(161, 122, 66, 0.3);
+  }
+
+  .box-socials-footer a.icon-socials:hover svg {
+    fill: #ffffff !important;
+  }
+
+  .footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .footer-contact-item svg {
+    color: #a17a42;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .footer-contact-item span {
+    font-size: 14px;
+    color: #b0b0b0;
+    line-height: 1.6;
+  }
+
+  .menu-bottom-footer {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+  }
+
+  .menu-bottom-footer li {
+    display: inline-block;
+    margin-left: 20px;
+  }
+
+  .menu-bottom-footer li a {
+    color: #b0b0b0 !important;
+    font-size: 14px !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease;
+  }
+
+  .menu-bottom-footer li a:hover {
+    color: #a17a42 !important;
+  }
 </style>
 
 <footer class="footer">
   <div class="container">
     <div class="footer-top">
-      <div class="row align-items-center"> 
+      <div class="row align-items-center">
         <div class="col-md-4 text-center text-md-start">
           <a class="d-inline-block" href="index.php">
             <img alt="Hotel Destin" src="assets/imgs/template/logo-destin.png" style="max-height: 80px; width: auto;">
           </a>
         </div>
         <div class="col-md-8 text-center text-md-end">
-          <?php 
+          <?php
           $hotel_phone = get_setting('hotel_phone') ?: '1-800-222-8888';
           $phones = array_map('trim', explode(',', $hotel_phone));
           $first_phone = isset($phones[0]) ? $phones[0] : '1-800-222-8888';
@@ -163,7 +188,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-3 col-sm-12 footer-1">  
+      <div class="col-md-3 col-sm-12 footer-1">
         <h6>Contact Us</h6>
         <div class="mt-20 mb-20">
           <div class="box-info-contact">
@@ -181,9 +206,9 @@
               <span>Front Desk: 24 Hours, Mon - Sun</span>
             </div>
             <?php
-            $hotel_email = get_setting('hotel_email') ?: 'info@hoteldestin.com';
+            $hotel_email = get_setting('hotel_email') ?: 'info@hoteldestin.in';
             $emails = array_map('trim', explode(',', $hotel_email));
-            $first_email = isset($emails[0]) ? $emails[0] : 'info@hoteldestin.com';
+            $first_email = isset($emails[0]) ? $emails[0] : 'info@hoteldestin.in';
             ?>
             <div class="footer-contact-item">
               <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -267,3 +292,108 @@
     </div>
   </div>
 </footer>
+
+<!-- Mobile Sticky Bottom Navigation -->
+<div class="mobile-bottom-nav">
+  <a href="index.php" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : '' ?>">
+    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+    </svg>
+    <span class="nav-label">Home</span>
+  </a>
+
+  <a href="rooms.php" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'rooms.php') ? 'active' : '' ?>">
+    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    </svg>
+    <span class="nav-label">Rooms</span>
+  </a>
+
+  <a href="contact.php#map" class="nav-item">
+    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+    <span class="nav-label">Destinations</span>
+  </a>
+
+  <a href="gallery.php" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'gallery.php') ? 'active' : '' ?>">
+    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7"></rect>
+      <rect x="14" y="3" width="7" height="7"></rect>
+      <rect x="14" y="14" width="7" height="7"></rect>
+      <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+    <span class="nav-label">Gallery</span>
+  </a>
+
+  <a href="contact.php" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">
+    <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+    <span class="nav-label">Contact</span>
+  </a>
+</div>
+
+<style>
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: #ffffffff;
+    border-top: 1px solid rgba(224, 184, 93, 0.25);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 99999;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    text-decoration: none;
+    width: 20%;
+    height: 100%;
+    transition: color 0.25s ease, transform 0.2s ease;
+  }
+
+  .mobile-bottom-nav .nav-item .nav-icon {
+    margin-bottom: 4px;
+    transition: transform 0.25s ease;
+  }
+
+  .mobile-bottom-nav .nav-item .nav-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .mobile-bottom-nav .nav-item:hover,
+  .mobile-bottom-nav .nav-item.active {
+    color: #E0B85D;
+  }
+
+  .mobile-bottom-nav .nav-item:active .nav-icon {
+    transform: scale(0.9);
+  }
+
+  @media (min-width: 768px) {
+    .mobile-bottom-nav {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 767px) {
+    body {
+      padding-bottom: 74px !important;
+    }
+  }
+</style>

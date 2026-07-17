@@ -478,7 +478,7 @@ $mode = isset($_GET['mode']) ? $_GET['mode'] : 'login';
                     
                     <div class="form-group">
                         <label class="form-label">Email Address</label>
-                        <input class="form-control-custom" type="email" name="email" placeholder="e.g. admin@hoteldestin.com" required autocomplete="email">
+                        <input class="form-control-custom" type="email" name="email" placeholder="e.g. info@hoteldestin.in" required autocomplete="email">
                     </div>
 
                     <button class="btn-login" type="submit">Send Verification Code</button>
