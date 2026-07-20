@@ -37,4 +37,76 @@ function get_setting($key, $default = '') {
         return $default;
     }
 }
+
+/**
+ * Resolve room price for a specific date considering rate calendar overrides.
+ */
+function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $room) {
+    try {
+        $stmt = $pdo->prepare("
+            SELECT ep_price, cp_price, map_price 
+            FROM room_rate_calendars 
+            WHERE room_category_id = ? 
+              AND start_date <= ? 
+              AND end_date >= ? 
+            ORDER BY id DESC 
+            LIMIT 1
+        ");
+        $stmt->execute([$room_id, $date, $date]);
+        $rule = $stmt->fetch();
+        
+        if ($rule) {
+            $plan = strtolower(trim($meal_plan));
+            if ($plan === 'cp') {
+                return (float)$rule['cp_price'];
+            } elseif ($plan === 'map') {
+                return (float)$rule['map_price'];
+            } else {
+                return (float)$rule['ep_price'];
+            }
+        }
+    } catch (Exception $e) {
+        error_log("Rate calendar lookup error on date $date: " . $e->getMessage());
+    }
+    
+    // Fallback: standard matrix pricing
+    $occupancy = ($adults >= 2) ? 'double' : 'single';
+    $plan = strtolower(trim($meal_plan));
+    $column = "price_" . $occupancy . "_" . $plan;
+    
+    return isset($room[$column]) ? (float)$room[$column] : (float)$room['price'];
+}
+
+/**
+ * Shared helper to get the icon filename for a given amenity/facility name.
+ */
+function get_amenity_icon($name)
+{
+    $n = strtolower(trim($name));
+    if (strpos($n, 'ac') !== false || strpos($n, 'air') !== false || strpos($n, 'conditioner') !== false) {
+        return 'assets/imgs/page/room/air-conditioner.svg';
+    }
+    if (strpos($n, 'wifi') !== false || strpos($n, 'wi-fi') !== false || strpos($n, 'internet') !== false) {
+        return 'assets/imgs/page/room/wifi.svg';
+    }
+    if (strpos($n, 'laundry') !== false || strpos($n, 'wash') !== false) {
+        return 'assets/imgs/page/room/loundry.svg';
+    }
+    if (strpos($n, 'bed') !== false) {
+        return 'assets/imgs/page/room/bed.svg';
+    }
+    if (strpos($n, 'safe') !== false || strpos($n, 'locker') !== false || strpos($n, 'safety') !== false) {
+        return 'assets/imgs/page/room/safety-box.svg';
+    }
+    if (strpos($n, 'airport') !== false || strpos($n, 'transfer') !== false || strpos($n, 'shuttle') !== false) {
+        return 'assets/imgs/page/room/airport.svg';
+    }
+    if (strpos($n, 'food') !== false || strpos($n, 'meal') !== false || strpos($n, 'breakfast') !== false || strpos($n, 'dining') !== false) {
+        return 'assets/imgs/page/room/food.svg';
+    }
+    if (strpos($n, 'living') !== false || strpos($n, 'hall') !== false || strpos($n, 'sofa') !== false) {
+        return 'assets/imgs/page/room/living.svg';
+    }
+    return 'assets/imgs/page/room/wifi.svg';
+}
 ?>

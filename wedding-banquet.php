@@ -32,6 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $req_summary = "Package: " . sanitize($package) . " | Remarks: " . sanitize($remarks);
             $stmt->execute(['wedding', $name, $email, $phone, $date, $guests, $req_summary]);
             $message_sent = true;
+
+            // Send email alert to admin
+            require_once __DIR__ . '/mail-helper.php';
+            send_enquiry_alert('wedding', $name, $email, $phone, $date, $guests, [
+                'Package Preferred' => $package,
+                'Remarks/Special Requests' => $remarks
+            ]);
         } catch (Exception $e) {
             error_log("Wedding booking DB error: " . $e->getMessage());
             $message_sent = true;

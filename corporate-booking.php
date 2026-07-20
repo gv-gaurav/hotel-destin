@@ -33,6 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $req_summary = "Company: " . sanitize($company) . " | Package: " . sanitize($package) . " | Remarks: " . sanitize($remarks);
             $stmt->execute(['corporate', $name, $email, $phone, $date, $guests, $req_summary]);
             $message_sent = true;
+
+            // Send email alert to admin
+            require_once __DIR__ . '/mail-helper.php';
+            send_enquiry_alert('corporate', $name, $email, $phone, $date, $guests, [
+                'Company Name' => $company,
+                'Package Chosen' => $package,
+                'Remarks/Special Requests' => $remarks
+            ]);
         } catch (Exception $e) {
             error_log("Corporate booking DB error: " . $e->getMessage());
             $message_sent = true;

@@ -287,6 +287,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <span class="meta-value" style="font-weight:700;"><?= htmlspecialchars($booking['invoice_no'] ?: 'Pending Invoicing') ?></span>
                     </div>
                     <div class="meta-row">
+                        <span class="meta-label">Payment Method:</span>
+                        <span class="meta-value" style="font-weight:700; color: <?= $booking['payment_method'] === 'Pay at Hotel' ? '#c2410c' : '#1d4ed8' ?>;"><?= htmlspecialchars($booking['payment_method'] ?: 'Razorpay') ?></span>
+                    </div>
+                    <div class="meta-row">
                         <span class="meta-label">Room Type Category:</span>
                         <span class="meta-value"><?= htmlspecialchars($booking['category_title']) ?></span>
                     </div>
@@ -341,7 +345,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             <span class="meta-value">₹<?= number_format($booking['tax'], 2) ?></span>
                         </div>
                         <div class="meta-row" style="font-size: 15px; font-weight:800; border-top:1px dashed #cbd5e1; padding-top:12px; margin-top:5px; color:#16a34a;">
-                            <span>Total Paid Amount:</span>
+                            <span><?= strtolower($booking['payment_status']) === 'paid' ? 'Total Paid Amount:' : 'Total Payable Amount:' ?></span>
                             <span>₹<?= number_format($booking['total_amount'], 2) ?></span>
                         </div>
                     </div>

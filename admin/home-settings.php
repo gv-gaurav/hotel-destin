@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $announcement_status = isset($_POST['announcement_status']) ? trim($_POST['announcement_status']) : 'active';
             $hero_title = isset($_POST['hero_title']) ? trim($_POST['hero_title']) : '';
             $hero_subtitle = isset($_POST['hero_subtitle']) ? trim($_POST['hero_subtitle']) : '';
+            $hero_slider_interval = isset($_POST['hero_slider_interval']) ? trim($_POST['hero_slider_interval']) : '4';
 
             if (empty($announcement_text) || empty($hero_title) || empty($hero_subtitle)) {
                 header("Location: home-settings.php?error=req&tab=settings");
@@ -76,45 +77,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             } else {
                 try {
                     $hero_bg_image = get_setting('hero_bg_image', 'assets/imgs/page/homepage7/banner.png');
-                    if (isset($_FILES['hero_bg_file']) && $_FILES['hero_bg_file']['error'] === UPLOAD_ERR_OK) {
-                        $file_tmp = $_FILES['hero_bg_file']['tmp_name'];
-                        $file_name = $_FILES['hero_bg_file']['name'];
-                        $file_size = $_FILES['hero_bg_file']['size'];
-                        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+                    $hero_bg_image_2 = get_setting('hero_bg_image_2', '');
+                    $hero_bg_image_3 = get_setting('hero_bg_image_3', '');
 
-                        $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-                        $max_size = 5 * 1024 * 1024; // 5MB
+                    $bg_inputs = [
+                        'hero_bg_file_1' => [
+                            'key' => 'hero_bg_image',
+                            'val' => &$hero_bg_image,
+                            'required' => true
+                        ],
+                        'hero_bg_file_2' => [
+                            'key' => 'hero_bg_image_2',
+                            'val' => &$hero_bg_image_2,
+                            'required' => false,
+                            'delete_key' => 'delete_bg_2'
+                        ],
+                        'hero_bg_file_3' => [
+                            'key' => 'hero_bg_image_3',
+                            'val' => &$hero_bg_image_3,
+                            'required' => false,
+                            'delete_key' => 'delete_bg_3'
+                        ]
+                    ];
 
-                        if (!in_array($file_ext, $allowed_extensions)) {
-                            header("Location: home-settings.php?error=format&tab=settings");
-                            exit;
-                        } else if ($file_size > $max_size) {
-                            header("Location: home-settings.php?error=size&tab=settings");
-                            exit;
-                        } else {
-                            $upload_dir = __DIR__ . '/../uploads/';
-                            if (!is_dir($upload_dir)) {
-                                mkdir($upload_dir, 0755, true);
-                            }
-
-                            $new_filename = 'hero_bg_' . uniqid('', true) . '.' . $file_ext;
-                            $dest_path = $upload_dir . $new_filename;
-                            $db_bg_path = 'uploads/' . $new_filename;
-
-                            if (move_uploaded_file($file_tmp, $dest_path)) {
-                                if (strpos($hero_bg_image, 'uploads/') === 0) {
-                                    $old_file_path = __DIR__ . '/../' . $hero_bg_image;
-                                    if (file_exists($old_file_path)) {
-                                        @unlink($old_file_path);
-                                    }
+                    foreach ($bg_inputs as $post_name => &$info) {
+                        // Handle delete checkbox first for optional images
+                        if (!$info['required'] && isset($info['delete_key']) && isset($_POST[$info['delete_key']]) && $_POST[$info['delete_key']] === '1') {
+                            if (!empty($info['val']) && strpos($info['val'], 'uploads/') === 0) {
+                                $old_file_path = __DIR__ . '/../' . $info['val'];
+                                if (file_exists($old_file_path)) {
+                                    @unlink($old_file_path);
                                 }
-                                $hero_bg_image = $db_bg_path;
-                            } else {
-                                header("Location: home-settings.php?error=upload&tab=settings");
+                            }
+                            $info['val'] = '';
+                            continue; // Skip uploading if deleted
+                        }
+
+                        if (isset($_FILES[$post_name]) && $_FILES[$post_name]['error'] === UPLOAD_ERR_OK) {
+                            $file_tmp = $_FILES[$post_name]['tmp_name'];
+                            $file_name = $_FILES[$post_name]['name'];
+                            $file_size = $_FILES[$post_name]['size'];
+                            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+                            $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+                            $max_size = 5 * 1024 * 1024; // 5MB
+
+                            if (!in_array($file_ext, $allowed_extensions)) {
+                                header("Location: home-settings.php?error=format&tab=settings");
                                 exit;
+                            } else if ($file_size > $max_size) {
+                                header("Location: home-settings.php?error=size&tab=settings");
+                                exit;
+                            } else {
+                                $upload_dir = __DIR__ . '/../uploads/';
+                                if (!is_dir($upload_dir)) {
+                                    mkdir($upload_dir, 0755, true);
+                                }
+
+                                $new_filename = 'hero_bg_' . str_replace('hero_bg_file_', '', $post_name) . '_' . uniqid('', true) . '.' . $file_ext;
+                                $dest_path = $upload_dir . $new_filename;
+                                $db_bg_path = 'uploads/' . $new_filename;
+
+                                if (move_uploaded_file($file_tmp, $dest_path)) {
+                                    if (!empty($info['val']) && strpos($info['val'], 'uploads/') === 0) {
+                                        $old_file_path = __DIR__ . '/../' . $info['val'];
+                                        if (file_exists($old_file_path)) {
+                                            @unlink($old_file_path);
+                                        }
+                                    }
+                                    $info['val'] = $db_bg_path;
+                                } else {
+                                    header("Location: home-settings.php?error=upload&tab=settings");
+                                    exit;
+                                }
                             }
                         }
                     }
+                    unset($info);
 
                     $stmt = $pdo->prepare("INSERT INTO settings (key_name, val_content) VALUES (?, ?) ON DUPLICATE KEY UPDATE val_content = VALUES(val_content)");
                     $stmt->execute(['announcement_text', $announcement_text]);
@@ -122,6 +161,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $stmt->execute(['hero_title', $hero_title]);
                     $stmt->execute(['hero_subtitle', $hero_subtitle]);
                     $stmt->execute(['hero_bg_image', $hero_bg_image]);
+                    $stmt->execute(['hero_bg_image_2', $hero_bg_image_2]);
+                    $stmt->execute(['hero_bg_image_3', $hero_bg_image_3]);
+                    $stmt->execute(['hero_slider_interval', $hero_slider_interval]);
 
                     header("Location: home-settings.php?success=settings");
                     exit;
@@ -190,7 +232,10 @@ $home_configs = [
     'announcement_status' => 'active',
     'hero_title' => 'Experience Luxury & Comfort',
     'hero_subtitle' => 'in the heart of Gwalior',
-    'hero_bg_image' => 'assets/imgs/page/homepage7/banner.png'
+    'hero_bg_image' => 'assets/imgs/page/homepage7/banner.png',
+    'hero_bg_image_2' => '',
+    'hero_bg_image_3' => '',
+    'hero_slider_interval' => '4'
 ];
 
 try {
@@ -263,6 +308,118 @@ if (isset($_GET['tab']) && ($_GET['tab'] === 'settings' || $_GET['tab'] === 'tes
     
     <!-- Tab 1: Hero & Top Bar Settings -->
     <?php if ($active_tab === 'settings'): ?>
+        <style>
+            .slider-card-wrapper {
+                margin-top: 15px;
+            }
+            .slider-image-card {
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 24px;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            .slider-image-card:hover {
+                border-color: #cbd5e1;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+                transform: translateY(-2px);
+            }
+            .slider-preview-box {
+                width: 100%;
+                height: 150px;
+                border-radius: 8px;
+                overflow: hidden;
+                border: 1px solid #e2e8f0;
+                margin-bottom: 16px;
+                background: #f8fafc;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+                position: relative;
+            }
+            .slider-preview-box img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+            .slider-image-card:hover .slider-preview-box img {
+                transform: scale(1.03);
+            }
+            .slider-placeholder-box {
+                text-align: center;
+                color: #94a3b8;
+                font-size: 13px;
+                font-weight: 550;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            .slider-placeholder-icon {
+                font-size: 24px;
+                color: #cbd5e1;
+            }
+            .delete-check-container {
+                margin-top: auto;
+                padding-top: 14px;
+                border-top: 1px dashed #e2e8f0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .delete-image-checkbox {
+                width: 18px !important;
+                height: 18px !important;
+                min-height: 18px !important;
+                display: inline-block !important;
+                margin: 0 !important;
+                cursor: pointer !important;
+                vertical-align: middle !important;
+                background-color: #fff !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 4px !important;
+                -webkit-appearance: checkbox !important;
+                appearance: checkbox !important;
+            }
+            .delete-image-checkbox:checked {
+                background-color: #dc2626 !important;
+                border-color: #dc2626 !important;
+            }
+            .slider-card-title {
+                font-size: 14px;
+                font-weight: 700;
+                color: #334155;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .required-badge {
+                background: #fef3c7;
+                color: #d97706;
+                font-size: 10px;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .optional-badge {
+                background: #f1f5f9;
+                color: #64748b;
+                font-size: 10px;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+        </style>
         <div class="tab-pane fade show active" id="settings" role="tabpanel">
             <form action="home-settings.php?tab=settings" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
@@ -307,20 +464,118 @@ if (isset($_GET['tab']) && ($_GET['tab'] === 'settings' || $_GET['tab'] === 'tes
                             </div>
                         </div>
                     </div>
+                </div>
+                
                 <div class="panel-card mt-25">
-                    <h3 class="font-heading" style="font-size:18px;">Hero Background Image</h3>
+                    <h3 class="font-heading" style="font-size:18px; margin-bottom: 20px;">Hero Background Slider Configuration</h3>
                     
-                    <div class="row align-items-center">
-                        <div class="col-md-3">
+                    <!-- Slider Interval delay configuration -->
+                    <div class="row align-items-center mb-25 pb-20 border-bottom">
+                        <div class="col-md-5">
                             <div class="form-group mb-0">
-                                <label class="form-label-custom d-block">Current Background</label>
-                                <img src="../<?= htmlspecialchars($home_configs['hero_bg_image']) ?>" alt="Hero BG Preview" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                                <label class="form-label-custom">Slider Rotation Speed (Interval) *</label>
+                                <select class="form-control-custom" name="hero_slider_interval" style="height:42px !important; padding:8px 12px;">
+                                    <?php for($i = 1; $i <= 10; $i++): ?>
+                                        <option value="<?= $i ?>" <?= intval($home_configs['hero_slider_interval']) === $i ? 'selected' : '' ?>><?= $i ?> <?= $i === 1 ? 'second' : 'seconds' ?></option>
+                                    <?php endfor; ?>
+                                </select>
                             </div>
                         </div>
-                        <div class="col-md-9">
-                            <div class="form-group">
-                                <label class="form-label-custom">Upload New Background Image <span style="font-weight:normal; font-size:11.5px; color:#64748b;">(Allowed: JPG, JPEG, PNG, WEBP, GIF | Max 5MB)</span></label>
-                                <input class="form-control-custom" type="file" name="hero_bg_file" style="height:auto !important; padding:8px 12px;">
+                        <div class="col-md-7">
+                            <span class="text-neutral-500 font-sm d-block" style="line-height:1.5; margin-top:22px;">Configure the time delay in seconds before the hero background slides automatically to the next image one by one.</span>
+                        </div>
+                    </div>
+
+                    <div class="row slider-card-wrapper">
+                        <!-- Card 1: Image 1 -->
+                        <div class="col-lg-4 col-md-12 mb-3">
+                            <div class="slider-image-card">
+                                <div>
+                                    <div class="slider-card-title">
+                                        <span>Image 1</span>
+                                        <span class="required-badge">Required</span>
+                                    </div>
+                                    <div class="slider-preview-box">
+                                        <img src="../<?= htmlspecialchars($home_configs['hero_bg_image']) ?>" alt="Image 1 Preview">
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-group mb-0">
+                                        <label class="form-label-custom">Upload New Image 1</label>
+                                        <input class="form-control-custom" type="file" name="hero_bg_file_1" style="height:auto !important; padding:8px 12px; font-size: 12.5px !important;">
+                                        <span class="text-neutral-400 font-sm d-block mt-5" style="font-size:11px;">Allowed: JPG, JPEG, PNG, WEBP, GIF (Max 5MB)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Image 2 -->
+                        <div class="col-lg-4 col-md-12 mb-3">
+                            <div class="slider-image-card">
+                                <div>
+                                    <div class="slider-card-title">
+                                        <span>Image 2</span>
+                                        <span class="optional-badge">Optional</span>
+                                    </div>
+                                    <div class="slider-preview-box">
+                                        <?php if (!empty($home_configs['hero_bg_image_2'])): ?>
+                                            <img src="../<?= htmlspecialchars($home_configs['hero_bg_image_2']) ?>" alt="Image 2 Preview">
+                                        <?php else: ?>
+                                            <div class="slider-placeholder-box">
+                                                <span class="slider-placeholder-icon">📷</span>
+                                                <span>No image uploaded</span>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-group mb-12">
+                                        <label class="form-label-custom">Upload New Image 2</label>
+                                        <input class="form-control-custom" type="file" name="hero_bg_file_2" style="height:auto !important; padding:8px 12px; font-size: 12.5px !important;">
+                                        <span class="text-neutral-400 font-sm d-block mt-5" style="font-size:11px;">Allowed: JPG, JPEG, PNG, WEBP, GIF (Max 5MB)</span>
+                                    </div>
+                                    <?php if (!empty($home_configs['hero_bg_image_2'])): ?>
+                                        <div class="delete-check-container">
+                                            <input class="delete-image-checkbox" type="checkbox" name="delete_bg_2" id="delete_bg_2" value="1">
+                                            <label class="text-danger font-sm mb-0" for="delete_bg_2" style="font-weight:700; cursor:pointer; font-size: 12.5px; user-select:none;">Remove this image</label>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Image 3 -->
+                        <div class="col-lg-4 col-md-12 mb-3">
+                            <div class="slider-image-card">
+                                <div>
+                                    <div class="slider-card-title">
+                                        <span>Image 3</span>
+                                        <span class="optional-badge">Optional</span>
+                                    </div>
+                                    <div class="slider-preview-box">
+                                        <?php if (!empty($home_configs['hero_bg_image_3'])): ?>
+                                            <img src="../<?= htmlspecialchars($home_configs['hero_bg_image_3']) ?>" alt="Image 3 Preview">
+                                        <?php else: ?>
+                                            <div class="slider-placeholder-box">
+                                                <span class="slider-placeholder-icon">📷</span>
+                                                <span>No image uploaded</span>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-group mb-12">
+                                        <label class="form-label-custom">Upload New Image 3</label>
+                                        <input class="form-control-custom" type="file" name="hero_bg_file_3" style="height:auto !important; padding:8px 12px; font-size: 12.5px !important;">
+                                        <span class="text-neutral-400 font-sm d-block mt-5" style="font-size:11px;">Allowed: JPG, JPEG, PNG, WEBP, GIF (Max 5MB)</span>
+                                    </div>
+                                    <?php if (!empty($home_configs['hero_bg_image_3'])): ?>
+                                        <div class="delete-check-container">
+                                            <input class="delete-image-checkbox" type="checkbox" name="delete_bg_3" id="delete_bg_3" value="1">
+                                            <label class="text-danger font-sm mb-0" for="delete_bg_3" style="font-weight:700; cursor:pointer; font-size: 12.5px; user-select:none;">Remove this image</label>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     </div>

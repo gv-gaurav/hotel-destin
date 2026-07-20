@@ -397,3 +397,56 @@
     }
   }
 </style>
+
+<!-- Floating Share Location Button -->
+<a href="https://api.whatsapp.com/send?text=Check%20out%20Hotel%20Destin%20on%20Google%20Maps%3A%20https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%3Fapi%3D1%26query%3DHotel%2BDESTIN%2BGWALIOR" 
+   target="_blank" 
+   class="floating-share-location-btn" 
+   title="Share Hotel Location on WhatsApp">
+    <div class="d-flex align-items-center justify-content-center w-100 h-100 gap-1 position-relative">
+        <!-- Small WhatsApp badge overlay -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="wa-badge-icon" xmlns="http://www.w3.org/2000/svg" style="color: #25D366; position: absolute; top: -6px; right: -6px; background: #ffffff; border-radius: 50%; border: 1.5px solid #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); width: 18px; height: 18px; padding: 1px;">
+          <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 1.62c4.57 0 8.29 3.72 8.29 8.29s-3.72 8.29-8.29 8.29c-1.55 0-3.03-.43-4.31-1.24l-.31-.18-3.09.81.82-3.01-.2-.32a8.23 8.23 0 0 1-1.27-4.35c0-4.57 3.72-8.29 8.29-8.29zm-3.66 4.28c-.18 0-.44.07-.67.33-.23.26-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.7 4.28 3.78.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.48-.6 1.69-1.19.21-.58.21-1.09.15-1.19-.06-.1-.23-.17-.48-.29l-2.52-1.24c-.25-.13-.44-.19-.63.09l-.72.9c-.16.2-.33.22-.58.09-.26-.13-1.09-.4-2.07-1.28-.76-.68-1.27-1.52-1.42-1.78-.15-.26-.02-.4.11-.53l.51-.6c.13-.15.17-.26.26-.43a.47.47 0 0 0-.02-.45c-.06-.13-.59-1.42-.81-1.95-.21-.52-.43-.45-.59-.46l-.5-.01z" />
+        </svg>
+        <!-- Location pin -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pin-badge-icon" xmlns="http://www.w3.org/2000/svg" style="color: #ffffff;">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+    </div>
+</a>
+
+<style>
+  /* Floating Share Location Button styling */
+  .floating-share-location-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    width: 50px;
+    height: 50px;
+    background: #a17a42; /* Premium Gold Theme */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(161, 122, 66, 0.4);
+    transition: all 0.3s ease;
+    border: 2px solid #ffffff;
+  }
+
+  .floating-share-location-btn:hover {
+    transform: scale(1.1);
+    background: #8c6734;
+    box-shadow: 0 6px 20px rgba(161, 122, 66, 0.6);
+  }
+
+  @media (max-width: 767px) {
+    .floating-share-location-btn {
+      bottom: 84px; /* Sits cleanly above the sticky mobile navigation bar */
+      left: 20px;
+      width: 46px;
+      height: 46px;
+    }
+  }
+</style>

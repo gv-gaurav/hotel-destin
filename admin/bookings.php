@@ -58,8 +58,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             exit;
         } else {
             try {
-                $stmt = $pdo->prepare("UPDATE bookings SET payment_status = ? WHERE id = ?");
-                $stmt->execute([$status, $booking_id]);
+                if ($status === 'paid') {
+                    $b_stmt = $pdo->prepare("SELECT invoice_no FROM bookings WHERE id = ?");
+                    $b_stmt->execute([$booking_id]);
+                    $current_invoice = $b_stmt->fetchColumn();
+
+                    if (empty($current_invoice)) {
+                        $date_prefix = 'INV-' . date('Ymd') . '-';
+                        $seq_stmt = $pdo->prepare("SELECT invoice_no FROM bookings WHERE invoice_no LIKE ? ORDER BY invoice_no DESC LIMIT 1");
+                        $seq_stmt->execute([$date_prefix . '%']);
+                        $last_invoice = $seq_stmt->fetchColumn();
+                        if ($last_invoice) {
+                            $seq = (int)substr($last_invoice, -4);
+                            $next_seq = str_pad($seq + 1, 4, '0', STR_PAD_LEFT);
+                        } else {
+                            $next_seq = '0001';
+                        }
+                        $invoice_no = $date_prefix . $next_seq;
+
+                        $stmt = $pdo->prepare("UPDATE bookings SET payment_status = ?, invoice_no = ? WHERE id = ?");
+                        $stmt->execute([$status, $invoice_no, $booking_id]);
+                    } else {
+                        $stmt = $pdo->prepare("UPDATE bookings SET payment_status = ? WHERE id = ?");
+                        $stmt->execute([$status, $booking_id]);
+                    }
+                } else {
+                    $stmt = $pdo->prepare("UPDATE bookings SET payment_status = ? WHERE id = ?");
+                    $stmt->execute([$status, $booking_id]);
+                }
                 header("Location: bookings.php?success=1");
                 exit;
             } catch (Exception $e) {
@@ -71,15 +97,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Fetch bookings from database
+// Fetch bookings from database with date filters
+$start_date = isset($_GET['start_date']) ? trim($_GET['start_date']) : '';
+$end_date = isset($_GET['end_date']) ? trim($_GET['end_date']) : '';
+
 $bookings = [];
 try {
-    $bookings = $pdo->query("
+    $query = "
         SELECT b.*, r.title as room_title 
         FROM bookings b 
-        LEFT JOIN rooms r ON b.room_id = r.id 
-        ORDER BY b.id DESC
-    ")->fetchAll();
+        LEFT JOIN rooms r ON b.room_id = r.id
+    ";
+    $conditions = [];
+    $params = [];
+
+    if ($start_date !== '') {
+        $conditions[] = "b.created_at >= :start_date";
+        $params['start_date'] = $start_date . " 00:00:00";
+    }
+    if ($end_date !== '') {
+        $conditions[] = "b.created_at <= :end_date";
+        $params['end_date'] = $end_date . " 23:59:59";
+    }
+
+    if (count($conditions) > 0) {
+        $query .= " WHERE " . implode(" AND ", $conditions);
+    }
+
+    $query .= " ORDER BY b.id DESC";
+
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($params);
+    $bookings = $stmt->fetchAll();
 } catch (Exception $e) {
     error_log("Bookings listing DB load failure: " . $e->getMessage());
 }
@@ -109,6 +158,35 @@ try {
 <div class="panel-card">
     <h3 class="font-heading mb-25" style="font-size:18px;">Master Booking Register</h3>
 
+    <!-- Search & Filter Bar -->
+    <form method="GET" class="row g-3 align-items-end mb-30" style="background-color: #fafaf9; padding: 18px; border-radius: 12px; border: 1px solid #f1f1f0; margin: 0 0 25px 0;">
+        <div class="col-6 col-md-3">
+            <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">From Date</label>
+            <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($start_date) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">To Date</label>
+            <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($end_date) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
+        </div>
+        <div class="col-12 col-md-6 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0 20px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#9c6047; border:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#824c36';" onmouseout="this.style.backgroundColor='#9c6047';">
+                🔍 Filter
+            </button>
+            <?php if ($start_date !== '' || $end_date !== ''): ?>
+                <a href="bookings.php" class="btn btn-light border d-inline-flex align-items-center justify-content-center" style="height: 38px; padding: 0 15px; border-radius: 8px; font-weight:700; font-size:13px; border-color:#cbd5e1; color:#475569; background-color:#ffffff; text-decoration:none;">
+                    Reset
+                </a>
+            <?php endif; ?>
+            
+            <a href="export-bookings.php?start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>" class="btn btn-success ms-auto d-inline-flex align-items-center gap-2" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#16a34a; border:none; color:#ffffff; text-decoration:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#15803d';" onmouseout="this.style.backgroundColor='#16a34a';">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                Export to Excel
+            </a>
+        </div>
+    </form>
+
     <div class="table-responsive">
         <table class="table-custom">
             <thead>
@@ -117,6 +195,7 @@ try {
                     <th>Room Reserved</th>
                     <th>Stay Dates</th>
                     <th>Amount Details</th>
+                    <th>Method</th>
                     <th>Razorpay ID</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -148,6 +227,21 @@ try {
                                 <?php if (!empty($b['coupon_code'])): ?>
                                     <span class="badge bg-light text-success border mt-5" style="font-size:10px; padding:3px 6px; font-weight:700;">Used: <?= htmlspecialchars($b['coupon_code']) ?></span>
                                 <?php endif; ?>
+                            </td>
+                            <td style="vertical-align: middle; padding: 16px 12px;">
+                                <?php
+                                $method_bg = '#eff6ff';
+                                $method_color = '#1d4ed8';
+                                $method_border = '#bfdbfe';
+                                if ($b['payment_method'] === 'Pay at Hotel') {
+                                    $method_bg = '#fff7ed';
+                                    $method_color = '#c2410c';
+                                    $method_border = '#ffedd5';
+                                }
+                                ?>
+                                <span class="badge" style="background-color: <?= $method_bg ?>; color: <?= $method_color ?>; border: 1px solid <?= $method_border ?>; font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase;">
+                                    <?= htmlspecialchars($b['payment_method'] ?: 'Razorpay') ?>
+                                </span>
                             </td>
                             <td style="vertical-align: middle; padding: 16px 12px;">
                                 <span style="font-family:Courier, monospace; font-size:12.5px; color:#475569; font-weight:600;">

@@ -87,15 +87,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Fetch enquiries from DB
+// Fetch enquiries from DB with date range filters
+$start_date = isset($_GET['start_date']) ? trim($_GET['start_date']) : '';
+$end_date = isset($_GET['end_date']) ? trim($_GET['end_date']) : '';
+
 $enquiries = [];
 try {
-    $enquiries = $pdo->query("SELECT * FROM enquiries ORDER BY id DESC")->fetchAll();
+    $query = "SELECT * FROM enquiries";
+    $conditions = [];
+    $params = [];
+
+    if ($start_date !== '') {
+        $conditions[] = "created_at >= :start_date";
+        $params['start_date'] = $start_date . " 00:00:00";
+    }
+    if ($end_date !== '') {
+        $conditions[] = "created_at <= :end_date";
+        $params['end_date'] = $end_date . " 23:59:59";
+    }
+
+    if (count($conditions) > 0) {
+        $query .= " WHERE " . implode(" AND ", $conditions);
+    }
+
+    $query .= " ORDER BY id DESC";
+
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($params);
+    $enquiries = $stmt->fetchAll();
 } catch (Exception $e) {
     error_log("Enquiries loading failure: " . $e->getMessage());
 }
 
-// Count dynamic lead numbers for each tab
+// Count dynamic lead numbers for each tab based on the filtered set
 $counts = [];
 foreach ($lead_types as $key => $val) {
     $counts[$key] = 0;
@@ -222,7 +246,7 @@ if ($active_type === 'all') {
 <ul class="lead-nav-tabs">
     <?php foreach ($lead_types as $key => $type): ?>
         <li class="nav-item">
-            <a class="nav-link <?= ($active_type === $key) ? 'active' : '' ?>" href="enquiries.php?type=<?= $key ?>">
+            <a class="nav-link <?= ($active_type === $key) ? 'active' : '' ?>" href="enquiries.php?type=<?= $key ?>&start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>">
                 <span class="me-1"><?= $type['icon'] ?></span> <?= htmlspecialchars($type['title']) ?>
                 <span class="badge"><?= $counts[$key] ?></span>
             </a>
@@ -237,6 +261,36 @@ if ($active_type === 'all') {
         </h3>
         <span class="text-sm text-neutral-400">Showing <?= count($filtered_enquiries) ?> records</span>
     </div>
+
+    <!-- Search & Filter Bar -->
+    <form method="GET" class="row g-3 align-items-end mb-30" style="background-color: #fafaf9; padding: 18px; border-radius: 12px; border: 1px solid #f1f1f0; margin: 0 0 25px 0;">
+        <input type="hidden" name="type" value="<?= htmlspecialchars($active_type) ?>">
+        <div class="col-6 col-md-3">
+            <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">From Date</label>
+            <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($start_date) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">To Date</label>
+            <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($end_date) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
+        </div>
+        <div class="col-12 col-md-6 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0 20px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#9c6047; border:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#824c36';" onmouseout="this.style.backgroundColor='#9c6047';">
+                🔍 Filter
+            </button>
+            <?php if ($start_date !== '' || $end_date !== ''): ?>
+                <a href="enquiries.php?type=<?= htmlspecialchars($active_type) ?>" class="btn btn-light border d-inline-flex align-items-center justify-content-center" style="height: 38px; padding: 0 15px; border-radius: 8px; font-weight:700; font-size:13px; border-color:#cbd5e1; color:#475569; background-color:#ffffff; text-decoration:none;">
+                    Reset
+                </a>
+            <?php endif; ?>
+            
+            <a href="export-enquiries.php?type=<?= urlencode($active_type) ?>&start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>" class="btn btn-success ms-auto d-inline-flex align-items-center gap-2" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#16a34a; border:none; color:#ffffff; text-decoration:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#15803d';" onmouseout="this.style.backgroundColor='#16a34a';">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                Export to Excel
+            </a>
+        </div>
+    </form>
 
     <div class="table-responsive">
         <table class="table-custom">

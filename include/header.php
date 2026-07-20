@@ -87,6 +87,18 @@
                 <span>WhatsApp Chat</span>
               </a>
             </div>
+            <div class="align-middle mr-15">
+              <?php
+              $hotel_phone = get_setting('hotel_phone') ?: '09203509944';
+              $phone_url = preg_replace('/[^0-9+]/', '', $hotel_phone);
+              ?>
+              <a class="btn-call-header" href="tel:<?= htmlspecialchars($phone_url) ?>">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                <span>Call Us</span>
+              </a>
+            </div>
             <div class="d-none d-xxl-inline-block align-middle mr-15"><a class="btn btn-default" href="rooms.php">Book Now</a></div>
 
             <div class="burger-icon burger-icon-white"><span class="burger-icon-top"></span><span class="burger-icon-mid"></span><span class="burger-icon-bottom"></span></div>
@@ -318,6 +330,46 @@
           padding-top: 10px !important;
           min-height: 580px !important;
           height: auto !important;
+        }
+      }
+
+      /* Fix header buttons design wrapping issue */
+      .header .main-header .header-right {
+        width: auto !important;
+        min-width: max-content !important;
+        flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+      }
+      .header .main-header .header-left {
+        width: auto !important;
+        flex-grow: 1 !important;
+      }
+      .btn-whatsapp-header,
+      .btn-call-header,
+      .header-right .btn,
+      .header-right .btn-default {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+      }
+
+      /* Prevent horizontal scroll / header overflow on medium desktop viewports */
+      @media (min-width: 1200px) and (max-width: 1475px) {
+        .header .container-fluid {
+          padding-left: 24px !important;
+          padding-right: 24px !important;
+        }
+        .header .main-menu li a {
+          padding-left: 6px !important;
+          padding-right: 6px !important;
+          font-size: 14px !important;
+        }
+        .header .main-header .header-left .header-logo {
+          min-width: 110px !important;
+        }
+        .header .main-header .header-left .header-logo img {
+          max-height: 65px !important;
         }
       }
     </style>

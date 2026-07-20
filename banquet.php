@@ -48,6 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $success_guests = $guests;
             $success_date = $date;
 
+            // Send email alert to admin
+            require_once __DIR__ . '/mail-helper.php';
+            send_enquiry_alert('banquet', $name, $email, $phone, $date, $guests, [
+                'Event Type' => $event_type,
+                'Remarks' => $remarks
+            ]);
+
             // Reset inputs to clean page state
             $name = '';
             $email = '';

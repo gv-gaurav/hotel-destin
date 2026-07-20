@@ -11,35 +11,6 @@ $search_adults = isset($_GET['adults']) ? intval($_GET['adults']) : 2;
 $search_children = isset($_GET['children']) ? intval($_GET['children']) : 0;
 $has_search_dates = (!empty($search_checkin) && !empty($search_checkout));
 
-function get_amenity_icon($name)
-{
-    $n = strtolower(trim($name));
-    if (strpos($n, 'ac') !== false || strpos($n, 'air') !== false || strpos($n, 'conditioner') !== false) {
-        return 'assets/imgs/page/room/air-conditioner.svg';
-    }
-    if (strpos($n, 'wifi') !== false || strpos($n, 'wi-fi') !== false || strpos($n, 'internet') !== false) {
-        return 'assets/imgs/page/room/wifi.svg';
-    }
-    if (strpos($n, 'laundry') !== false || strpos($n, 'wash') !== false) {
-        return 'assets/imgs/page/room/loundry.svg';
-    }
-    if (strpos($n, 'bed') !== false) {
-        return 'assets/imgs/page/room/bed.svg';
-    }
-    if (strpos($n, 'safe') !== false || strpos($n, 'locker') !== false || strpos($n, 'safety') !== false) {
-        return 'assets/imgs/page/room/safety-box.svg';
-    }
-    if (strpos($n, 'airport') !== false || strpos($n, 'transfer') !== false || strpos($n, 'shuttle') !== false) {
-        return 'assets/imgs/page/room/airport.svg';
-    }
-    if (strpos($n, 'food') !== false || strpos($n, 'meal') !== false || strpos($n, 'breakfast') !== false || strpos($n, 'dining') !== false) {
-        return 'assets/imgs/page/room/food.svg';
-    }
-    if (strpos($n, 'living') !== false || strpos($n, 'hall') !== false || strpos($n, 'sofa') !== false) {
-        return 'assets/imgs/page/room/living.svg';
-    }
-    return 'assets/imgs/page/room/wifi.svg';
-}
 
 // Static Fallback Room Categories (if DB connection has no table records yet)
 $static_rooms = [
@@ -205,6 +176,23 @@ try {
                 $tags[] = ['text' => '+' . $more_count . ' more', 'style' => 'green'];
             }
 
+            $price = (float)$r['price'];
+            if ($has_search_dates) {
+                $date1 = new DateTime($search_checkin);
+                $date2 = new DateTime($search_checkout);
+                $nights = $date2->diff($date1)->format("%a");
+                $nights = max(1, (int)$nights);
+                
+                $total_base_price = 0.00;
+                $curr_date_ptr = clone $date1;
+                while ($curr_date_ptr < $date2) {
+                    $date_str = $curr_date_ptr->format('Y-m-d');
+                    $total_base_price += get_resolved_room_price($pdo, $r['id'], $date_str, 'EP', $search_adults, $r);
+                    $curr_date_ptr->modify('+1 day');
+                }
+                $price = round($total_base_price / $nights, 2);
+            }
+
             $rooms[] = [
                 'id' => $r['slug'],
                 'db_id' => $r['id'],
@@ -218,7 +206,7 @@ try {
                 'struck_price' => $r['struck_price'],
                 'discount' => $r['discount'],
                 'code' => $r['code'],
-                'price' => $r['price'],
+                'price' => $price,
                 'image' => $r['image_path'],
                 'images' => $all_images,
                 'available_count' => $available_count,
@@ -1016,7 +1004,6 @@ usort($rooms, function ($a, $b) {
                                                         <div class="d-flex align-items-center justify-content-between mb-2">
                                                             <div>
                                                                 <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Adult</span>
-                                                                <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Above 12 years)</span>
                                                             </div>
                                                             <div class="d-flex align-items-center border rounded overflow-hidden">
                                                                 <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
@@ -1027,7 +1014,7 @@ usort($rooms, function ($a, $b) {
                                                         <div class="d-flex align-items-center justify-content-between">
                                                             <div>
                                                                 <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Child</span>
-                                                                <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Below 12 years)</span>
+                                                                <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 10 years)</span>
                                                             </div>
                                                             <div class="d-flex align-items-center border rounded overflow-hidden">
                                                                 <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
@@ -1282,9 +1269,27 @@ usort($rooms, function ($a, $b) {
                 e.stopPropagation();
                 var target = $(this).siblings('span');
                 var count = parseInt(target.text());
-                if (count < 5) {
-                    target.text(count + 1);
-                    updateGuestsRoomsSummary();
+                var roomBlock = $(this).closest('.room-block');
+
+                if (target.hasClass('adult-count')) {
+                    if (count < 3) { // Rule 1: Adult limit is only 3
+                        var newAdults = count + 1;
+                        target.text(newAdults);
+                        // Rule 2: If customer chooses 3 adults, child count drops to 0
+                        if (newAdults === 3) {
+                            roomBlock.find('.child-count').text(0);
+                        }
+                        updateGuestsRoomsSummary();
+                    }
+                } else if (target.hasClass('child-count')) {
+                    var adults = parseInt(roomBlock.find('.adult-count').text()) || 0;
+                    // Rule 3: Child allowed only with adults <= 2
+                    if (adults < 3) {
+                        if (count < 4) {
+                            target.text(count + 1);
+                            updateGuestsRoomsSummary();
+                        }
+                    }
                 }
             });
 
@@ -1316,7 +1321,6 @@ usort($rooms, function ($a, $b) {
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <div>
                                     <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Adult</span>
-                                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Above 12 years)</span>
                                 </div>
                                 <div class="d-flex align-items-center border rounded overflow-hidden">
                                     <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
@@ -1327,7 +1331,7 @@ usort($rooms, function ($a, $b) {
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Child</span>
-                                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Below 12 years)</span>
+                                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 10 years)</span>
                                 </div>
                                 <div class="d-flex align-items-center border rounded overflow-hidden">
                                     <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>

@@ -215,3 +215,18 @@ INSERT INTO `blogs` (`id`, `slug`, `title`, `category`, `image_path`, `date`, `r
 (1, 'gwalior-fort-guide', 'Gwalior Fort Guide: Exploring the Gibraltar of India', 'Local Attractions', 'assets/imgs/page/homepage1/news.png', '05 Jul 2026', '8 min read', 'Discover the rich history, magnificent palaces, and stunning temple carvings inside Gwalior\'s historic fort.', 'Gwalior Fort is one of the most famous tourist attractions in Madhya Pradesh, India. Built in the 8th century, it sits atop a steep hill overlooking the city. Inside, visitors can marvel at the stunning Man Mandir Palace with its signature turquoise blue tiles, the ancient Sas Bahu temples, and the magnificent rock-cut Jain sculptures carved along the cliffside paths. Plan a half-day tour to experience this majestic fort in all its glory.', 'Gwalior Fort Sightseeing Guide & History - Hotel Destin', 'Read our complete tourist guide to visiting Gwalior Fort in Madhya Pradesh, including ticket timings, palaces, temples, and historical details.'),
 (2, 'dining-spots-sachin-tendulkar-road', 'Top 5 Dining Spots on Sachin Tendulkar Road', 'Dining Guide', 'assets/imgs/page/homepage1/news2.png', '02 Jul 2026', '5 min read', 'A curated list of local Gwalior specialties, fine dining, and cafe favorites located just steps from Hotel Destin.', 'Sachin Tendulkar Road is Gwalior\'s premier lifestyle and dining hub. When staying at Hotel Destin, you are surrounded by excellent choices. Here are our top 5 recommendations: 1) The Heights Rooftop Club (located inside Hotel Destin) for high-end dining, 2) local street food stalls for spicy Gwalior Bedai, 3) Indian accent fine dining restaurants, 4) modern espresso cafes, and 5) premium ice cream parlors.', 'Top Restaurants & Cafes on Sachin Tendulkar Road - Hotel Destin', 'Explore the best restaurants, local breakfast spots, and cafe lounges on Gwalior\'s Sachin Tendulkar Road, located right next to Hotel Destin.')
 ON DUPLICATE KEY UPDATE `title`=VALUES(`title`);
+
+-- 12. Room Rate Calendars (Seasonal / Custom Date-wise pricing)
+CREATE TABLE IF NOT EXISTS `room_rate_calendars` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `room_category_id` INT NOT NULL,
+  `start_date` DATE NOT NULL,
+  `end_date` DATE NOT NULL,
+  `ep_price` DECIMAL(10,2) NOT NULL,
+  `cp_price` DECIMAL(10,2) NOT NULL,
+  `map_price` DECIMAL(10,2) NOT NULL,
+  `reason` VARCHAR(255) NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`room_category_id`) REFERENCES `rooms`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

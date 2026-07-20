@@ -17828,6 +17828,36 @@ h2 span {
   display: block;
 }
 
+/* Call Header Button */
+.btn-call-header {
+  background: #a17a42;
+  color: #ffffff !important;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid #8c6734;
+  box-shadow: 0 4px 10px rgba(161, 122, 66, 0.2);
+}
+
+.btn-call-header:hover {
+  background: #8c6734;
+  box-shadow: 0 6px 15px rgba(161, 122, 66, 0.3);
+  transform: translateY(-1px);
+  color: #ffffff !important;
+}
+
+.btn-call-header svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
 /* Responsive adjustment for WhatsApp button */
 @media (max-width: 991px) {
   .btn-whatsapp-header {
@@ -17844,6 +17874,27 @@ h2 span {
   }
 
   .btn-whatsapp-header svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Responsive adjustment for Call button */
+@media (max-width: 991px) {
+  .btn-call-header {
+    padding: 8px;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .btn-call-header span {
+    display: none;
+  }
+
+  .btn-call-header svg {
     width: 20px;
     height: 20px;
   }

@@ -45,6 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $req_summary = "Time: " . sanitize($time) . " | Seating: " . sanitize($seating) . " | Preference: " . sanitize($preference);
             $stmt->execute(['restaurant', $name, $email, $phone, $date, $guests, $req_summary]);
             $message_sent = true;
+
+            // Send email alert to admin
+            require_once __DIR__ . '/mail-helper.php';
+            send_enquiry_alert('restaurant', $name, $email, $phone, $date, $guests, [
+                'Time Preferred' => $time,
+                'Seating Option' => $seating,
+                'Food/Bar Preference' => $preference
+            ]);
         } catch (Exception $e) {
             error_log("Restaurant reservation DB error: " . $e->getMessage());
             $message_sent = true;

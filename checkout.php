@@ -32,6 +32,60 @@ if (isset($_POST['action']) && $_POST['action'] === 'apply_coupon') {
     exit;
 }
 
+// AJAX Dynamic Pricing Endpoint
+if (isset($_POST['action']) && $_POST['action'] === 'get_pricing') {
+    header('Content-Type: application/json');
+    $check_in = isset($_POST['check_in']) ? trim($_POST['check_in']) : '';
+    $check_out = isset($_POST['check_out']) ? trim($_POST['check_out']) : '';
+    $adults = isset($_POST['adults']) ? intval($_POST['adults']) : 2;
+    $room_id = isset($_POST['room_id']) ? intval($_POST['room_id']) : 0;
+    
+    // Fetch room from DB
+    $room_data = null;
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM rooms WHERE id = ?");
+        $stmt->execute([$room_id]);
+        $room_data = $stmt->fetch();
+    } catch (Exception $e) {}
+    
+    if (!$room_data) {
+        echo json_encode(['success' => false, 'message' => 'Room not found']);
+        exit;
+    }
+    
+    // Calculate nights
+    $date1 = new DateTime($check_in);
+    $date2 = new DateTime($check_out);
+    $nights = $date2->diff($date1)->format("%a");
+    $nights = max(1, (int)$nights);
+    
+    // Sum prices day-by-day for each plan
+    $ep_base_price = 0.00;
+    $cp_base_price = 0.00;
+    $map_base_price = 0.00;
+    
+    $curr_date_ptr = clone $date1;
+    while ($curr_date_ptr < $date2) {
+        $date_str = $curr_date_ptr->format('Y-m-d');
+        $ep_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'EP', $adults, $room_data);
+        $cp_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'CP', $adults, $room_data);
+        $map_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'MAP', $adults, $room_data);
+        $curr_date_ptr->modify('+1 day');
+    }
+    
+    echo json_encode([
+        'success' => true,
+        'nights' => $nights,
+        'ep_base_price' => $ep_base_price,
+        'ep_average_rate' => round($ep_base_price / $nights, 2),
+        'cp_base_price' => $cp_base_price,
+        'cp_average_rate' => round($cp_base_price / $nights, 2),
+        'map_base_price' => $map_base_price,
+        'map_average_rate' => round($map_base_price / $nights, 2)
+    ]);
+    exit;
+}
+
 function get_matrix_room_price($room, $adults, $meal_plan)
 {
     if (!$room) {
@@ -94,6 +148,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
     $guests = $adults + $children;
 
+    // Enforce guest occupancy validation rules
+    if ($adults > 3) {
+        $booking_error = 'Maximum 3 adults are allowed per room.';
+    } else if ($adults === 3 && $children > 0) {
+        $booking_error = 'Children are not allowed when reserving for 3 adults in a single room.';
+    }
+
     // Calculate nights
     $date1 = new DateTime($check_in);
     $date2 = new DateTime($check_out);
@@ -117,9 +178,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
     }
 
     if (empty($booking_error)) {
-        // Compute prices using occupancy pricing matrix
-        $rate_per_night = get_matrix_room_price($room, $adults, $meal_plan);
-        $base_price = $rate_per_night * $nights;
+        // Compute base price by resolving seasonal rates day-by-day
+        $base_price = 0.00;
+        $curr_date_ptr = new DateTime($check_in);
+        $end_date_ptr = new DateTime($check_out);
+        while ($curr_date_ptr < $end_date_ptr) {
+            $date_str = $curr_date_ptr->format('Y-m-d');
+            $base_price += get_resolved_room_price($pdo, $room['id'], $date_str, $meal_plan, $adults, $room);
+            $curr_date_ptr->modify('+1 day');
+        }
         $discount_amount = 0.00;
 
         // Apply Coupon discount if valid
@@ -145,6 +212,121 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         $date_str = date('Ymd');
         $hex_str = strtoupper(bin2hex(random_bytes(3))); // 3 bytes = 6 hex characters
         $booking_id = "GV-" . $date_str . "-" . $hex_str;
+
+        $payment_method = isset($_POST['payment_method']) ? trim($_POST['payment_method']) : 'online';
+
+        if ($payment_method === 'offline') {
+            try {
+                $ins_stmt = $pdo->prepare("INSERT INTO bookings (
+                    booking_id, customer_name, customer_email, customer_phone, 
+                    check_in, check_out, guests, meal_plan, adults, children, 
+                    room_id, coupon_code, total_nights, subtotal, tax, 
+                    base_amount, tax_amount, discount_amount, total_amount, 
+                    payment_status, booking_status, special_request, payment_method
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'confirmed', ?, 'Pay at Hotel')");
+
+                $ins_stmt->execute([
+                    $booking_id,
+                    $name,
+                    $email,
+                    $phone,
+                    $check_in,
+                    $check_out,
+                    $guests,
+                    $meal_plan,
+                    $adults,
+                    $children,
+                    $room['id'],
+                    !empty($coupon_code) ? $coupon_code : null,
+                    $nights,
+                    $subtotal,
+                    $tax_amount,
+                    $base_price,
+                    $tax_amount,
+                    $discount_amount,
+                    $total_amount,
+                    $special_request
+                ]);
+
+                // Send HTML confirmation email
+                require_once __DIR__ . '/mail-helper.php';
+                $subject = "Reservation Confirmed (Pay Offline on Arrival) - Ref: " . $booking_id;
+                $body = "
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e9ecf2; border-radius: 12px;'>
+                    <h2 style='color: #9c6047; text-align: center; border-bottom: 2px solid #9c6047; padding-bottom: 10px;'>HOTEL DESTIN GWALIOR</h2>
+                    <p>Dear <strong>" . htmlspecialchars($name) . "</strong>,</p>
+                    <p>Thank you for booking with us. Your reservation is confirmed. Please find stay particulars below:</p>
+                    <p>Please note that you have chosen to pay offline. <strong>Payment of ₹" . number_format($total_amount, 2) . " is due at the hotel receptionist counter during check-in.</strong></p>
+                    
+                    <table style='width: 100%; border-collapse: collapse; margin: 20px 0;'>
+                        <tr style='background: #f7f9fc;'>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Booking Reference ID</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking_id) . "</td>
+                        </tr>
+                        <tr>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Room Type</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($room['title']) . "</td>
+                        </tr>
+                        <tr style='background: #f7f9fc;'>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Check-In Date</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($check_in) . "</td>
+                        </tr>
+                        <tr>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Check-Out Date</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($check_out) . "</td>
+                        </tr>
+                        <tr style='background: #f7f9fc;'>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Nights</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($nights) . " night(s)</td>
+                        </tr>
+                        <tr>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Meal Plan</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>" . htmlspecialchars($meal_plan) . "</td>
+                        </tr>
+                        <tr style='background: #f7f9fc;'>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Guests Count</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($guests) . " guest(s) (Adults: " . htmlspecialchars($adults) . ", Children: " . htmlspecialchars($children) . ")</td>
+                        </tr>
+                        <tr>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Base Amount</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>₹" . number_format($base_price, 2) . "</td>
+                        </tr>
+                        " . ($discount_amount > 0 ? "
+                        <tr style='background: #f7f9fc;'>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Promo Discount (" . htmlspecialchars($coupon_code) . ")</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; color: #d13232;'>-₹" . number_format($discount_amount, 2) . "</td>
+                        </tr>
+                        " : "") . "
+                        <tr>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>GST Taxes (5%)</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>₹" . number_format($tax_amount, 2) . "</td>
+                        </tr>
+                        <tr style='background: #fdfaf8; font-size: 16px; font-weight: bold; color: #9c6047;'>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>Total Cost (Payable at Hotel)</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>₹" . number_format($total_amount, 2) . "</td>
+                        </tr>
+                    </table>
+
+                    <p><strong>Special Request:</strong> " . (!empty($special_request) ? htmlspecialchars($special_request) : 'None') . "</p>
+                    <p style='border-top: 1px solid #e9ecf2; padding-top: 15px; text-align: center; color: #777; font-size: 12px;'>
+                        Hotel Destin Gwalior, Sachin Tendulkar Rd. For queries call +91 9203509944.
+                    </p>
+                </div>";
+
+                // Dispatch copy to Customer
+                send_mail($email, $subject, $body, true);
+                
+                // Dispatch copy to Hotel Owner/Admin alerts
+                send_mail(OWNER_EMAIL, "NEW OFFLINE BOOKING - " . $booking_id, $body, true);
+
+                header("Location: thank-you.php?ref=" . urlencode($booking_id));
+                exit;
+
+            } catch (Exception $e) {
+                error_log("Offline booking DB insert error: " . $e->getMessage());
+                $booking_error = 'Error saving stay transaction: ' . $e->getMessage();
+            }
+        }
 
         $is_sandbox_simulation = false;
         $key_id = get_setting('razorpay_key_id') ?: RAZORPAY_KEY_ID;
@@ -294,6 +476,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         .checkout-container {
             padding: 30px 0 60px 0;
             background-color: #F3EDE2;
+            overflow-x: hidden;
         }
 
         .checkout-card {
@@ -395,6 +578,102 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         .btn-payment:active {
             transform: translateY(0);
         }
+
+        /* Premium Payment Selection Cards */
+        .payment-option-card {
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            user-select: none;
+        }
+
+        .payment-option-card:hover {
+            border-color: #9c6047;
+            box-shadow: 0 4px 12px rgba(156, 96, 71, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .payment-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            color: #475569;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .payment-icon {
+            transition: transform 0.25s ease;
+        }
+
+        .payment-option-card:hover .payment-icon {
+            transform: scale(1.1);
+        }
+
+        .payment-title {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #0f172a;
+            transition: color 0.25s ease;
+        }
+
+        .payment-desc {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .payment-indicator {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            position: relative;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .payment-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #9c6047;
+            transition: transform 0.2s ease;
+        }
+
+        /* Check State Rules */
+        .btn-check:checked + .payment-option-card {
+            border-color: #9c6047;
+            background: rgba(156, 96, 71, 0.02);
+            box-shadow: 0 4px 16px rgba(156, 96, 71, 0.08);
+        }
+
+        .btn-check:checked + .payment-option-card .payment-icon-wrapper {
+            background: rgba(156, 96, 71, 0.1);
+            color: #9c6047;
+        }
+
+        .btn-check:checked + .payment-option-card .payment-title {
+            color: #9c6047;
+        }
+
+        .btn-check:checked + .payment-option-card .payment-indicator {
+            border-color: #9c6047;
+        }
+
+        .btn-check:checked + .payment-option-card .payment-indicator::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
@@ -457,7 +736,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                     <div class="col-md-3 col-6">
                                         <div class="form-group">
                                             <label class="form-label-custom">Adults *</label>
-                                            <input id="adultsInput" class="form-control-custom" type="number" name="adults" value="<?= htmlspecialchars($adults_param) ?>" min="1" max="5" required>
+                                            <input id="adultsInput" class="form-control-custom" type="number" name="adults" value="<?= htmlspecialchars($adults_param > 3 ? 3 : $adults_param) ?>" min="1" max="3" required>
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-6">
@@ -482,6 +761,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                             <textarea class="form-control-custom" name="special_request" rows="3" placeholder="Double bed, tea kettle preferences, airport transfer scheduling..."></textarea>
                                         </div>
                                     </div>
+
+
 
                                     <!-- Hidden Inputs -->
                                     <input type="hidden" id="hiddenCouponCode" name="coupon_code" value="">
@@ -537,10 +818,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                     <span>GST Taxes (5%)</span>
                                     <span>₹<span id="taxAmount"><?= number_format($room['price'] * 0.05, 2) ?></span></span>
                                 </div>
-                                <div class="price-total">
-                                    <span>Total Payable</span>
-                                    <span>₹<span id="grandTotal"><?= number_format($room['price'] * 1.05, 2) ?></span></span>
-                                </div>
+                                 <!-- Select Payment Option -->
+                                 <div class="mt-20 mb-15 pt-15" style="border-top: 1px dashed #cbd5e1;">
+                                     <label class="form-label-custom mb-10">Select Payment Option *</label>
+                                     <div class="row g-2">
+                                         <!-- Online Payment Card -->
+                                         <div class="col-6">
+                                             <input type="radio" class="btn-check" name="payment_method" id="pay_online" value="online" checked autocomplete="off">
+                                             <label class="payment-option-card d-flex align-items-center gap-2 px-2 py-2 w-100 h-100" for="pay_online" style="min-height: 52px;">
+                                                 <div class="payment-icon-wrapper d-flex align-items-center justify-content-center" style="width:28px; height:28px; border-radius:5px; flex-shrink:0;">
+                                                     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="payment-icon">
+                                                         <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                                                         <line x1="2" y1="10" x2="22" y2="10"></line>
+                                                     </svg>
+                                                 </div>
+                                                 <div class="payment-content flex-grow-1" style="min-width: 0;">
+                                                     <div class="d-flex align-items-center justify-content-between">
+                                                         <span class="payment-title" style="font-size: 12px; display: block; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pay Online</span>
+                                                         <div class="payment-indicator" style="width:14px; height:14px; flex-shrink:0;"></div>
+                                                     </div>
+                                                     <span style="font-size: 9.5px; color:#64748b; display:block; line-height:1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">Instant Confirm</span>
+                                                 </div>
+                                             </label>
+                                         </div>
+                                         
+                                         <!-- Offline Payment Card -->
+                                         <div class="col-6">
+                                             <input type="radio" class="btn-check" name="payment_method" id="pay_offline" value="offline" autocomplete="off">
+                                             <label class="payment-option-card d-flex align-items-center gap-2 px-2 py-2 w-100 h-100" for="pay_offline" style="min-height: 52px;">
+                                                 <div class="payment-icon-wrapper d-flex align-items-center justify-content-center" style="width:28px; height:28px; border-radius:5px; flex-shrink:0;">
+                                                     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="payment-icon">
+                                                         <path d="M3 21h18M3 7v14M21 7v14M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2zM12 11h.01M12 15h.01M8 11h.01M8 15h.01M16 11h.01M16 15h.01"></path>
+                                                     </svg>
+                                                 </div>
+                                                 <div class="payment-content flex-grow-1" style="min-width: 0;">
+                                                     <div class="d-flex align-items-center justify-content-between">
+                                                         <span class="payment-title" style="font-size: 12px; display: block; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pay at Hotel</span>
+                                                         <div class="payment-indicator" style="width:14px; height:14px; flex-shrink:0;"></div>
+                                                     </div>
+                                                     <span style="font-size: 9.5px; color:#64748b; display:block; line-height:1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">Pay on Arrival</span>
+                                                 </div>
+                                             </label>
+                                         </div>
+                                     </div>
+                                 </div>
+
+                                 <div class="price-total">
+                                     <span>Total Payable</span>
+                                     <span>₹<span id="grandTotal"><?= number_format($room['price'] * 1.05, 2) ?></span></span>
+                                 </div>
 
                                 <button class="btn-payment" type="submit">
                                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
@@ -734,47 +1060,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 recalculatePrices();
             });
 
-            const pricingMatrix = {
-                single: {
-                    EP: <?= floatval($room['price_single_ep'] ?? 0) ?>,
-                    CP: <?= floatval($room['price_single_cp'] ?? 0) ?>,
-                    MAP: <?= floatval($room['price_single_map'] ?? 0) ?>
-                },
-                double: {
-                    EP: <?= floatval($room['price_double_ep'] ?? 0) ?>,
-                    CP: <?= floatval($room['price_double_cp'] ?? 0) ?>,
-                    MAP: <?= floatval($room['price_double_map'] ?? 0) ?>
-                }
-            };
-
             function recalculatePrices() {
                 var checkIn = $('#checkInDate').val();
                 var checkOut = $('#checkOutDate').val();
-                var nights = 1;
-
-                if (checkIn && checkOut) {
-                    var d1 = new Date(checkIn);
-                    var d2 = new Date(checkOut);
-                    var diffTime = Math.abs(d2 - d1);
-                    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    if (diffDays > 0) {
-                        nights = diffDays;
-                    }
-                }
-
-                $('#labelNights').text(nights);
-
                 var adults = parseInt($('#adultsInput').val()) || 2;
-                var occupancy = (adults >= 2) ? 'double' : 'single';
                 var mealPlan = $('#mealPlanSelect').val() || 'EP';
+                var roomId = <?= intval($room['id']) ?>;
 
-                // Look up price from matrix
-                var ratePerNight = pricingMatrix[occupancy][mealPlan] || <?= floatval($room['price']) ?>;
-                $('#ratePerNight').text(ratePerNight.toFixed(2));
+                if (!checkIn || !checkOut) return;
 
-                var basePrice = ratePerNight * nights;
-                $('#basePrice').text(basePrice.toFixed(2));
+                $.ajax({
+                    url: 'checkout.php',
+                    method: 'POST',
+                    data: {
+                        action: 'get_pricing',
+                        check_in: checkIn,
+                        check_out: checkOut,
+                        adults: adults,
+                        room_id: roomId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            var nights = response.nights;
+                            var basePrice = 0;
+                            var ratePerNight = 0;
+                            
+                            if (mealPlan === 'CP') {
+                                basePrice = response.cp_base_price;
+                                ratePerNight = response.cp_average_rate;
+                            } else if (mealPlan === 'MAP') {
+                                basePrice = response.map_base_price;
+                                ratePerNight = response.map_average_rate;
+                            } else {
+                                basePrice = response.ep_base_price;
+                                ratePerNight = response.ep_average_rate;
+                            }
 
+                            $('#labelNights').text(nights);
+                            $('#ratePerNight').text(ratePerNight.toFixed(2));
+                            $('#basePrice').text(basePrice.toFixed(2));
+
+                            updateTotals(basePrice);
+                        }
+                    }
+                });
+            }
+
+            function updateTotals(basePrice) {
                 var discountAmount = 0;
                 if (discountPercent > 0) {
                     discountAmount = (basePrice * discountPercent) / 100;
@@ -795,10 +1128,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 $('#grandTotal').text(grandTotal.toFixed(2));
             }
 
-            // Initial execution on page load
-            recalculatePrices();
-        });
-    </script>
-</body>
+            // Payment method dynamic text toggle helper
+                                    function updateSubmitButton() {
+                                        var payOffline = document.getElementById('pay_offline');
+                                        var btnPayment = document.querySelector('.btn-payment');
+                                        if (payOffline && payOffline.checked) {
+                                            btnPayment.innerHTML = `
+                                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                Confirm Booking (Pay at Hotel)
+                                            `;
+                                        } else {
+                                            btnPayment.innerHTML = `
+                                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                                </svg>
+                                                Proceed to Online Payment
+                                            `;
+                                        }
+                                    }
 
-</html>
+                                    $(document).on('change', 'input[name="payment_method"]', updateSubmitButton);
+
+                                    // Enforce occupancy rules inside checkout form input fields
+                                    $('#adultsInput, #childrenInput').on('change input', function() {
+                                        var adults = parseInt($('#adultsInput').val()) || 1;
+                                        var children = parseInt($('#childrenInput').val()) || 0;
+                                        
+                                        if (adults >= 3) {
+                                            $('#adultsInput').val(3);
+                                            $('#childrenInput').val(0).attr('max', 0);
+                                        } else {
+                                            $('#childrenInput').attr('max', 4);
+                                        }
+                                        recalculatePrices();
+                                    });
+
+                                    // Initial execution on page load
+                                    recalculatePrices();
+                                });
+                            </script>
+                        </body>
+
+                        </html>

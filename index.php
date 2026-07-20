@@ -196,6 +196,36 @@
         width: 100% !important;
       }
     }
+
+    /* Hero Background Slider styles */
+    .hero-bg-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-bg-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: top center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+      z-index: 0;
+    }
+
+    .hero-bg-slide.active {
+      opacity: 1;
+      z-index: 1;
+    }
   </style>
   <?php include("include/head-scripts.php"); ?>
 </head>
@@ -203,12 +233,37 @@
 <body>
 
   <?php include "include/header.php"; ?>
+  <?php
+  $bg_1 = get_setting('hero_bg_image', 'assets/imgs/page/homepage7/banner.png');
+  $bg_2 = get_setting('hero_bg_image_2', '');
+  $bg_3 = get_setting('hero_bg_image_3', '');
+  $slider_interval = intval(get_setting('hero_slider_interval', '4')) * 1000;
+  
+  $bg_slides = [];
+  if (!empty($bg_1)) {
+      $bg_slides[] = $bg_1;
+  }
+  if (!empty($bg_2)) {
+      $bg_slides[] = $bg_2;
+  }
+  if (!empty($bg_3)) {
+      $bg_slides[] = $bg_3;
+  }
+  if (empty($bg_slides)) {
+      $bg_slides[] = 'assets/imgs/page/homepage7/banner.png';
+  }
+  ?>
   <main class="main">
     <section class="section-box box-banner-home7 background-body">
       <div class="container"></div>
       <div class="container-banner-home7">
         <div class="box-swiper">
-          <div class="item-banner-slide" style="background-image: url(<?= htmlspecialchars(get_setting('hero_bg_image', 'assets/imgs/page/homepage7/banner.png')) ?>)">
+          <div class="item-banner-slide" style="position: relative; overflow: hidden;">
+            <div class="hero-bg-slider">
+              <?php foreach ($bg_slides as $index => $slide_path): ?>
+                <div class="hero-bg-slide <?= $index === 0 ? 'active' : '' ?>" style="background-image: url(<?= htmlspecialchars($slide_path) ?>)"></div>
+              <?php endforeach; ?>
+            </div>
             <div class="container upper-space">
               <p class="upper-top-bar">Welcome to Hotel Destin</p>
               <h1 class="mt-10 color-white"><?= htmlspecialchars(get_setting('hero_title', 'Experience Luxury & Comfort')) ?></h1>
@@ -300,7 +355,6 @@
                           <div class="d-flex align-items-center justify-content-between mb-2">
                             <div>
                               <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Adult</span>
-                              <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Above 12 years)</span>
                             </div>
                             <div class="d-flex align-items-center border rounded overflow-hidden">
                               <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
@@ -311,7 +365,7 @@
                           <div class="d-flex align-items-center justify-content-between">
                             <div>
                               <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Child</span>
-                              <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Below 12 years)</span>
+                              <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 10 years)</span>
                             </div>
                             <div class="d-flex align-items-center border rounded overflow-hidden">
                               <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
@@ -352,6 +406,138 @@
 
 
 
+    <?php
+    $rooms_for_home = [];
+    $search_checkin = isset($_GET['checkin']) ? trim($_GET['checkin']) : '';
+    $search_checkout = isset($_GET['checkout']) ? trim($_GET['checkout']) : '';
+    $search_adults = isset($_GET['adults']) ? intval($_GET['adults']) : 2;
+    $search_children = isset($_GET['children']) ? intval($_GET['children']) : 0;
+    $has_search_dates = (!empty($search_checkin) && !empty($search_checkout));
+
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM rooms WHERE status = 'active' ORDER BY price ASC");
+        $stmt->execute();
+        $db_rooms = $stmt->fetchAll();
+
+        foreach ($db_rooms as $r) {
+            $total_inventory = (int)$r['inventory'];
+
+            $available_count = $total_inventory;
+            if ($has_search_dates) {
+                $booked_stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE room_id = ? AND check_in < ? AND check_out > ? AND booking_status != 'cancelled'");
+                $booked_stmt->execute([$r['id'], $search_checkout, $search_checkin]);
+                $booked_count = (int)$booked_stmt->fetchColumn();
+                $available_count = max(0, $total_inventory - $booked_count);
+            }
+
+            $f_stmt = $pdo->prepare("SELECT facility_name FROM room_facilities WHERE room_id = ?");
+            $f_stmt->execute([$r['id']]);
+            $facilities = $f_stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            $specs = [];
+            $card_facilities = $facilities;
+            if (count($card_facilities) > 5) {
+                $card_facilities = array_slice($card_facilities, 0, 5);
+            } else {
+                $standard_defaults = ['AC', 'Free Wi-Fi', 'Laundry', 'King Bed', 'Safe Box'];
+                foreach ($standard_defaults as $def) {
+                    if (count($card_facilities) >= 5) break;
+                    if (!in_array($def, $card_facilities)) {
+                        $card_facilities[] = $def;
+                    }
+                }
+            }
+
+            foreach ($card_facilities as $f) {
+                $specs[] = ['icon' => 'check', 'label' => $f];
+            }
+
+            $all_images = [];
+            if (!empty($r['image_path'])) {
+                $all_images[] = $r['image_path'];
+            }
+            $g_stmt = $pdo->prepare("SELECT image_path FROM room_images WHERE room_id = ?");
+            $g_stmt->execute([$r['id']]);
+            $gallery_imgs = $g_stmt->fetchAll(PDO::FETCH_COLUMN);
+            $all_images = array_merge($all_images, $gallery_imgs);
+            $all_images = array_slice($all_images, 0, 3);
+            if (empty($all_images)) {
+                $all_images[] = 'assets/imgs/page/room/banner-room.png';
+            }
+
+            $type_badge = strtoupper($r['type']);
+            $status_badge = $r['status_badge'] ?: 'POPULAR';
+            $rating = $r['rating'] ?: 'G 4.8 ★';
+
+            $tags = [];
+            if (count($facilities) > 0) {
+                $tags[] = ['text' => $facilities[0], 'style' => 'orange'];
+            } else {
+                $tags[] = ['text' => 'Free Wi-Fi', 'style' => 'orange'];
+            }
+            if (count($facilities) > 1) {
+                $tags[] = ['text' => $facilities[1], 'style' => 'orange'];
+            } else {
+                $tags[] = ['text' => 'Mineral Water', 'style' => 'orange'];
+            }
+            $tags[] = ['text' => $r['type'] . ' Space', 'style' => 'blue'];
+            if (count($facilities) > 2) {
+                $more_count = count($facilities) - 2;
+                $tags[] = ['text' => '+' . $more_count . ' more', 'style' => 'green'];
+            }
+
+            // Calculate dynamic base price
+            $price = (float)$r['price'];
+            if ($has_search_dates) {
+                $date1 = new DateTime($search_checkin);
+                $date2 = new DateTime($search_checkout);
+                $nights = $date2->diff($date1)->format("%a");
+                $nights = max(1, (int)$nights);
+                
+                $total_base_price = 0.00;
+                $curr_date_ptr = clone $date1;
+                while ($curr_date_ptr < $date2) {
+                    $date_str = $curr_date_ptr->format('Y-m-d');
+                    $total_base_price += get_resolved_room_price($pdo, $r['id'], $date_str, 'EP', $search_adults, $r);
+                    $curr_date_ptr->modify('+1 day');
+                }
+                $price = round($total_base_price / $nights, 2);
+            }
+
+            $rooms_for_home[] = [
+                'id' => $r['slug'],
+                'db_id' => $r['id'],
+                'name' => $r['title'],
+                'type_badge' => $type_badge,
+                'status_badge' => ($has_search_dates && $available_count <= 0) ? 'SOLD OUT' : $status_badge,
+                'rating' => $rating,
+                'location' => 'Sachin Tendulkar Rd, Gwalior',
+                'tags' => $tags,
+                'specs' => $specs,
+                'struck_price' => $r['struck_price'],
+                'discount' => $r['discount'],
+                'code' => $r['code'],
+                'price' => $price,
+                'image' => $r['image_path'],
+                'images' => $all_images,
+                'available_count' => $available_count,
+                'total_active' => $total_inventory
+            ];
+        }
+
+        // Standardize sorting order: Standard, Executive, Premium
+        usort($rooms_for_home, function ($a, $b) {
+            $order = ['standard' => 1, 'executive' => 2, 'premium' => 3];
+            $typeA = strtolower($a['type_badge'] ?? '');
+            $typeB = strtolower($b['type_badge'] ?? '');
+            $valA = isset($order[$typeA]) ? $order[$typeA] : 99;
+            $valB = isset($order[$typeB]) ? $order[$typeB] : 99;
+            return $valA <=> $valB;
+        });
+    } catch (Exception $e) {
+        error_log("Failed to load homepage dynamic rooms: " . $e->getMessage());
+    }
+    ?>
     <section class="section-box box-top-rated-3 background-body">
       <div class="container">
         <div class="row align-items-end mt-3">
@@ -374,258 +560,89 @@
         <div class="box-swiper position-relative">
           <div class="swiper-container swiper-group-rooms-custom">
             <div class="swiper-wrapper">
-              <!-- Room 1: Standard Room -->
-              <div class="swiper-slide">
-                <div class="card-room-destin">
-                  <div class="image-box">
-                    <span class="badge-premier">Standard</span>
-                    <span class="badge-discount">Best Seller</span>
+              <?php foreach ($rooms_for_home as $room): ?>
+                <div class="swiper-slide">
+                  <div class="card-room-destin">
+                    <div class="image-box">
+                      <span class="badge-premier"><?= htmlspecialchars($room['type_badge']) ?></span>
+                      <span class="badge-discount"><?= htmlspecialchars($room['status_badge']) ?></span>
 
-                    <!-- Navigation Arrows Overlay -->
-                    <div class="nav-arrow left">&lt;</div>
-                    <div class="nav-arrow right">&gt;</div>
+                      <?php if (count($room['images']) > 1): ?>
+                        <!-- Navigation Arrows Overlay -->
+                        <div class="nav-arrow left" onclick="prevCardImg(this, event)">&lt;</div>
+                        <div class="nav-arrow right" onclick="nextCardImg(this, event)">&gt;</div>
 
-                    <!-- Pagination Dots Overlay -->
-                    <div class="dots-container">
-                      <div class="dot active"></div>
-                      <div class="dot"></div>
-                    </div>
-
-                    <img src="assets/imgs/page/room/room.png" alt="Standard Room">
-                  </div>
-                  <div class="content-box">
-                    <div class="title-row">
-                      <a href="room-details.html">Standard Room - Hotel Destin</a>
-                    </div>
-
-                    <div class="meta-row">
-                      <div class="location-text">
-                        <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M6 0C2.68 0 0 2.68 0 6C0 10.5 6 14 6 14C6 14 12 10.5 12 6C12 2.68 9.32 0 6 0ZM6 8.5C4.62 8.5 3.5 7.38 3.5 6C3.5 4.62 4.62 3.5 6 3.5C7.38 3.5 8.5 4.62 8.5 6C8.5 7.38 7.38 8.5 6 8.5Z" fill="#64748B" />
-                        </svg>
-                        Sachin Tendulkar Rd, Gwalior
-                      </div>
-                      <div class="rating-box">
-                        <span>G</span> <span>4.8</span> <span>★</span>
-                      </div>
-                    </div>
-
-                    <div class="tags-row">
-                      <span class="tag-pill">Free Wi-Fi</span>
-                      <span class="tag-pill">Mineral Water</span>
-                      <span class="tag-pill gym">Standard Only</span>
-                      <span class="tag-pill more">+3 more</span>
-                    </div>
-
-                    <div class="amenities-row">
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/air-conditioner.svg" alt="AC">
-                        AC
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/wifi.svg" alt="Wifi">
-                        Free Wi-Fi
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/loundry.svg" alt="Laundry">
-                        Laundry
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/bed.svg" alt="King Bed">
-                        King Bed
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/safety-box.svg" alt="Safe">
-                        Safe Box
-                      </div>
-                    </div>
-
-                    <div class="banner-box">
-                      <i class="fa fa-star">⭐</i> Get Destin, and get 25% off (up to ₹1,000) on your booking
-                    </div>
-
-                    <div class="footer-row">
-                      <div class="price-area">
-                        <div class="old-price-line">
-                          <span class="old-price">₹2,300</span>
-                          <span class="discount-lbl">26% off</span>
-                          <span class="brand-lbl">DESTIN</span>
+                        <!-- Pagination Dots Overlay -->
+                        <div class="dots-container">
+                          <?php foreach ($room['images'] as $idx => $img_path): ?>
+                            <div class="dot <?= $idx === 0 ? 'active' : '' ?>" onclick="setCardImg(this, <?= $idx ?>, event)"></div>
+                          <?php endforeach; ?>
                         </div>
-                        <div class="current-price">₹1,700 <span>/ night</span></div>
+                      <?php endif; ?>
+
+                      <!-- Sliding images wrapper -->
+                      <div class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: <?= count($room['images']) * 100 ?>%;">
+                        <?php foreach ($room['images'] as $img_path): ?>
+                          <img src="<?= htmlspecialchars($img_path) ?>" alt="<?= htmlspecialchars($room['name']) ?>" style="flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; transition: none;">
+                        <?php endforeach; ?>
                       </div>
-                      <a href="room-detail.php?room=standard-room&checkin=&checkout=&adults=2&children=0" class="book-btn">Book Room</a>
+                    </div>
+                    <div class="content-box">
+                      <div class="title-row">
+                        <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>"><?= htmlspecialchars($room['name']) ?></a>
+                      </div>
+
+                      <div class="meta-row">
+                        <div class="location-text">
+                          <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 0C2.68 0 0 2.68 0 6C0 10.5 6 14 6 14C6 14 12 10.5 12 6C12 2.68 9.32 0 6 0ZM6 8.5C4.62 8.5 3.5 7.38 3.5 6C3.5 4.62 4.62 3.5 6 3.5C7.38 3.5 8.5 4.62 8.5 6C8.5 7.38 7.38 8.5 6 8.5Z" fill="#64748B" />
+                          </svg>
+                          <?= htmlspecialchars($room['location']) ?>
+                        </div>
+                        <div class="rating-box">
+                          <span>G</span> <span><?= str_replace(['G', '★', ' '], '', $room['rating']) ?></span> <span>★</span>
+                        </div>
+                      </div>
+
+                      <div class="tags-row">
+                        <?php foreach ($room['tags'] as $tag): ?>
+                          <span class="tag-pill <?= ($tag['style'] === 'blue') ? 'gym' : (($tag['style'] === 'green') ? 'more' : '') ?>"><?= htmlspecialchars($tag['text']) ?></span>
+                        <?php endforeach; ?>
+                      </div>
+
+                      <div class="amenities-row">
+                        <?php foreach ($room['specs'] as $spec): ?>
+                          <div class="amenity-col">
+                            <img src="<?= htmlspecialchars(get_amenity_icon($spec['label'])) ?>" alt="<?= htmlspecialchars($spec['label']) ?>">
+                            <?= htmlspecialchars($spec['label']) ?>
+                          </div>
+                        <?php endforeach; ?>
+                      </div>
+
+                      <div class="banner-box">
+                        <i class="fa fa-star">⭐</i> Get Destin, and get 25% off (up to ₹1,000) on your booking
+                      </div>
+
+                      <div class="footer-row">
+                        <div class="price-area">
+                          <div class="old-price-line">
+                            <span class="old-price">₹<?= number_format($room['struck_price']) ?></span>
+                            <span class="discount-lbl"><?= htmlspecialchars($room['discount']) ?></span>
+                            <span class="brand-lbl"><?= htmlspecialchars($room['code']) ?></span>
+                          </div>
+                          <div class="current-price">₹<?= number_format($room['price']) ?> <span>/ night</span></div>
+                        </div>
+
+                        <?php if (isset($room['available_count']) && $room['available_count'] <= 0): ?>
+                          <button class="book-btn" disabled style="background-color: #cbd5e1 !important; color: #64748b !important; border: none; cursor: not-allowed; padding: 10px 20px !important;">Sold Out</button>
+                        <?php else: ?>
+                          <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>" class="book-btn">Book Room</a>
+                        <?php endif; ?>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- Room 2: Executive Room -->
-              <div class="swiper-slide">
-                <div class="card-room-destin">
-                  <div class="image-box">
-                    <span class="badge-premier">Executive</span>
-                    <span class="badge-discount">New Launch Discount</span>
-
-                    <!-- Navigation Arrows Overlay -->
-                    <div class="nav-arrow left">&lt;</div>
-                    <div class="nav-arrow right">&gt;</div>
-
-                    <!-- Pagination Dots Overlay -->
-                    <div class="dots-container">
-                      <div class="dot active"></div>
-                      <div class="dot"></div>
-                    </div>
-
-                    <img src="assets/imgs/page/room/room2.png" alt="Executive Room">
-                  </div>
-                  <div class="content-box">
-                    <div class="title-row">
-                      <a href="room-details.html">Executive Room - Hotel Destin</a>
-                    </div>
-
-                    <div class="meta-row">
-                      <div class="location-text">
-                        <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M6 0C2.68 0 0 2.68 0 6C0 10.5 6 14 6 14C6 14 12 10.5 12 6C12 2.68 9.32 0 6 0ZM6 8.5C4.62 8.5 3.5 7.38 3.5 6C3.5 4.62 4.62 3.5 6 3.5C7.38 3.5 8.5 4.62 8.5 6C8.5 7.38 7.38 8.5 6 8.5Z" fill="#64748B" />
-                        </svg>
-                        Sachin Tendulkar Rd, Gwalior
-                      </div>
-                      <div class="rating-box">
-                        <span>G</span> <span>4.9</span> <span>★</span>
-                      </div>
-                    </div>
-
-                    <div class="tags-row">
-                      <span class="tag-pill">Free Wi-Fi</span>
-                      <span class="tag-pill">Mineral Water</span>
-                      <span class="tag-pill gym">Executive Lounge</span>
-                      <span class="tag-pill more">+4 more</span>
-                    </div>
-
-                    <div class="amenities-row">
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/air-conditioner.svg" alt="AC">
-                        AC
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/wifi.svg" alt="Wifi">
-                        Free Wi-Fi
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/loundry.svg" alt="Laundry">
-                        Laundry
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/bed.svg" alt="King Bed">
-                        King Bed
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/safety-box.svg" alt="Safe">
-                        Safe Box
-                      </div>
-                    </div>
-
-                    <div class="banner-box">
-                      <i class="fa fa-star">⭐</i> Get Destin, and get 25% off (up to ₹1,000) on your booking
-                    </div>
-
-                    <div class="footer-row">
-                      <div class="price-area">
-                        <div class="old-price-line">
-                          <span class="old-price">₹2,000</span>
-                          <span class="discount-lbl">15% off</span>
-                          <span class="brand-lbl">DESTIN</span>
-                        </div>
-                        <div class="current-price">₹1,700 <span>/ night</span></div>
-                      </div>
-                      <a href="room-detail.php?room=executive-room&checkin=&checkout=&adults=2&children=0" class="book-btn">Book Room</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- Room 3: Premium Room -->
-              <div class="swiper-slide">
-                <div class="card-room-destin">
-                  <div class="image-box">
-                    <span class="badge-premier">Premium</span>
-                    <span class="badge-discount">Luxury Choice</span>
-
-                    <!-- Navigation Arrows Overlay -->
-                    <div class="nav-arrow left">&lt;</div>
-                    <div class="nav-arrow right">&gt;</div>
-
-                    <!-- Pagination Dots Overlay -->
-                    <div class="dots-container">
-                      <div class="dot active"></div>
-                      <div class="dot"></div>
-                    </div>
-
-                    <img src="assets/imgs/page/room/room3.png" alt="Premium Room">
-                  </div>
-                  <div class="content-box">
-                    <div class="title-row">
-                      <a href="room-details.html">Premium Room - Hotel Destin</a>
-                    </div>
-
-                    <div class="meta-row">
-                      <div class="location-text">
-                        <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M6 0C2.68 0 0 2.68 0 6C0 10.5 6 14 6 14C6 14 12 10.5 12 6C12 2.68 9.32 0 6 0ZM6 8.5C4.62 8.5 3.5 7.38 3.5 6C3.5 4.62 4.62 3.5 6 3.5C7.38 3.5 8.5 4.62 8.5 6C8.5 7.38 7.38 8.5 6 8.5Z" fill="#64748B" />
-                        </svg>
-                        Sachin Tendulkar Rd, Gwalior
-                      </div>
-                      <div class="rating-box">
-                        <span>G</span> <span>5.0</span> <span>★</span>
-                      </div>
-                    </div>
-
-                    <div class="tags-row">
-                      <span class="tag-pill">Free Wi-Fi</span>
-                      <span class="tag-pill">Mineral Water</span>
-                      <span class="tag-pill gym">Free Breakfast</span>
-                      <span class="tag-pill more">+5 more</span>
-                    </div>
-
-                    <div class="amenities-row">
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/air-conditioner.svg" alt="AC">
-                        AC
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/wifi.svg" alt="Wifi">
-                        Free Wi-Fi
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/loundry.svg" alt="Laundry">
-                        Laundry
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/bed.svg" alt="King Bed">
-                        King Bed
-                      </div>
-                      <div class="amenity-col">
-                        <img src="assets/imgs/page/room/safety-box.svg" alt="Safe">
-                        Safe Box
-                      </div>
-                    </div>
-
-                    <div class="banner-box">
-                      <i class="fa fa-star">⭐</i> Get Destin, and get 25% off (up to ₹1,000) on your booking
-                    </div>
-
-                    <div class="footer-row">
-                      <div class="price-area">
-                        <div class="old-price-line">
-                          <span class="old-price">₹3,000</span>
-                          <span class="discount-lbl">15% off</span>
-                          <span class="brand-lbl">DESTIN</span>
-                        </div>
-                        <div class="current-price">₹2,550 <span>/ night</span></div>
-                      </div>
-                      <a href="room-detail.php?room=premium-room&checkin=&checkout=&adults=2&children=0" class="book-btn">Book Room</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <?php endforeach; ?>
 
               <!-- Mobile/Tablet navigation buttons centered under the cards -->
               <div class="d-flex justify-content-center align-items-center gap-3 mt-20 d-lg-none">
@@ -1950,9 +1967,27 @@
         e.stopPropagation();
         var target = $(this).siblings('span');
         var count = parseInt(target.text());
-        if (count < 5) {
-          target.text(count + 1);
-          updateGuestsRoomsSummary();
+        var roomBlock = $(this).closest('.room-block');
+
+        if (target.hasClass('adult-count')) {
+          if (count < 3) { // Rule 1: Adult limit is only 3
+            var newAdults = count + 1;
+            target.text(newAdults);
+            // Rule 2: If customer chooses 3 adults, child count drops to 0
+            if (newAdults === 3) {
+              roomBlock.find('.child-count').text(0);
+            }
+            updateGuestsRoomsSummary();
+          }
+        } else if (target.hasClass('child-count')) {
+          var adults = parseInt(roomBlock.find('.adult-count').text()) || 0;
+          // Rule 3: Child allowed only with adults <= 2
+          if (adults < 3) {
+            if (count < 4) {
+              target.text(count + 1);
+              updateGuestsRoomsSummary();
+            }
+          }
         }
       });
 
@@ -1984,7 +2019,6 @@
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <div>
                     <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Adult</span>
-                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Above 12 years)</span>
                   </div>
                   <div class="d-flex align-items-center border rounded overflow-hidden">
                     <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
@@ -1995,7 +2029,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                   <div>
                     <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Child</span>
-                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Below 12 years)</span>
+                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 10 years)</span>
                   </div>
                   <div class="d-flex align-items-center border rounded overflow-hidden">
                     <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
@@ -2092,7 +2126,73 @@
         });
       })();
 
+      // ── Hero Background Slider Rotation ───────────────────────────────
+      (function initHeroBgSlider() {
+        var slides = document.querySelectorAll('.hero-bg-slide');
+        if (slides.length <= 1) return;
+        var currentSlide = 0;
+        var intervalTime = <?= $slider_interval ?>;
+        setInterval(function() {
+          slides[currentSlide].classList.remove('active');
+          currentSlide = (currentSlide + 1) % slides.length;
+          slides[currentSlide].classList.add('active');
+        }, intervalTime);
+      })();
+
     });
+
+    // Dynamic Card Image Slideshow
+    function prevCardImg(btn, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      var box = $(btn).closest('.image-box');
+      var wrapper = box.find('.card-images-wrapper');
+      var imgs = wrapper.find('img');
+      var dots = box.find('.dot');
+      var index = parseInt(wrapper.data('current-index')) || 0;
+
+      index--;
+      if (index < 0) {
+        index = imgs.length - 1;
+      }
+
+      slideCardTo(wrapper, dots, index);
+    }
+
+    function nextCardImg(btn, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      var box = $(btn).closest('.image-box');
+      var wrapper = box.find('.card-images-wrapper');
+      var imgs = wrapper.find('img');
+      var dots = box.find('.dot');
+      var index = parseInt(wrapper.data('current-index')) || 0;
+
+      index++;
+      if (index >= imgs.length) {
+        index = 0;
+      }
+
+      slideCardTo(wrapper, dots, index);
+    }
+
+    function setCardImg(dot, index, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      var box = $(dot).closest('.image-box');
+      var wrapper = box.find('.card-images-wrapper');
+      var dots = box.find('.dot');
+
+      slideCardTo(wrapper, dots, index);
+    }
+
+    function slideCardTo(wrapper, dots, index) {
+      wrapper.data('current-index', index);
+      wrapper.css('transform', 'translateX(-' + (index * 100) + '%)');
+
+      dots.removeClass('active');
+      dots.eq(index).addClass('active');
+    }
   </script>
 </body>
 

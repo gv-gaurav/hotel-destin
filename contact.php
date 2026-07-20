@@ -29,6 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $full_name = $first_name . ' ' . $last_name;
             $stmt->execute(['contact', $full_name, $email, $phone, $message]);
             $message_sent = true;
+
+            // Send email alert to admin
+            require_once __DIR__ . '/mail-helper.php';
+            send_enquiry_alert('contact', $full_name, $email, $phone, null, null, ['Message' => $message]);
         } catch (Exception $e) {
             error_log("Contact submission DB error: " . $e->getMessage());
             $message_sent = true; // fallback success

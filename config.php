@@ -28,26 +28,27 @@ define('DB_NAME', 'hotel_destin');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-// SMTP Email Configurations (Gmail SMTP or Mailtrap)
-define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_PORT', 587);
-define('SMTP_USER', '69126c7a9f90e6');
-define('SMTP_PASS', '77f6cd986e88c0'); // Use Gmail App Passwords, not account password
+// SMTP Email Configurations (Titan/GoDaddy Setup)
+define('SMTP_HOST', 'smtp.titan.email');
+define('SMTP_PORT', 465);
+define('SMTP_USER', 'info@hoteldestin.in');
+define('SMTP_PASS', 'gU3_2VYVdJM8&');
 define('SMTP_FROM', 'info@hoteldestin.in');
 define('SMTP_FROM_NAME', 'Hotel Destin System');
-define('OWNER_EMAIL', 'owner_hotel_destin@example.com'); // Admin email recipient
+define('OWNER_EMAIL', 'info@hoteldestin.in'); // Admin email recipient
 
 // Razorpay Credentials (Sandbox mode settings)
 define('RAZORPAY_KEY_ID', 'rzp_test_placeholder_key');
 define('RAZORPAY_KEY_SECRET', 'rzp_test_placeholder_secret');
 
 // Core Helper: Check CSRF token validation
-function verify_csrf_token($token) {
+function verify_csrf_token($token)
+{
     return !empty($token) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
 // Core Helper: XSS Sanitization
-function sanitize($data) {
+function sanitize($data)
+{
     return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
 }
-?>

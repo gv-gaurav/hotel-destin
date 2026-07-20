@@ -753,42 +753,50 @@ if (empty($images)) {
         function recalculateStayTotals() {
             var checkIn = $('#detailCheckIn').val();
             var checkOut = $('#detailCheckOut').val();
-            var nights = 1;
-
-            if (checkIn && checkOut) {
-                var d1 = new Date(checkIn);
-                var d2 = new Date(checkOut);
-                var diffTime = Math.abs(d2 - d1);
-                var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                if (diffDays > 0) {
-                    nights = diffDays;
-                }
-            }
-            $('#stayNights').text(nights);
-
             var adults = parseInt($('#detailAdults').val()) || 2;
-            var occupancy = (adults >= 2) ? 'double' : 'single';
+            var roomId = <?= intval($room['id']) ?>;
 
-            // Fetch matrix rates dynamically calculated
-            var epRate = pricingMatrix[occupancy]['EP'];
-            var cpRate = pricingMatrix[occupancy]['CP'];
-            var mapRate = pricingMatrix[occupancy]['MAP'];
+            if (!checkIn || !checkOut) return;
 
-            $('#rateEP').text(epRate.toFixed(2));
-            $('#rateCP').text(cpRate.toFixed(2));
-            $('#rateMAP').text(mapRate.toFixed(2));
+            $.ajax({
+                url: 'checkout.php',
+                method: 'POST',
+                data: {
+                    action: 'get_pricing',
+                    check_in: checkIn,
+                    check_out: checkOut,
+                    adults: adults,
+                    room_id: roomId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        var nights = response.nights;
+                        $('#stayNights').text(nights);
 
-            // Calculate totals based on selected plan radio button
-            var selectedPlan = $('input[name="meal_plan"]:checked').val() || 'EP';
-            var unitRate = pricingMatrix[occupancy][selectedPlan];
+                        $('#rateEP').text(response.ep_average_rate.toFixed(2));
+                        $('#rateCP').text(response.cp_average_rate.toFixed(2));
+                        $('#rateMAP').text(response.map_average_rate.toFixed(2));
 
-            var subtotal = unitRate * nights;
-            var tax = subtotal * 0.05; // 5% GST
-            var total = subtotal + tax;
+                        var selectedPlan = $('input[name="meal_plan"]:checked').val() || 'EP';
+                        var subtotal = 0;
+                        if (selectedPlan === 'CP') {
+                            subtotal = response.cp_base_price;
+                        } else if (selectedPlan === 'MAP') {
+                            subtotal = response.map_base_price;
+                        } else {
+                            subtotal = response.ep_base_price;
+                        }
 
-            $('#subtotalCost').text(subtotal.toFixed(2));
-            $('#taxCost').text(tax.toFixed(2));
-            $('#totalCost').text(total.toFixed(2));
+                        var tax = subtotal * 0.05; // 5% GST
+                        var total = subtotal + tax;
+
+                        $('#subtotalCost').text(subtotal.toFixed(2));
+                        $('#taxCost').text(tax.toFixed(2));
+                        $('#totalCost').text(total.toFixed(2));
+                    }
+                }
+            });
         }
 
         $(document).ready(function() {
