@@ -3,6 +3,11 @@ require_once __DIR__ . '/db.php';
 $message_sent = false;
 $errors = [];
 
+if (isset($_SESSION['contact_success']) && $_SESSION['contact_success'] === true) {
+    $message_sent = true;
+    unset($_SESSION['contact_success']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_name = isset($_POST['first_name']) ? htmlspecialchars(trim($_POST['first_name'])) : '';
     $last_name = isset($_POST['last_name']) ? htmlspecialchars(trim($_POST['last_name'])) : '';
@@ -28,14 +33,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO enquiries (category, name, email, phone, requirements) VALUES (?, ?, ?, ?, ?)");
             $full_name = $first_name . ' ' . $last_name;
             $stmt->execute(['contact', $full_name, $email, $phone, $message]);
-            $message_sent = true;
 
             // Send email alert to admin
             require_once __DIR__ . '/mail-helper.php';
             send_enquiry_alert('contact', $full_name, $email, $phone, null, null, ['Message' => $message]);
+
+            $_SESSION['contact_success'] = true;
+            header("Location: contact.php");
+            exit;
         } catch (Exception $e) {
             error_log("Contact submission DB error: " . $e->getMessage());
-            $message_sent = true; // fallback success
+            $_SESSION['contact_success'] = true; // fallback success
+            header("Location: contact.php");
+            exit;
         }
     }
 }

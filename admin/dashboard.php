@@ -38,28 +38,70 @@ if (isset($_GET['action']) && $_GET['action'] === 'reset') {
     }
 }
 
+$selected_month = isset($_GET['month']) ? trim($_GET['month']) : 'all';
+
+// Fetch dynamic unique months list for the dropdown
+$months_list = [];
+try {
+    $b_months = $pdo->query("SELECT DISTINCT DATE_FORMAT(created_at, '%Y-%m') as ym FROM bookings WHERE created_at IS NOT NULL ORDER BY ym DESC")->fetchAll(PDO::FETCH_COLUMN);
+    $e_months = $pdo->query("SELECT DISTINCT DATE_FORMAT(created_at, '%Y-%m') as ym FROM enquiries WHERE created_at IS NOT NULL ORDER BY ym DESC")->fetchAll(PDO::FETCH_COLUMN);
+    $months_list = array_unique(array_filter(array_merge($b_months, $e_months)));
+    rsort($months_list);
+} catch (Exception $e) {
+    error_log("Failed to fetch unique months: " . $e->getMessage());
+}
+
 // Initialize metrics
 $gross_revenue = 0.00;
+$online_revenue = 0.00;
+$offline_revenue = 0.00;
 $room_bookings = 0;
 $banquet_leads = 0;
 $pending_enquiries = 0;
 $recent_bookings = [];
 
 try {
-    // 1. Calculate Gross Revenue (total_amount from bookings with payment_status = 'paid')
-    $rev_stmt = $pdo->query("SELECT SUM(total_amount) FROM bookings WHERE payment_status = 'paid'");
-    $gross_revenue = floatval($rev_stmt->fetchColumn() ?: 0.00);
+    $month_filter_b = '';
+    $month_filter_e = '';
+    $params_b = [];
+    $params_e = [];
+
+    if ($selected_month !== 'all' && preg_match('/^\d{4}-\d{2}$/', $selected_month)) {
+        $month_filter_b = " AND DATE_FORMAT(created_at, '%Y-%m') = :month ";
+        $month_filter_e = " AND DATE_FORMAT(created_at, '%Y-%m') = :month ";
+        $params_b['month'] = $selected_month;
+        $params_e['month'] = $selected_month;
+    }
+
+    // 1. Calculate Gross Revenue by payment methods (payment_status = 'paid')
+    $online_query = "SELECT SUM(total_amount) FROM bookings WHERE payment_status = 'paid' AND (payment_method != 'Pay at Hotel' OR payment_method IS NULL) " . $month_filter_b;
+    $online_stmt = $pdo->prepare($online_query);
+    $online_stmt->execute($params_b);
+    $online_revenue = floatval($online_stmt->fetchColumn() ?: 0.00);
+
+    $offline_query = "SELECT SUM(total_amount) FROM bookings WHERE payment_status = 'paid' AND payment_method = 'Pay at Hotel' " . $month_filter_b;
+    $offline_stmt = $pdo->prepare($offline_query);
+    $offline_stmt->execute($params_b);
+    $offline_revenue = floatval($offline_stmt->fetchColumn() ?: 0.00);
+
+    $gross_revenue = $online_revenue + $offline_revenue;
 
     // 2. Count Room Bookings (confirmed & checked_in reservation status)
-    $bookings_stmt = $pdo->query("SELECT COUNT(*) FROM bookings WHERE booking_status IN ('confirmed', 'checked_in')");
+    $bookings_query = "SELECT COUNT(*) FROM bookings WHERE booking_status IN ('confirmed', 'checked_in') " . $month_filter_b;
+    $bookings_stmt = $pdo->prepare($bookings_query);
+    $bookings_stmt->execute($params_b);
     $room_bookings = intval($bookings_stmt->fetchColumn() ?: 0);
 
     // 3. Count Banquet Leads (enquiries belonging to banquet or wedding categories)
-    $leads_stmt = $pdo->query("SELECT COUNT(*) FROM enquiries WHERE category IN ('banquet', 'wedding')");
+    $leads_query = "SELECT COUNT(*) FROM enquiries WHERE category IN ('banquet', 'wedding') " . $month_filter_e;
+    $leads_stmt = $pdo->prepare($leads_query);
+    $leads_stmt->execute($params_e);
     $banquet_leads = intval($leads_stmt->fetchColumn() ?: 0);
 
     // 4. Count Pending Enquiries (unresolved enquiries not in banquet/wedding)
-    $enq_stmt = $pdo->query("SELECT COUNT(*) FROM enquiries WHERE status = 'pending' AND category NOT IN ('banquet', 'wedding')");
+    $enq_query = "SELECT COUNT(*) FROM enquiries WHERE status = 'pending' AND category NOT IN ('banquet', 'wedding') " . $month_filter_e;
+    $enq_stmt = $pdo->prepare($enq_query);
+    $enq_stmt->execute($params_e);
     $pending_enquiries = intval($enq_stmt->fetchColumn() ?: 0);
 
     // 5. Fetch recent 10 reservation requests
@@ -119,22 +161,53 @@ try {
     </div>
 </div>
 
+<!-- Analytics Filter Bar -->
+<div class="d-flex justify-content-between align-items-center mb-25" style="background-color: #fafaf9; padding: 12px 18px; border-radius: 12px; border: 1px solid #f1f1f0;">
+    <div class="d-flex align-items-center gap-3">
+        <span style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Filter Analytics:</span>
+        <form method="GET" action="dashboard.php" style="margin: 0; display: inline-flex; align-items: center;">
+            <select name="month" onchange="this.form.submit()" class="form-select" style="font-size: 13px; font-weight: 600; padding: 6px 12px 6px 36px; border-radius: 8px; border: 1px solid #cbd5e1; height: 36px; background-color: #ffffff; color: #334155; cursor: pointer; min-width: 160px; background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><rect x=%223%22 y=%224%22 width=%2218%22 height=%2218%22 rx=%222%22 ry=%222%22></rect><line x1=%2216%22 y1=%222%22 x2=%2216%22 y2=%226%22></line><line x1=%228%22 y1=%222%22 x2=%228%22 y2=%226%22></line><line x1=%223%22 y1=%2210%22 x2=%2221%22 y2=%2210%22></line></svg>'); background-repeat: no-repeat; background-position: 10px center; background-size: 16px;">
+                <option value="all">All Time</option>
+                <?php foreach ($months_list as $ym): ?>
+                    <?php
+                    $date_obj = DateTime::createFromFormat('Y-m', $ym);
+                    $formatted_ym = $date_obj ? $date_obj->format('F Y') : $ym;
+                    ?>
+                    <option value="<?= $ym ?>" <?= $selected_month === $ym ? 'selected' : '' ?>><?= htmlspecialchars($formatted_ym) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </form>
+    </div>
+    <?php if ($selected_month !== 'all'): ?>
+        <?php
+        $selected_date_obj = DateTime::createFromFormat('Y-m', $selected_month);
+        $display_month_name = $selected_date_obj ? $selected_date_obj->format('F Y') : $selected_month;
+        ?>
+        <span style="font-size: 12.5px; font-weight: 600; color: #9c6047; background-color: rgba(156,96,71,0.06); padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(156,96,71,0.15);">
+            Showing results for: <strong><?= htmlspecialchars($display_month_name) ?></strong>
+        </span>
+    <?php endif; ?>
+</div>
+
 <!-- Refined Control Console Metrics Grid -->
 <div class="row g-4 mb-35" style="margin-bottom: 35px;">
     <!-- Metric 1: Gross Revenue -->
     <div class="col-xl-3 col-md-6 col-12">
-        <div class="metric-card" style="padding: 24px; border-radius: 12px; background: #ffffff; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+        <div class="metric-card" style="padding: 24px; border-radius: 12px; background: #ffffff; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); height: 100%;">
             <div>
                 <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px;">Gross Revenue</span>
                 <div class="metric-val" style="font-size: 26px; font-weight: 600; color: #0f172a; margin-top: 5px; margin-bottom: 5px;">₹<?= number_format($gross_revenue, 2) ?></div>
-                <span style="font-size: 11.5px; font-weight: 600; color: #16a34a; display: flex; align-items: center; gap: 4px;">
-                    ▲ <span style="color: #64748b; font-weight: 500;">5% standard GST computed</span>
+                <span style="font-size: 11.5px; font-weight: 500; color: #64748b; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span>Online: <strong style="color: #334155;">₹<?= number_format($online_revenue, 2) ?></strong></span>
+                    <span style="color: #cbd5e1;">•</span>
+                    <span>Hotel: <strong style="color: #334155;">₹<?= number_format($offline_revenue, 2) ?></strong></span>
                 </span>
             </div>
             <div style="background: #fef3c7; color: #d97706; padding: 12px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;">
-                <!-- Gold sack icon -->
-                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <!-- Rupee coin icon -->
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 5h8M8 9h8M8 5a4 4 0 0 1 0 8H8M11 13l5 5"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
                 </svg>
             </div>
         </div>

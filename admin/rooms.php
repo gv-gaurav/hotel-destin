@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $price_double_map = isset($_POST['price_double_map']) ? floatval($_POST['price_double_map']) : 0;
             $status_badge = isset($_POST['status_badge']) ? htmlspecialchars(trim($_POST['status_badge'])) : 'POPULAR';
             $rating = isset($_POST['rating']) ? htmlspecialchars(trim($_POST['rating'])) : 'G 4.8 ★';
+            $banner_text = isset($_POST['banner_text']) ? htmlspecialchars(trim($_POST['banner_text'])) : '';
 
             // Build slug from title
             $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
@@ -60,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             } else {
                 if ($action === 'add') {
                     try {
-                        $stmt = $pdo->prepare("INSERT INTO rooms (slug, title, type, price, struck_price, discount, code, inventory, capacity_adults, capacity_children, description, status, price_single_ep, price_single_cp, price_single_map, price_double_ep, price_double_cp, price_double_map, status_badge, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmt->execute([$slug, $title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating]);
+                        $stmt = $pdo->prepare("INSERT INTO rooms (slug, title, type, price, struck_price, discount, code, inventory, capacity_adults, capacity_children, description, status, price_single_ep, price_single_cp, price_single_map, price_double_ep, price_double_cp, price_double_map, status_badge, rating, banner_text) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->execute([$slug, $title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $banner_text]);
 
                         // Get last inserted room ID to add facilities
                         $new_room_id = $pdo->lastInsertId();
@@ -131,8 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 } else if ($action === 'edit') {
                     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
                     try {
-                        $stmt = $pdo->prepare("UPDATE rooms SET title = ?, type = ?, price = ?, struck_price = ?, discount = ?, code = ?, inventory = ?, capacity_adults = ?, capacity_children = ?, description = ?, status = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_double_ep = ?, price_double_cp = ?, price_double_map = ?, status_badge = ?, rating = ? WHERE id = ?");
-                        $stmt->execute([$title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $id]);
+                        $stmt = $pdo->prepare("UPDATE rooms SET title = ?, type = ?, price = ?, struck_price = ?, discount = ?, code = ?, inventory = ?, capacity_adults = ?, capacity_children = ?, description = ?, status = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_double_ep = ?, price_double_cp = ?, price_double_map = ?, status_badge = ?, rating = ?, banner_text = ? WHERE id = ?");
+                        $stmt->execute([$title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $banner_text, $id]);
 
                         // Process amenities update
                         if (isset($_POST['facilities'])) {
@@ -275,7 +276,7 @@ try {
 
 <!-- Room Form Card Panel (Initially Hidden) -->
 <div id="roomFormCard" class="panel-card mb-35" style="display:none; border-radius: 16px; border:1px solid var(--bs-border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 30px;">
-    <div class="d-flex justify-content-between align-items-center border-bottom-0 pb-15 mb-20" style="border-bottom: 1px solid var(--bs-border-color);">
+    <div class="d-flex justify-content-between align-items-center border-bottom-0" style="border-bottom: 1px solid var(--bs-border-color);">
         <h3 id="roomModalLabel" class="font-heading mb-0" style="font-size: 18px; color: #0f172a;">Add New Room</h3>
         <button type="button" class="btn-close" onclick="hideRoomForm()" aria-label="Close"></button>
     </div>
@@ -311,16 +312,13 @@ try {
                         <input id="roomStruckPrice" class="form-control-custom" type="number" name="struck_price" step="0.01">
                     </div>
                 </div>
-                <div class="col-md-3">
+                <!-- Hidden fields for compatibility -->
+                <input id="roomDiscount" type="hidden" name="discount" value="">
+                <input id="roomCode" type="hidden" name="code" value="DESTIN">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label class="form-label-custom">Discount Text Badge</label>
-                        <input id="roomDiscount" class="form-control-custom" type="text" name="discount" placeholder="e.g. 58% off">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="form-label-custom">Promo Code Badge</label>
-                        <input id="roomCode" class="form-control-custom" type="text" name="code" value="DESTIN">
+                        <label class="form-label-custom">Promo Banner Text (Offer Text)</label>
+                        <input id="roomBannerText" class="form-control-custom" type="text" name="banner_text" placeholder="e.g., Get Destin, and get 25% off (up to ₹1,000) on your booking">
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -475,9 +473,10 @@ try {
                             </td>
                             <td><?= htmlspecialchars($r['type']) ?></td>
                             <td>
-                                <strong>₹<?= number_format($r['price'], 2) ?></strong><br>
-                                <span style="font-size:11.5px; text-decoration:line-through; color:#aaa;">₹<?= number_format($r['struck_price'], 2) ?></span>
-                                <span style="font-size:11px; color:#d13232; font-weight:700;">(<?= htmlspecialchars($r['discount']) ?>)</span>
+                                <strong>₹<?= number_format($r['price'], 2) ?></strong>
+                                <?php if ($r['struck_price'] > 0): ?><br>
+                                    <span style="font-size:11.5px; text-decoration:line-through; color:#aaa;">₹<?= number_format($r['struck_price'], 2) ?></span>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <?= htmlspecialchars($r['capacity_adults']) ?> Adults, <?= htmlspecialchars($r['capacity_children']) ?> Children
@@ -532,6 +531,7 @@ try {
         document.getElementById('roomStruckPrice').value = '';
         document.getElementById('roomDiscount').value = '';
         document.getElementById('roomCode').value = 'DESTIN';
+        document.getElementById('roomBannerText').value = '';
         document.getElementById('roomInventory').value = '1';
         document.getElementById('roomAdults').value = '2';
         document.getElementById('roomChildren').value = '1';
@@ -575,6 +575,7 @@ try {
         document.getElementById('roomStruckPrice').value = room.struck_price;
         document.getElementById('roomDiscount').value = room.discount;
         document.getElementById('roomCode').value = room.code;
+        document.getElementById('roomBannerText').value = room.banner_text || '';
         document.getElementById('roomInventory').value = room.inventory;
         document.getElementById('roomAdults').value = room.capacity_adults;
         document.getElementById('roomChildren').value = room.capacity_children;

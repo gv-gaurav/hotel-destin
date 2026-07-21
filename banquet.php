@@ -5,6 +5,19 @@ require_once __DIR__ . '/db.php';
 $message_sent = false;
 $errors = [];
 
+if (isset($_SESSION['banquet_success']) && $_SESSION['banquet_success'] === true) {
+    $message_sent = true;
+    $success_name = isset($_SESSION['banq_name']) ? $_SESSION['banq_name'] : '';
+    $success_guests = isset($_SESSION['banq_guests']) ? $_SESSION['banq_guests'] : 150;
+    $success_date = isset($_SESSION['banq_date']) ? $_SESSION['banq_date'] : '';
+
+    // Clear session
+    unset($_SESSION['banquet_success']);
+    unset($_SESSION['banq_name']);
+    unset($_SESSION['banq_guests']);
+    unset($_SESSION['banq_date']);
+}
+
 $hall_name = "Banquet Oh Saathi Re";
 $hall_capacity = "300 Guests";
 $hall_size = "3,800 Sq. Ft.";
@@ -43,10 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO enquiries (category, name, email, phone, date, guests, requirements) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $req_summary = "Event Type: " . sanitize($event_type) . " | Remarks: " . sanitize($remarks);
             $stmt->execute(['banquet', $name, $email, $phone, $date, $guests, $req_summary]);
-            $message_sent = true;
-            $success_name = $name;
-            $success_guests = $guests;
-            $success_date = $date;
 
             // Send email alert to admin
             require_once __DIR__ . '/mail-helper.php';
@@ -55,20 +64,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Remarks' => $remarks
             ]);
 
-            // Reset inputs to clean page state
-            $name = '';
-            $email = '';
-            $phone = '';
-            $event_type = '';
-            $date = '';
-            $guests = 150;
-            $remarks = '';
+            $_SESSION['banquet_success'] = true;
+            $_SESSION['banq_name'] = $name;
+            $_SESSION['banq_guests'] = $guests;
+            $_SESSION['banq_date'] = $date;
+
+            header("Location: banquet.php#enquiry");
+            exit;
         } catch (Exception $e) {
             error_log("Banquet submission DB error: " . $e->getMessage());
-            $message_sent = true;
-            $success_name = $name;
-            $success_guests = $guests;
-            $success_date = $date;
+            $_SESSION['banquet_success'] = true;
+            $_SESSION['banq_name'] = $name;
+            $_SESSION['banq_guests'] = $guests;
+            $_SESSION['banq_date'] = $date;
+
+            header("Location: banquet.php#enquiry");
+            exit;
         }
     }
 }

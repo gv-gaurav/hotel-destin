@@ -74,8 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             exit;
         } else {
             try {
-                $stmt = $pdo->prepare("UPDATE enquiries SET status = ? WHERE id = ?");
-                $stmt->execute([$status, $enquiry_id]);
+                if ($status === 'contacted') {
+                    $followup_note = isset($_POST['followup_note']) ? trim($_POST['followup_note']) : '';
+                    $stmt = $pdo->prepare("UPDATE enquiries SET status = ?, followup_note = ? WHERE id = ?");
+                    $stmt->execute([$status, $followup_note, $enquiry_id]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE enquiries SET status = ? WHERE id = ?");
+                    $stmt->execute([$status, $enquiry_id]);
+                }
                 header("Location: enquiries.php?type=" . urlencode($active_type) . "&success=1");
                 exit;
             } catch (Exception $e) {
@@ -347,31 +353,44 @@ if ($active_type === 'all') {
                                     <div style="color:#64748b; font-size:12.5px; border-top: 1px solid #f1f5f9; padding-top:6px; margin-top:4px;">
                                         <?= nl2br(htmlspecialchars($e['requirements'])) ?>
                                     </div>
+                                    <?php if (!empty($e['followup_note'])): ?>
+                                        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; color:#9c6047; font-size:12.5px;">
+                                            <span style="font-weight:700;">📝 Follow Back Note:</span><br>
+                                            <span style="font-style: italic; color: #475569;"><?= nl2br(htmlspecialchars($e['followup_note'])) ?></span>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                             <td style="vertical-align: middle; padding: 16px 12px;">
                                 <?php
                                 $status_bg = '#f59e0b';
-                                if (strtolower($e['status']) === 'converted') $status_bg = '#10b981';
-                                else if (strtolower($e['status']) === 'rejected') $status_bg = '#ef4444';
-                                else if (strtolower($e['status']) === 'contacted') $status_bg = '#3b82f6';
+                                $display_status = $e['status'];
+                                if (strtolower($e['status']) === 'converted') {
+                                    $status_bg = '#10b981';
+                                } else if (strtolower($e['status']) === 'rejected') {
+                                    $status_bg = '#ef4444';
+                                } else if (strtolower($e['status']) === 'contacted') {
+                                    $status_bg = '#3b82f6';
+                                    $display_status = 'Follow Back';
+                                }
                                 ?>
                                 <span class="badge" style="background-color: <?= $status_bg ?>; color: #ffffff; font-size: 11px; padding: 5px 10px; border-radius: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <?= htmlspecialchars($e['status']) ?>
+                                    <?= htmlspecialchars($display_status) ?>
                                 </span>
                             </td>
                             <td style="vertical-align: middle; padding: 16px 12px;">
                                 <div class="d-flex flex-column gap-2" style="width: 130px;">
                                     <!-- Status Update Form -->
-                                    <form action="enquiries.php" method="POST" style="margin:0;">
+                                    <form action="enquiries.php" method="POST" style="margin:0;" id="status-form-<?= $e['id'] ?>">
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                         <input type="hidden" name="action" value="update_status">
                                         <input type="hidden" name="enquiry_id" value="<?= $e['id'] ?>">
                                         <input type="hidden" name="active_type" value="<?= htmlspecialchars($active_type) ?>">
+                                        <input type="hidden" name="followup_note" id="note-input-<?= $e['id'] ?>" value="">
                                         
-                                        <select class="form-select" name="status" onchange="this.form.submit()" style="font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px; background-color: #ffffff; width: 100%; color: #334155; cursor: pointer;">
+                                        <select class="form-select" name="status" onchange="handleStatusChange(this, <?= $e['id'] ?>, '<?= htmlspecialchars($e['status']) ?>')" style="font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px; background-color: #ffffff; width: 100%; color: #334155; cursor: pointer;">
                                             <option value="pending" <?= $e['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
-                                            <option value="contacted" <?= $e['status'] === 'contacted' ? 'selected' : '' ?>>Contacted</option>
+                                            <option value="contacted" <?= $e['status'] === 'contacted' ? 'selected' : '' ?>>Follow Back</option>
                                             <option value="converted" <?= $e['status'] === 'converted' ? 'selected' : '' ?>>Converted</option>
                                             <option value="rejected" <?= $e['status'] === 'rejected' ? 'selected' : '' ?>>Rejected</option>
                                         </select>
@@ -400,5 +419,72 @@ if ($active_type === 'all') {
         </table>
     </div>
 </div>
+
+<!-- Follow Up Note Modal -->
+<div class="modal fade" id="followUpModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:12px; overflow:hidden; border:none; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header bg-dark text-white py-15 px-20">
+                <h5 class="modal-title font-heading" style="font-weight:700; font-size:17px;">Add Follow Back Note</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter:invert(1) grayscale(1) brightness(2);"></button>
+            </div>
+            <div class="modal-body p-24">
+                <div class="form-group mb-0">
+                    <label class="form-label-custom">Enter a small follow-up note (Optional)</label>
+                    <textarea id="followUpNoteInput" class="form-control-custom" rows="3" placeholder="e.g., Talked to customer. Customized catering package details..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer bg-light py-12 px-24 border-top-0 d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 8px; font-weight: 600; padding: 8px 16px;">Cancel</button>
+                <button type="button" class="btn btn-primary text-white" onclick="submitFollowUpStatus()" style="border-radius: 8px; font-weight: 600; padding: 8px 16px; background-color:#9c6047; border:none;">Submit Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let activeEnquiryId = null;
+let activeSelectElement = null;
+let previousStatusVal = null;
+
+function handleStatusChange(selectElement, enquiryId, currentStatus) {
+    if (selectElement.value === 'contacted') {
+        activeEnquiryId = enquiryId;
+        activeSelectElement = selectElement;
+        previousStatusVal = currentStatus;
+        
+        // Clear previous note
+        document.getElementById('followUpNoteInput').value = '';
+        
+        // Open the modal
+        var modalEl = document.getElementById('followUpModal');
+        var myModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        myModal.show();
+    } else {
+        selectElement.form.submit();
+    }
+}
+
+function submitFollowUpStatus() {
+    if (activeEnquiryId && activeSelectElement) {
+        const note = document.getElementById('followUpNoteInput').value;
+        document.getElementById('note-input-' + activeEnquiryId).value = note;
+        activeSelectElement.form.submit();
+    }
+}
+
+// When the modal is dismissed (via cancel button or clicking outside/close)
+document.addEventListener('DOMContentLoaded', function() {
+    var modalEl = document.getElementById('followUpModal');
+    if (modalEl) {
+        modalEl.addEventListener('hidden.bs.modal', function () {
+            // If the form wasn't submitted, revert the dropdown
+            if (activeSelectElement && activeSelectElement.value === 'contacted') {
+                activeSelectElement.value = previousStatusVal;
+            }
+        });
+    }
+});
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

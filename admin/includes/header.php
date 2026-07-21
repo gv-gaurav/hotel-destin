@@ -35,7 +35,7 @@ $active_page = basename($_SERVER['PHP_SELF']);
             width: 260px;
             background: #ffffff;
             color: #334155;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             position: fixed;
@@ -44,6 +44,7 @@ $active_page = basename($_SERVER['PHP_SELF']);
             z-index: 100;
             padding: 25px 0;
             border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
         }
 
         .sidebar-brand {
@@ -454,6 +455,15 @@ $active_page = basename($_SERVER['PHP_SELF']);
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
                     </svg>
                     Home Page Editor
+                </a>
+            </li>
+            <li>
+                <a href="restaurant-settings.php" class="sidebar-link <?= $active_page === 'restaurant-settings.php' ? 'active' : '' ?>">
+                    <!-- Restaurant Utensils Icon -->
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"></path>
+                    </svg>
+                    Restaurant
                 </a>
             </li>
             <li>

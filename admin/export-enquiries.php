@@ -88,7 +88,8 @@ fputcsv($output, [
     'Booking Date',
     'Guests',
     'Requirements / Message',
-    'Status'
+    'Status',
+    'Follow Back Note'
 ]);
 
 // Write rows
@@ -102,6 +103,9 @@ foreach ($enquiries as $e) {
     $booking_date = ($e['date'] && $e['date'] !== '0000-00-00') ? $e['date'] : 'N/A';
     $guests = $e['guests'] ?: 'N/A';
 
+    $status_text = (strtolower($e['status']) === 'contacted') ? 'Follow Back' : ucfirst($e['status']);
+    $followup_note = isset($e['followup_note']) ? $e['followup_note'] : '';
+
     fputcsv($output, [
         $e['created_at'],
         $display_cat,
@@ -111,7 +115,8 @@ foreach ($enquiries as $e) {
         $booking_date,
         $guests,
         $e['requirements'],
-        ucfirst($e['status'])
+        $status_text,
+        $followup_note
     ]);
 }
 

@@ -206,6 +206,7 @@ try {
                 'struck_price' => $r['struck_price'],
                 'discount' => $r['discount'],
                 'code' => $r['code'],
+                'banner_text' => isset($r['banner_text']) ? $r['banner_text'] : '',
                 'price' => $price,
                 'image' => $r['image_path'],
                 'images' => $all_images,
@@ -1113,17 +1114,19 @@ usort($rooms, function ($a, $b) {
                                         <?php endforeach; ?>
                                     </div>
 
-                                    <div class="banner-box">
-                                        <i class="fa fa-star">⭐</i> Get Destin, and get 25% off (up to ₹1,000) on your booking
-                                    </div>
+                                    <?php if (!empty($room['banner_text'])): ?>
+                                        <div class="banner-box">
+                                            <i class="fa fa-star">⭐</i> <?= htmlspecialchars($room['banner_text']) ?>
+                                        </div>
+                                    <?php endif; ?>
 
                                     <div class="footer-row">
                                         <div class="price-area">
-                                            <div class="old-price-line">
-                                                <span class="old-price">₹<?= number_format($room['struck_price']) ?></span>
-                                                <span class="discount-lbl"><?= htmlspecialchars($room['discount']) ?></span>
-                                                <span class="brand-lbl"><?= htmlspecialchars($room['code']) ?></span>
-                                            </div>
+                                            <?php if (!empty($room['struck_price']) && $room['struck_price'] > 0): ?>
+                                                <div class="old-price-line">
+                                                    <span class="old-price">₹<?= number_format($room['struck_price']) ?></span>
+                                                </div>
+                                            <?php endif; ?>
                                             <div class="current-price">₹<?= number_format($room['price']) ?> <span>/ night</span></div>
                                         </div>
 

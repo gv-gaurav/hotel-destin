@@ -2,15 +2,82 @@
 // Dynamic data arrays for future database connection or CMS integration
 require_once __DIR__ . '/db.php';
 
-$restaurant_name = "The Heights Rooftop & Club Bar";
-$restaurant_tagline = "Elevated Gastronomy & Celestial Libations";
-$restaurant_hours = "07:00 AM to 11:30 PM";
-$room_service_text = "Room Service & Restaurant Facilities Available";
-$food_types_text = "We have both veg and non-veg food available with club bar facility at rooftop";
+$restaurant_hero_bg = get_setting('restaurant_hero_bg', 'assets/imgs/page/restaurant/hero.png');
+$restaurant_name = get_setting('restaurant_hero_title', 'The Heights Rooftop & Club Bar');
+$restaurant_tagline = get_setting('restaurant_hero_tagline', 'Elevated Gastronomy & Celestial Libations');
+$restaurant_hours = get_setting('restaurant_hero_hours', '07:00 AM to 11:30 PM');
+$food_types_text = get_setting('restaurant_food_types', 'We have both veg and non-veg food available with club bar facility at rooftop');
+$room_service_text = get_setting('restaurant_room_service_text', 'Room Service & Restaurant Facilities Available');
+
+// Facilities Section heading
+$restaurant_facilities_title = get_setting('restaurant_facilities_title', 'Restaurant Facilities');
+$restaurant_facilities_desc = get_setting('restaurant_facilities_desc', 'Indulge in our luxurious hospitality features that combine great taste with a premium lounge experience.');
+
+// Amenities showcase
+$amenities = [
+    [
+        'title' => get_setting('restaurant_facility_1_title', 'Rooftop Club & Bar'),
+        'description' => get_setting('restaurant_facility_1_desc', 'Unwind under the stars with our signature cocktails, handpicked spirits, and deep house beats at Gwalior\'s premier rooftop club facility.'),
+        'image' => get_setting('restaurant_facility_1_image', 'assets/imgs/page/restaurant/rooftop_bar.png'),
+        'badge' => get_setting('restaurant_facility_1_badge', 'Open Daily'),
+        'icon' => get_setting('restaurant_facility_1_icon', '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 22H6M12 15v7M12 15l7-10H5l7 10zM12 9l-2-2h4l-2 2z"/></svg>')
+    ],
+    [
+        'title' => get_setting('restaurant_facility_2_title', 'Fine Dining Restaurant'),
+        'description' => get_setting('restaurant_facility_2_desc', 'A sophisticated family dining atmosphere offering an exquisite spread of pure vegetarian and gourmet non-vegetarian options prepared by master chefs.'),
+        'image' => get_setting('restaurant_facility_2_image', 'assets/imgs/page/restaurant/fine_dining.png'),
+        'badge' => get_setting('restaurant_facility_2_badge', 'Family Friendly'),
+        'icon' => get_setting('restaurant_facility_2_icon', '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M12 4v3M12 7a8 8 0 0 0-8 8h16a8 8 0 0 0-8-8zM5 15h14"/></svg>')
+    ],
+    [
+        'title' => get_setting('restaurant_facility_3_title', 'In-Room Dining'),
+        'description' => get_setting('restaurant_facility_3_desc', 'Experience restaurant-quality hot meals delivered directly to the comfort of your executive room or suite at any hour during operating times.'),
+        'image' => get_setting('restaurant_facility_3_image', 'assets/imgs/page/restaurant/room_service.png'),
+        'badge' => get_setting('restaurant_facility_3_badge', 'For In-House Guests'),
+        'icon' => get_setting('restaurant_facility_3_icon', '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 2v2M7 8h10M12 12h.01M3 20h18"/></svg>')
+    ]
+];
+
+// Ambience Section heading
+$restaurant_ambience_title = get_setting('restaurant_ambience_title', 'Ambience & Moments');
+$restaurant_ambience_desc = get_setting('restaurant_ambience_desc', 'Take a visual tour through our celestial rooftop club and warm indoor dining halls.');
+
+// Ambience Items
+$ambience_1_image = get_setting('restaurant_ambience_1_image', 'assets/imgs/page/restaurant/hero.png');
+$ambience_1_title = get_setting('restaurant_ambience_1_title', 'Rooftop Skyline Dining');
+$ambience_1_desc = get_setting('restaurant_ambience_1_desc', 'Unparalleled city views at dusk');
+
+$ambience_2_image = get_setting('restaurant_ambience_2_image', 'assets/imgs/page/restaurant/rooftop_bar.png');
+$ambience_2_title = get_setting('restaurant_ambience_2_title', 'Signature Bar Lounge');
+
+$ambience_3_image = get_setting('restaurant_ambience_3_image', 'assets/imgs/page/restaurant/fine_dining.png');
+$ambience_3_title = get_setting('restaurant_ambience_3_title', 'Gourmet Masterpieces');
+
+$ambience_4_image = get_setting('restaurant_ambience_4_image', 'assets/imgs/page/restaurant/room_service.png');
+$ambience_4_title = get_setting('restaurant_ambience_4_title', 'Luxury Suite Room Service');
 
 // Success message handling
 $message_sent = false;
 $errors = [];
+
+if (isset($_SESSION['restaurant_success']) && $_SESSION['restaurant_success'] === true) {
+    $message_sent = true;
+    $name = isset($_SESSION['res_name']) ? $_SESSION['res_name'] : '';
+    $email = isset($_SESSION['res_email']) ? $_SESSION['res_email'] : '';
+    $phone = isset($_SESSION['res_phone']) ? $_SESSION['res_phone'] : '';
+    $guests = isset($_SESSION['res_guests']) ? $_SESSION['res_guests'] : 2;
+    $date = isset($_SESSION['res_date']) ? $_SESSION['res_date'] : '';
+    $time = isset($_SESSION['res_time']) ? $_SESSION['res_time'] : '';
+
+    // Clear session data immediately
+    unset($_SESSION['restaurant_success']);
+    unset($_SESSION['res_name']);
+    unset($_SESSION['res_email']);
+    unset($_SESSION['res_phone']);
+    unset($_SESSION['res_guests']);
+    unset($_SESSION['res_date']);
+    unset($_SESSION['res_time']);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = isset($_POST['name']) ? htmlspecialchars(trim($_POST['name'])) : '';
@@ -44,7 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO enquiries (category, name, email, phone, date, guests, requirements) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $req_summary = "Time: " . sanitize($time) . " | Seating: " . sanitize($seating) . " | Preference: " . sanitize($preference);
             $stmt->execute(['restaurant', $name, $email, $phone, $date, $guests, $req_summary]);
-            $message_sent = true;
 
             // Send email alert to admin
             require_once __DIR__ . '/mail-helper.php';
@@ -53,40 +119,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Seating Option' => $seating,
                 'Food/Bar Preference' => $preference
             ]);
+
+            $_SESSION['restaurant_success'] = true;
+            $_SESSION['res_name'] = $name;
+            $_SESSION['res_email'] = $email;
+            $_SESSION['res_phone'] = $phone;
+            $_SESSION['res_guests'] = $guests;
+            $_SESSION['res_date'] = $date;
+            $_SESSION['res_time'] = $time;
+            
+            header("Location: restaurant.php#book-table");
+            exit;
         } catch (Exception $e) {
             error_log("Restaurant reservation DB error: " . $e->getMessage());
-            $message_sent = true;
+            $_SESSION['restaurant_success'] = true;
+            $_SESSION['res_name'] = $name;
+            $_SESSION['res_email'] = $email;
+            $_SESSION['res_phone'] = $phone;
+            $_SESSION['res_guests'] = $guests;
+            $_SESSION['res_date'] = $date;
+            $_SESSION['res_time'] = $time;
+            
+            header("Location: restaurant.php#book-table");
+            exit;
         }
     }
 }
-
-// Amenities showcase
-$amenities = [
-    [
-        'title' => 'Rooftop Club & Bar',
-        'subtitle' => 'Scenic Lounge',
-        'description' => 'Unwind under the stars with our signature cocktails, handpicked spirits, and deep house beats at Gwalior\'s premier rooftop club facility.',
-        'image' => 'assets/imgs/page/restaurant/rooftop_bar.png',
-        'badge' => 'Open Daily',
-        'icon' => '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 22H6M12 15v7M12 15l7-10H5l7 10zM12 9l-2-2h4l-2 2z"/></svg>'
-    ],
-    [
-        'title' => 'Fine Dining Restaurant',
-        'subtitle' => 'Culinary Experience',
-        'description' => 'A sophisticated family dining atmosphere offering an exquisite spread of pure vegetarian and gourmet non-vegetarian options prepared by master chefs.',
-        'image' => 'assets/imgs/page/restaurant/fine_dining.png',
-        'badge' => 'Family Friendly',
-        'icon' => '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M12 4v3M12 7a8 8 0 0 0-8 8h16a8 8 0 0 0-8-8zM5 15h14"/></svg>'
-    ],
-    [
-        'title' => 'In-Room Dining',
-        'subtitle' => 'Prompt Room Service',
-        'description' => 'Experience restaurant-quality hot meals delivered directly to the comfort of your executive room or suite at any hour during operating times.',
-        'image' => 'assets/imgs/page/restaurant/room_service.png',
-        'badge' => 'For In-House Guests',
-        'icon' => '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 2v2M7 8h10M12 12h.01M3 20h18"/></svg>'
-    ]
-];
 
 ?>
 <!DOCTYPE html>
@@ -118,7 +176,7 @@ $amenities = [
         /* Hero Banner style */
         .res-hero {
             position: relative;
-            background: linear-gradient(rgba(14, 14, 14, 0.5), rgba(14, 14, 14, 0.75)), url('assets/imgs/page/restaurant/hero.png') no-repeat center center;
+            background: linear-gradient(rgba(14, 14, 14, 0.5), rgba(14, 14, 14, 0.75)), url('<?= htmlspecialchars($restaurant_hero_bg) ?>') no-repeat center center;
             background-size: cover;
             height: 380px;
             display: flex;
@@ -534,8 +592,8 @@ $amenities = [
         <section class="section-box pt-80 pb-50">
             <div class="container">
                 <div class="text-center mb-50">
-                    <h2 class="heading-2 color-neutral-1000 mb-15 wow fadeInUp">Restaurant Facilities</h2>
-                    <p class="text-lg neutral-500 max-width-600 mx-auto wow fadeInUp" data-wow-delay="0.1s">Indulge in our luxurious hospitality features that combine great taste with a premium lounge experience.</p>
+                    <h2 class="heading-2 color-neutral-1000 mb-15 wow fadeInUp"><?= htmlspecialchars($restaurant_facilities_title) ?></h2>
+                    <p class="text-lg neutral-500 max-width-600 mx-auto wow fadeInUp" data-wow-delay="0.1s"><?= htmlspecialchars($restaurant_facilities_desc) ?></p>
                 </div>
                 <div class="row g-4">
                     <?php foreach ($amenities as $idx => $item): ?>
@@ -564,17 +622,17 @@ $amenities = [
         <section class="section-box pt-80">
             <div class="container">
                 <div class="text-center mb-50">
-                    <h2 class="heading-2 color-neutral-1000 mb-15 wow fadeInUp">Ambience & Moments</h2>
-                    <p class="text-lg neutral-500 max-width-600 mx-auto wow fadeInUp" data-wow-delay="0.1s">Take a visual tour through our celestial rooftop club and warm indoor dining halls.</p>
+                    <h2 class="heading-2 color-neutral-1000 mb-15 wow fadeInUp"><?= htmlspecialchars($restaurant_ambience_title) ?></h2>
+                    <p class="text-lg neutral-500 max-width-600 mx-auto wow fadeInUp" data-wow-delay="0.1s"><?= htmlspecialchars($restaurant_ambience_desc) ?></p>
                 </div>
                 <div class="row g-3">
                     <div class="col-md-6 col-sm-12 wow fadeInUp">
                         <div class="gallery-item-wrap" style="position: relative; height: 350px; overflow: hidden; border-radius: 12px;">
-                            <img src="assets/imgs/page/restaurant/hero.png" alt="Rooftop Ambience" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                            <img src="<?= htmlspecialchars($ambience_1_image) ?>" alt="<?= htmlspecialchars($ambience_1_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
                             <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%); display: flex; align-items: flex-end; padding: 24px; opacity: 0; transition: opacity 0.3s ease;">
                                 <div>
-                                    <h5 style="color: #fff; margin-bottom: 4px;">Rooftop Skyline Dining</h5>
-                                    <p style="color: var(--bs-neutral-300); font-size: 13px; margin: 0;">Unparalleled city views at dusk</p>
+                                    <h5 style="color: #fff; margin-bottom: 4px;"><?= htmlspecialchars($ambience_1_title) ?></h5>
+                                    <p style="color: var(--bs-neutral-300); font-size: 13px; margin: 0;"><?= htmlspecialchars($ambience_1_desc) ?></p>
                                 </div>
                             </div>
                         </div>
@@ -583,30 +641,30 @@ $amenities = [
                         <div class="row g-3">
                             <div class="col-6 wow fadeInUp" data-wow-delay="0.1s">
                                 <div class="gallery-item-wrap" style="position: relative; height: 168px; overflow: hidden; border-radius: 12px;">
-                                    <img src="assets/imgs/page/restaurant/rooftop_bar.png" alt="Rooftop Bar" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                    <img src="<?= htmlspecialchars($ambience_2_image) ?>" alt="<?= htmlspecialchars($ambience_2_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
                                     <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
                                         <div>
-                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;">Signature Bar Lounge</h6>
+                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_2_title) ?></h6>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6 wow fadeInUp" data-wow-delay="0.2s">
                                 <div class="gallery-item-wrap" style="position: relative; height: 168px; overflow: hidden; border-radius: 12px;">
-                                    <img src="assets/imgs/page/restaurant/fine_dining.png" alt="Fine Dining Food" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                    <img src="<?= htmlspecialchars($ambience_3_image) ?>" alt="<?= htmlspecialchars($ambience_3_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
                                     <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
                                         <div>
-                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;">Gourmet Masterpieces</h6>
+                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_3_title) ?></h6>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12 wow fadeInUp" data-wow-delay="0.3s">
                                 <div class="gallery-item-wrap" style="position: relative; height: 166px; overflow: hidden; border-radius: 12px;">
-                                    <img src="assets/imgs/page/restaurant/room_service.png" alt="Room Service Room" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                    <img src="<?= htmlspecialchars($ambience_4_image) ?>" alt="<?= htmlspecialchars($ambience_4_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
                                     <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
                                         <div>
-                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;">Luxury Suite Room Service</h6>
+                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_4_title) ?></h6>
                                         </div>
                                     </div>
                                 </div>

@@ -4,6 +4,11 @@ require_once __DIR__ . '/db.php';
 $message_sent = false;
 $errors = [];
 
+if (isset($_SESSION['airport_success']) && $_SESSION['airport_success'] === true) {
+    $message_sent = true;
+    unset($_SESSION['airport_success']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = isset($_POST['name']) ? htmlspecialchars(trim($_POST['name'])) : '';
     $email = isset($_POST['email']) ? htmlspecialchars(trim($_POST['email'])) : '';
@@ -35,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO enquiries (category, name, email, phone, date, requirements) VALUES (?, ?, ?, ?, ?, ?)");
             $req_summary = "Vehicle: " . sanitize($vehicle) . " | Flight: " . sanitize($flight) . " | Time: " . sanitize($time) . " | Remarks: " . sanitize($remarks);
             $stmt->execute(['airport_transfer', $name, $email, $phone, $date, $req_summary]);
-            $message_sent = true;
 
             // Send email alert to admin
             require_once __DIR__ . '/mail-helper.php';
@@ -45,9 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Pickup Time' => $time,
                 'Remarks' => $remarks
             ]);
+
+            $_SESSION['airport_success'] = true;
+            header("Location: airport-transfer.php");
+            exit;
         } catch (Exception $e) {
             error_log("Airport transfer booking DB error: " . $e->getMessage());
-            $message_sent = true;
+            $_SESSION['airport_success'] = true;
+            header("Location: airport-transfer.php");
+            exit;
         }
     }
 }

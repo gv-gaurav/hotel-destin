@@ -4,6 +4,11 @@ require_once __DIR__ . '/db.php';
 $message_sent = false;
 $errors = [];
 
+if (isset($_SESSION['wedding_success']) && $_SESSION['wedding_success'] === true) {
+    $message_sent = true;
+    unset($_SESSION['wedding_success']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = isset($_POST['name']) ? htmlspecialchars(trim($_POST['name'])) : '';
     $email = isset($_POST['email']) ? htmlspecialchars(trim($_POST['email'])) : '';
@@ -31,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO enquiries (category, name, email, phone, date, guests, requirements) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $req_summary = "Package: " . sanitize($package) . " | Remarks: " . sanitize($remarks);
             $stmt->execute(['wedding', $name, $email, $phone, $date, $guests, $req_summary]);
-            $message_sent = true;
 
             // Send email alert to admin
             require_once __DIR__ . '/mail-helper.php';
@@ -39,9 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Package Preferred' => $package,
                 'Remarks/Special Requests' => $remarks
             ]);
+
+            $_SESSION['wedding_success'] = true;
+            header("Location: wedding-banquet.php");
+            exit;
         } catch (Exception $e) {
             error_log("Wedding booking DB error: " . $e->getMessage());
-            $message_sent = true;
+            $_SESSION['wedding_success'] = true;
+            header("Location: wedding-banquet.php");
+            exit;
         }
     }
 }

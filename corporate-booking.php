@@ -4,6 +4,11 @@ require_once __DIR__ . '/db.php';
 $message_sent = false;
 $errors = [];
 
+if (isset($_SESSION['corporate_success']) && $_SESSION['corporate_success'] === true) {
+    $message_sent = true;
+    unset($_SESSION['corporate_success']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = isset($_POST['name']) ? htmlspecialchars(trim($_POST['name'])) : '';
     $email = isset($_POST['email']) ? htmlspecialchars(trim($_POST['email'])) : '';
@@ -32,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO enquiries (category, name, email, phone, date, guests, requirements) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $req_summary = "Company: " . sanitize($company) . " | Package: " . sanitize($package) . " | Remarks: " . sanitize($remarks);
             $stmt->execute(['corporate', $name, $email, $phone, $date, $guests, $req_summary]);
-            $message_sent = true;
 
             // Send email alert to admin
             require_once __DIR__ . '/mail-helper.php';
@@ -41,9 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Package Chosen' => $package,
                 'Remarks/Special Requests' => $remarks
             ]);
+
+            $_SESSION['corporate_success'] = true;
+            header("Location: corporate-booking.php");
+            exit;
         } catch (Exception $e) {
             error_log("Corporate booking DB error: " . $e->getMessage());
-            $message_sent = true;
+            $_SESSION['corporate_success'] = true;
+            header("Location: corporate-booking.php");
+            exit;
         }
     }
 }

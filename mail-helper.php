@@ -26,6 +26,7 @@ function send_mail($to, $subject, $body, $isHtml = true) {
     try {
         // SMTP Server Configuration Settings
         $mail->isSMTP();
+        $mail->CharSet    = 'UTF-8';
         $mail->Host       = SMTP_HOST;
         $mail->SMTPAuth   = true;
         $mail->Username   = SMTP_USER;
