@@ -33,15 +33,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         exit;
     }
 
-    $rate_std = floatval($_POST['hourly_rate_standard']);
-    $rate_exe = floatval($_POST['hourly_rate_executive']);
-    $rate_prem = floatval($_POST['hourly_rate_premium']);
+    $keys = [
+        'hourly_3_standard', 'hourly_6_standard', 'hourly_9_standard', 'hourly_12_standard',
+        'hourly_3_executive', 'hourly_6_executive', 'hourly_9_executive', 'hourly_12_executive',
+        'hourly_3_premium', 'hourly_6_premium', 'hourly_9_premium', 'hourly_12_premium'
+    ];
 
     try {
         $stmt = $pdo->prepare("INSERT INTO settings (key_name, val_content) VALUES (?, ?) ON DUPLICATE KEY UPDATE val_content = VALUES(val_content)");
-        $stmt->execute(['hourly_rate_standard', $rate_std]);
-        $stmt->execute(['hourly_rate_executive', $rate_exe]);
-        $stmt->execute(['hourly_rate_premium', $rate_prem]);
+        foreach ($keys as $key) {
+            $val = floatval($_POST[$key]);
+            $stmt->execute([$key, $val]);
+        }
 
         header("Location: hourly-settings.php?tab=pricing&success=pricing");
         exit;
@@ -111,15 +114,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // Load hourly rates for pricing form
-$hourly_rates = [
-    'hourly_rate_standard' => 250.00,
-    'hourly_rate_executive' => 350.00,
-    'hourly_rate_premium' => 500.00
+$hourly_packages = [
+    'hourly_3_standard' => 600.00,
+    'hourly_6_standard' => 1000.00,
+    'hourly_9_standard' => 1400.00,
+    'hourly_12_standard' => 1800.00,
+    'hourly_3_executive' => 800.00,
+    'hourly_6_executive' => 1300.00,
+    'hourly_9_executive' => 1800.00,
+    'hourly_12_executive' => 2200.00,
+    'hourly_3_premium' => 1000.00,
+    'hourly_6_premium' => 1600.00,
+    'hourly_9_premium' => 2200.00,
+    'hourly_12_premium' => 2800.00
 ];
 try {
-    $stmt_h = $pdo->query("SELECT key_name, val_content FROM settings WHERE key_name IN ('hourly_rate_standard', 'hourly_rate_executive', 'hourly_rate_premium')");
+    $keys = array_keys($hourly_packages);
+    $stmt_h = $pdo->query("SELECT key_name, val_content FROM settings WHERE key_name IN ('" . implode("','", $keys) . "')");
     while ($row_h = $stmt_h->fetch()) {
-        $hourly_rates[$row_h['key_name']] = floatval($row_h['val_content']);
+        $hourly_packages[$row_h['key_name']] = floatval($row_h['val_content']);
     }
 } catch (Exception $e) {
     // Fail silently
@@ -304,12 +317,11 @@ try {
                             $room_type = 'Standard Room';
                             $checkin_time = 'N/A';
                             $total_price = 'N/A';
-                            $rate_per_hour = 'N/A';
                             
                             foreach ($lines as $line) {
                                 if (strpos($line, 'Room Category:') !== false) $room_type = trim(str_replace('Room Category:', '', $line));
                                 if (strpos($line, 'Check-in Time:') !== false) $checkin_time = trim(str_replace('Check-in Time:', '', $line));
-                                if (strpos($line, 'Hourly Rate:') !== false) $rate_per_hour = trim(str_replace('Hourly Rate:', '', $line));
+                                if (strpos($line, 'Package Total:') !== false) $total_price = trim(str_replace('Package Total:', '', $line));
                                 if (strpos($line, 'Total Calculated Price:') !== false) $total_price = trim(str_replace('Total Calculated Price:', '', $line));
                             }
                         ?>
@@ -328,8 +340,7 @@ try {
                                 </td>
                                 <td>
                                     <span class="badge bg-secondary text-white" style="font-size: 11px;"><?= htmlspecialchars($room_type) ?></span><br>
-                                    <span class="text-muted" style="font-size:12.5px;">Rate: <?= htmlspecialchars($rate_per_hour) ?></span><br>
-                                    <span style="font-size:14px; font-weight:700; color:#a17a42;">Total: <?= htmlspecialchars($total_price) ?></span>
+                                    <span style="font-size:14px; font-weight:700; color:#a17a42;">Cost: <?= htmlspecialchars($total_price) ?></span>
                                 </td>
                                 <td>
                                     <span class="status-badge <?= htmlspecialchars($e['status']) ?>"><?= htmlspecialchars($e['status'] === 'contacted' ? 'Follow Back' : $e['status']) ?></span>
@@ -449,33 +460,89 @@ try {
 <?php else: ?>
     <!-- 2. Pricing Settings Tab -->
     <div class="panel-card">
-        <h3 class="font-heading mb-20" style="font-size:18px;">Configure Hourly Pricing Rates</h3>
+        <h3 class="font-heading mb-20" style="font-size:18px;">Configure Hourly Stay Package Prices</h3>
         
         <form method="POST" action="hourly-settings.php">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="action" value="update_pricing">
 
-            <div class="row g-3 mb-25">
+            <div class="row g-4 mb-25">
+                <!-- Standard Room packages -->
                 <div class="col-md-4">
-                    <label class="form-label-custom">Standard Room Hourly Rate (₹ / hour) *</label>
-                    <input type="number" name="hourly_rate_standard" class="form-control-custom" value="<?= htmlspecialchars($hourly_rates['hourly_rate_standard']) ?>" min="0.01" step="0.01" required>
-                    <span style="font-size: 11.5px; color: #64748b;">Current 4-hour standard stay cost: <strong>₹<?= number_format($hourly_rates['hourly_rate_standard'] * 4) ?></strong></span>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                        <h4 style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 15px; border-bottom: 2px solid #a17a42; padding-bottom: 8px;">Standard Room Packages</h4>
+                        
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">3 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_3_standard" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_3_standard']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">6 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_6_standard" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_6_standard']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">9 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_9_standard" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_9_standard']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label class="form-label-custom">12 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_12_standard" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_12_standard']) ?>" min="0" required>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Executive Room packages -->
                 <div class="col-md-4">
-                    <label class="form-label-custom">Executive Room Hourly Rate (₹ / hour) *</label>
-                    <input type="number" name="hourly_rate_executive" class="form-control-custom" value="<?= htmlspecialchars($hourly_rates['hourly_rate_executive']) ?>" min="0.01" step="0.01" required>
-                    <span style="font-size: 11.5px; color: #64748b;">Current 4-hour executive stay cost: <strong>₹<?= number_format($hourly_rates['hourly_rate_executive'] * 4) ?></strong></span>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                        <h4 style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 15px; border-bottom: 2px solid #a17a42; padding-bottom: 8px;">Executive Room Packages</h4>
+                        
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">3 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_3_executive" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_3_executive']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">6 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_6_executive" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_6_executive']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">9 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_9_executive" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_9_executive']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label class="form-label-custom">12 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_12_executive" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_12_executive']) ?>" min="0" required>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Premium Room packages -->
                 <div class="col-md-4">
-                    <label class="form-label-custom">Premium Room Hourly Rate (₹ / hour) *</label>
-                    <input type="number" name="hourly_rate_premium" class="form-control-custom" value="<?= htmlspecialchars($hourly_rates['hourly_rate_premium']) ?>" min="0.01" step="0.01" required>
-                    <span style="font-size: 11.5px; color: #64748b;">Current 4-hour premium stay cost: <strong>₹<?= number_format($hourly_rates['hourly_rate_premium'] * 4) ?></strong></span>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                        <h4 style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 15px; border-bottom: 2px solid #a17a42; padding-bottom: 8px;">Premium Room Packages</h4>
+                        
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">3 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_3_premium" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_3_premium']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">6 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_6_premium" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_6_premium']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-12">
+                            <label class="form-label-custom">9 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_9_premium" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_9_premium']) ?>" min="0" required>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label class="form-label-custom">12 Hours Package Price (₹) *</label>
+                            <input type="number" name="hourly_12_premium" class="form-control-custom" value="<?= htmlspecialchars($hourly_packages['hourly_12_premium']) ?>" min="0" required>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="border-top pt-20">
                 <button type="submit" class="btn btn-primary" style="background-color:#9c6047; border-color:#9c6047; padding: 10px 24px; font-weight:700; font-size:14px; border-radius:8px; color: white;">
-                    Save Hourly Rates
+                    Save Hourly Package Rates
                 </button>
             </div>
         </form>

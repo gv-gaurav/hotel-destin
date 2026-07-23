@@ -599,19 +599,27 @@
 </style>
 
 <?php
-// Load hourly rates for the 3 categories standard, executive, premium
-$hourly_rates = [
-    'standard' => 250,
-    'executive' => 350,
-    'premium' => 500
+// Load hourly stay package rates
+$hourly_packages = [
+    'standard' => [3 => 600, 6 => 1000, 9 => 1400, 12 => 1800],
+    'executive' => [3 => 800, 6 => 1300, 9 => 1800, 12 => 2200],
+    'premium' => [3 => 1000, 6 => 1600, 9 => 2200, 12 => 2800]
 ];
 try {
     if (isset($pdo)) {
-        $stmt_h = $pdo->query("SELECT key_name, val_content FROM settings WHERE key_name IN ('hourly_rate_standard', 'hourly_rate_executive', 'hourly_rate_premium')");
+        $keys = [
+            'hourly_3_standard', 'hourly_6_standard', 'hourly_9_standard', 'hourly_12_standard',
+            'hourly_3_executive', 'hourly_6_executive', 'hourly_9_executive', 'hourly_12_executive',
+            'hourly_3_premium', 'hourly_6_premium', 'hourly_9_premium', 'hourly_12_premium'
+        ];
+        $stmt_h = $pdo->query("SELECT key_name, val_content FROM settings WHERE key_name IN ('" . implode("','", $keys) . "')");
         while ($row_h = $stmt_h->fetch()) {
-            if ($row_h['key_name'] === 'hourly_rate_standard') $hourly_rates['standard'] = (float)$row_h['val_content'];
-            if ($row_h['key_name'] === 'hourly_rate_executive') $hourly_rates['executive'] = (float)$row_h['val_content'];
-            if ($row_h['key_name'] === 'hourly_rate_premium') $hourly_rates['premium'] = (float)$row_h['val_content'];
+            $parts = explode('_', $row_h['key_name']);
+            if (count($parts) === 3) {
+                $hours = (int)$parts[1];
+                $category = $parts[2];
+                $hourly_packages[$category][$hours] = (float)$row_h['val_content'];
+            }
         }
     }
 } catch (Exception $e) {
@@ -674,17 +682,12 @@ if (count($hourly_rooms) < 3) {
           </div>
 
           <div class="form-group mb-15">
-            <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Stay Duration (Hours) *</label>
+            <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Stay Duration *</label>
             <select name="hours" id="hourlyStayHours" class="form-control" style="border-radius: 8px; padding: 10px 14px; border: 1px solid #cbd5e1; width: 100%; box-sizing: border-box; font-size: 14.5px;">
-              <option value="4">4 Hours (Minimum)</option>
-              <option value="5">5 Hours</option>
-              <option value="6">6 Hours</option>
-              <option value="7">7 Hours</option>
-              <option value="8">8 Hours</option>
-              <option value="9">9 Hours</option>
-              <option value="10">10 Hours</option>
-              <option value="11">11 Hours</option>
-              <option value="12">12 Hours</option>
+              <option value="3">3 Hours Package</option>
+              <option value="6">6 Hours Package</option>
+              <option value="9">9 Hours Package</option>
+              <option value="12">12 Hours Package</option>
             </select>
           </div>
 
@@ -695,16 +698,15 @@ if (count($hourly_rooms) < 3) {
               $slugs = ['standard', 'executive', 'premium'];
               foreach ($hourly_rooms as $index => $hr): 
                   $slug = $slugs[$index];
-                  $rate = $hourly_rates[$slug];
+                  $init_price = $hourly_packages[$slug][3];
               ?>
               <div class="col-4">
-                <div class="hourly-room-card text-center <?= $index === 0 ? 'selected' : '' ?>" data-slug="<?= $slug ?>" data-rate="<?= $rate ?>" onclick="selectHourlyRoom(this)">
+                <div class="hourly-room-card text-center <?= $index === 0 ? 'selected' : '' ?>" data-slug="<?= $slug ?>" onclick="selectHourlyRoom(this)">
                   <input type="radio" name="room_category" value="<?= htmlspecialchars($hr['title']) ?>" class="d-none" id="roomRadio_<?= $slug ?>" <?= $index === 0 ? 'checked' : '' ?> required>
                   <img src="<?= htmlspecialchars($hr['image_path']) ?>" alt="<?= htmlspecialchars($hr['title']) ?>" style="height: 60px; width: 100%; object-fit: cover;">
                   <div style="padding: 6px 4px;">
                     <h6 style="font-size: 11px; font-weight: 700; margin-bottom: 1px; color: #0f172a; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="<?= htmlspecialchars($hr['title']) ?>"><?= htmlspecialchars($slug === 'standard' ? 'Standard' : ($slug === 'executive' ? 'Executive' : 'Premium')) ?></h6>
-                    <div style="font-size: 9.5px; color: #64748b; margin-bottom: 3px;">₹<?= number_format($rate) ?>/hr</div>
-                    <div class="room-total-badge" style="font-size: 10px; font-weight: 700; color: #a17a42; background: #faf5eb; border-radius: 4px; padding: 1px 3px; display: inline-block;">₹<?= number_format($rate * 4) ?></div>
+                    <div class="room-total-badge" style="font-size: 10px; font-weight: 700; color: #a17a42; background: #faf5eb; border-radius: 4px; padding: 1px 3px; display: inline-block;">₹<?= number_format($init_price) ?></div>
                   </div>
                 </div>
               </div>
@@ -863,15 +865,17 @@ if (count($hourly_rooms) < 3) {
       hourlyDateInput.setAttribute('min', today);
     }
 
+    const hourlyRatesMatrix = <?= json_encode($hourly_packages) ?>;
+
     function calculateHourlyTotals() {
-      var hours = parseInt(hourlyHoursSelect.value) || 4;
+      var hours = parseInt(hourlyHoursSelect.value) || 3;
       var cards = document.querySelectorAll('#hourlyRoomContainer .hourly-room-card');
       var selectedCard = document.querySelector('#hourlyRoomContainer .hourly-room-card.selected');
       
       // Update each card badge price display
       cards.forEach(function(card) {
-        var rate = parseFloat(card.getAttribute('data-rate')) || 0;
-        var total = rate * hours;
+        var slug = card.getAttribute('data-slug');
+        var total = hourlyRatesMatrix[slug][hours] || 0;
         var badge = card.querySelector('.room-total-badge');
         if (badge) {
           badge.innerText = '₹' + total.toLocaleString('en-IN');
@@ -880,8 +884,8 @@ if (count($hourly_rooms) < 3) {
 
       // Update summary total
       if (selectedCard) {
-        var rate = parseFloat(selectedCard.getAttribute('data-rate')) || 0;
-        var total = rate * hours;
+        var slug = selectedCard.getAttribute('data-slug');
+        var total = hourlyRatesMatrix[slug][hours] || 0;
         var summaryText = document.getElementById('hourlyCalcTotal');
         if (summaryText) {
           summaryText.innerText = '₹' + total.toLocaleString('en-IN');
@@ -923,7 +927,10 @@ if (count($hourly_rooms) < 3) {
         // Fetch selected hourly details to submit
         var selectedCard = document.querySelector('#hourlyRoomContainer .hourly-room-card.selected');
         if (selectedCard) {
-          formData.append('hourly_rate', selectedCard.getAttribute('data-rate'));
+          var slug = selectedCard.getAttribute('data-slug');
+          var hours = parseInt(hourlyHoursSelect.value) || 3;
+          var total = hourlyRatesMatrix[slug][hours] || 0;
+          formData.append('hourly_rate', total / hours); // average hourly rate
         }
 
         fetch('submit-hourly-booking.php', {
