@@ -1158,9 +1158,9 @@ usort($rooms, function ($a, $b) {
                 <!-- Side-by-side Group Booking & Hourly Stay Banners -->
                 <div class="row" style="margin-top: 40px; margin-bottom: 20px;">
                     <div class="col-12 col-lg-6 mb-20 mb-lg-0">
-                        <div class="bulk-booking-card" style="height: 100%;">
-                            <div class="bulk-card-wrapper" style="flex-direction: column; align-items: flex-start; gap: 15px; height: 100%;">
-                                <div class="bulk-card-content" style="display: flex; gap: 16px; align-items: flex-start;">
+                        <div class="bulk-booking-card" style="height: 100%; display: flex; flex-direction: column;">
+                            <div class="bulk-card-wrapper" style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px; flex-grow: 1; height: 100%; width: 100%;">
+                                <div class="bulk-card-content" style="display: flex; gap: 16px; align-items: flex-start; width: 100%;">
                                     <div class="bulk-card-icon" style="flex-shrink: 0;">
                                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -1181,9 +1181,9 @@ usort($rooms, function ($a, $b) {
                         </div>
                     </div>
                     <div class="col-12 col-lg-6">
-                        <div class="bulk-booking-card" style="height: 100%;">
-                            <div class="bulk-card-wrapper" style="flex-direction: column; align-items: flex-start; gap: 15px; height: 100%;">
-                                <div class="bulk-card-content" style="display: flex; gap: 16px; align-items: flex-start;">
+                        <div class="bulk-booking-card" style="height: 100%; display: flex; flex-direction: column;">
+                            <div class="bulk-card-wrapper" style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px; flex-grow: 1; height: 100%; width: 100%;">
+                                <div class="bulk-card-content" style="display: flex; gap: 16px; align-items: flex-start; width: 100%;">
                                     <div class="bulk-card-icon" style="flex-shrink: 0; background: rgba(161, 122, 66, 0.15); color: #a17a42;">
                                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <circle cx="12" cy="12" r="10"></circle>
@@ -1192,7 +1192,7 @@ usort($rooms, function ($a, $b) {
                                     </div>
                                     <div class="bulk-card-text">
                                         <h3 style="font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 6px;">Need a Room for Few Hours?</h3>
-                                        <p style="font-size: 13px; line-height: 1.5; color: #d1d5db; margin: 0;">Book a room on hourly basis for short stays, transits, or business stops. Minimum booking is 4 hours with dynamic pricing starting from just ₹250/hour.</p>
+                                        <p style="font-size: 13px; line-height: 1.5; color: #d1d5db; margin: 0;">Book a room on hourly basis for short stays, transits, or business stops. Choose from 3, 6, 9, or 12-hour packages starting from just ₹600.</p>
                                     </div>
                                 </div>
                                 <div class="bulk-card-action" style="width: 100%; margin-top: auto; padding-top: 15px;">
