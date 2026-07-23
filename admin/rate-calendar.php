@@ -17,6 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ep_price = floatval($_POST['ep_price']);
             $cp_price = floatval($_POST['cp_price']);
             $map_price = floatval($_POST['map_price']);
+            $price_single_ep = floatval($_POST['price_single_ep']);
+            $price_single_cp = floatval($_POST['price_single_cp']);
+            $price_single_map = floatval($_POST['price_single_map']);
             $price_triple_ep = floatval($_POST['price_triple_ep']);
             $price_triple_cp = floatval($_POST['price_triple_cp']);
             $price_triple_map = floatval($_POST['price_triple_map']);
@@ -36,19 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     if ($action === 'add') {
                         $stmt = $pdo->prepare("
-                            INSERT INTO room_rate_calendars (room_category_id, start_date, end_date, ep_price, cp_price, map_price, price_triple_ep, price_triple_cp, price_triple_map, extra_child_price, reason)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            INSERT INTO room_rate_calendars (room_category_id, start_date, end_date, ep_price, cp_price, map_price, price_single_ep, price_single_cp, price_single_map, price_triple_ep, price_triple_cp, price_triple_map, extra_child_price, reason)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ");
-                        $stmt->execute([$room_category_id, $start_date, $end_date, $ep_price, $cp_price, $map_price, $price_triple_ep, $price_triple_cp, $price_triple_map, $extra_child_price, $reason]);
+                        $stmt->execute([$room_category_id, $start_date, $end_date, $ep_price, $cp_price, $map_price, $price_single_ep, $price_single_cp, $price_single_map, $price_triple_ep, $price_triple_cp, $price_triple_map, $extra_child_price, $reason]);
                         $success_msg = 'Seasonal pricing rule added successfully!';
                     } else {
                         $id = intval($_POST['rule_id']);
                         $stmt = $pdo->prepare("
                             UPDATE room_rate_calendars 
-                            SET room_category_id = ?, start_date = ?, end_date = ?, ep_price = ?, cp_price = ?, map_price = ?, price_triple_ep = ?, price_triple_cp = ?, price_triple_map = ?, extra_child_price = ?, reason = ?
+                            SET room_category_id = ?, start_date = ?, end_date = ?, ep_price = ?, cp_price = ?, map_price = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_triple_ep = ?, price_triple_cp = ?, price_triple_map = ?, extra_child_price = ?, reason = ?
                             WHERE id = ?
                         ");
-                        $stmt->execute([$room_category_id, $start_date, $end_date, $ep_price, $cp_price, $map_price, $price_triple_ep, $price_triple_cp, $price_triple_map, $extra_child_price, $reason, $id]);
+                        $stmt->execute([$room_category_id, $start_date, $end_date, $ep_price, $cp_price, $map_price, $price_single_ep, $price_single_cp, $price_single_map, $price_triple_ep, $price_triple_cp, $price_triple_map, $extra_child_price, $reason, $id]);
                         $success_msg = 'Seasonal pricing rule updated successfully!';
                     }
                 } catch (Exception $e) {
@@ -396,9 +399,9 @@ if ($next_month > 12) {
                         
                         <?php if ($override): ?>
                             <div class="override-prices" style="line-height: 1.1;">
-                                <span class="price-badge badge-ep" style="font-size: 8.5px;" title="Double EP: ₹<?= number_format($override['ep_price']) ?> | Triple EP: ₹<?= number_format($override['price_triple_ep']) ?>">EP: ₹<?= number_format($override['ep_price']) ?> / ₹<?= number_format($override['price_triple_ep']) ?></span>
-                                <span class="price-badge badge-cp" style="font-size: 8.5px;" title="Double CP: ₹<?= number_format($override['cp_price']) ?> | Triple CP: ₹<?= number_format($override['price_triple_cp']) ?>">CP: ₹<?= number_format($override['cp_price']) ?> / ₹<?= number_format($override['price_triple_cp']) ?></span>
-                                <span class="price-badge badge-map" style="font-size: 8.5px;" title="Double MAP: ₹<?= number_format($override['map_price']) ?> | Triple MAP: ₹<?= number_format($override['price_triple_map']) ?>">MAP: ₹<?= number_format($override['map_price']) ?> / ₹<?= number_format($override['price_triple_map']) ?></span>
+                                <span class="price-badge badge-ep" style="font-size: 8.5px;" title="Single: ₹<?= number_format($override['price_single_ep']) ?> | Double: ₹<?= number_format($override['ep_price']) ?> | Triple: ₹<?= number_format($override['price_triple_ep']) ?>">EP: ₹<?= number_format($override['ep_price']) ?></span>
+                                <span class="price-badge badge-cp" style="font-size: 8.5px;" title="Single: ₹<?= number_format($override['price_single_cp']) ?> | Double: ₹<?= number_format($override['cp_price']) ?> | Triple: ₹<?= number_format($override['price_triple_cp']) ?>">CP: ₹<?= number_format($override['cp_price']) ?></span>
+                                <span class="price-badge badge-map" style="font-size: 8.5px;" title="Single: ₹<?= number_format($override['price_single_map']) ?> | Double: ₹<?= number_format($override['map_price']) ?> | Triple: ₹<?= number_format($override['price_triple_map']) ?>">MAP: ₹<?= number_format($override['map_price']) ?></span>
                                 <?php if ((float)$override['extra_child_price'] > 0): ?>
                                     <span class="price-badge" style="font-size: 8.5px; background: #fae8ff; color: #701a75;" title="Extra Child Price">Child: ₹<?= number_format($override['extra_child_price']) ?></span>
                                 <?php endif; ?>
@@ -447,6 +450,7 @@ if ($next_month > 12) {
                         <th>Room Category</th>
                         <th>Start Date</th>
                         <th>End Date</th>
+                        <th>Single Prices (EP/CP/MAP)</th>
                         <th>Double Prices (EP/CP/MAP)</th>
                         <th>Triple Prices (EP/CP/MAP)</th>
                         <th>Extra Child</th>
@@ -461,6 +465,11 @@ if ($next_month > 12) {
                                 <td><strong><?= htmlspecialchars($rule['category_title']) ?></strong></td>
                                 <td><?= date('d-M-Y', strtotime($rule['start_date'])) ?></td>
                                 <td><?= date('d-M-Y', strtotime($rule['end_date'])) ?></td>
+                                <td>
+                                    <span class="badge bg-light text-dark" title="Single EP">EP: ₹<?= number_format($rule['price_single_ep'], 2) ?></span><br>
+                                    <span class="badge bg-light text-dark" title="Single CP">CP: ₹<?= number_format($rule['price_single_cp'], 2) ?></span><br>
+                                    <span class="badge bg-light text-dark" title="Single MAP">MAP: ₹<?= number_format($rule['price_single_map'], 2) ?></span>
+                                </td>
                                 <td>
                                     <span class="badge bg-light text-dark" title="Double EP">EP: ₹<?= number_format($rule['ep_price'], 2) ?></span><br>
                                     <span class="badge bg-light text-dark" title="Double CP">CP: ₹<?= number_format($rule['cp_price'], 2) ?></span><br>
@@ -533,58 +542,49 @@ if ($next_month > 12) {
                         </div>
                     </div>
                     
-                    <!-- Double Occupancy Prices -->
-                    <div class="row g-2 mb-15">
-                        <div class="col-12">
-                            <h6 style="font-size: 13px; font-weight: 700; color: #9c6047; margin-bottom: 5px;">Double Occupancy Rates *</h6>
-                        </div>
-                        <div class="col-4">
-                            <label class="form-label-custom">EP Price (₹) *</label>
-                            <input type="number" class="form-control-custom" name="ep_price" id="modalEP" min="0.01" step="0.01" required>
-                        </div>
-                        <div class="col-4">
-                            <label class="form-label-custom">CP Price (₹) *</label>
-                            <input type="number" class="form-control-custom" name="cp_price" id="modalCP" min="0.01" step="0.01" required>
-                        </div>
-                        <div class="col-4">
-                            <label class="form-label-custom">MAP Price (₹) *</label>
-                            <input type="number" class="form-control-custom" name="map_price" id="modalMAP" min="0.01" step="0.01" required>
-                        </div>
+                    <!-- Grid-Based compact pricing builder to eliminate scroll -->
+                    <div class="table-responsive mb-15">
+                        <table class="table table-bordered align-middle text-center mb-0" style="font-size: 13px;">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 25%; font-weight: 700; padding: 8px;">Occupancy</th>
+                                    <th style="width: 25%; font-weight: 700; padding: 8px;">EP Price (₹)</th>
+                                    <th style="width: 25%; font-weight: 700; padding: 8px;">CP Price (₹)</th>
+                                    <th style="width: 25%; font-weight: 700; padding: 8px;">MAP Price (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-start" style="padding: 8px; color: #475569;"><strong>Single</strong></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="price_single_ep" id="modalSingleEP" min="0" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;"></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="price_single_cp" id="modalSingleCP" min="0" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;"></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="price_single_map" id="modalSingleMAP" min="0" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start" style="padding: 8px; color: #475569;"><strong>Double *</strong></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="ep_price" id="modalEP" min="0.01" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;" required></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="cp_price" id="modalCP" min="0.01" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;" required></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="map_price" id="modalMAP" min="0.01" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;" required></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start" style="padding: 8px; color: #475569;"><strong>Triple</strong></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="price_triple_ep" id="modalTripleEP" min="0" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;"></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="price_triple_cp" id="modalTripleCP" min="0" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;"></td>
+                                    <td style="padding: 4px;"><input type="number" class="form-control" name="price_triple_map" id="modalTripleMAP" min="0" step="0.01" style="height:34px; padding:4px; font-size:13px; text-align:center; border-radius:6px; border: 1px solid #cbd5e1;"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <!-- Triple Occupancy Prices -->
                     <div class="row g-2 mb-15">
-                        <div class="col-12">
-                            <h6 style="font-size: 13px; font-weight: 700; color: #9c6047; margin-bottom: 5px;">Triple Occupancy Rates</h6>
+                        <div class="col-md-5 col-12">
+                            <label class="form-label-custom" style="font-weight: 700; font-size: 11.5px; color: #475569; margin-bottom: 4px;">Extra child above 8 yrs (₹)</label>
+                            <input type="number" class="form-control-custom" name="extra_child_price" id="modalExtraChild" min="0" step="0.01" style="height:36px; border-radius:6px; border: 1px solid #cbd5e1; padding: 6px 10px;">
                         </div>
-                        <div class="col-4">
-                            <label class="form-label-custom">EP Price (₹)</label>
-                            <input type="number" class="form-control-custom" name="price_triple_ep" id="modalTripleEP" min="0" step="0.01">
+                        <div class="col-md-7 col-12">
+                            <label class="form-label-custom" style="font-weight: 700; font-size: 11.5px; color: #475569; margin-bottom: 4px;">Reason / Notes</label>
+                            <input type="text" class="form-control-custom" name="reason" id="modalReason" placeholder="e.g. Diwali Peak, Weekend Surge" style="height:36px; border-radius:6px; border: 1px solid #cbd5e1; padding: 6px 10px;">
                         </div>
-                        <div class="col-4">
-                            <label class="form-label-custom">CP Price (₹)</label>
-                            <input type="number" class="form-control-custom" name="price_triple_cp" id="modalTripleCP" min="0" step="0.01">
-                        </div>
-                        <div class="col-4">
-                            <label class="form-label-custom">MAP Price (₹)</label>
-                            <input type="number" class="form-control-custom" name="price_triple_map" id="modalTripleMAP" min="0" step="0.01">
-                        </div>
-                    </div>
-
-                    <!-- Child Pricing -->
-                    <div class="row g-2 mb-15">
-                        <div class="col-12">
-                            <h6 style="font-size: 13px; font-weight: 700; color: #9c6047; margin-bottom: 5px;">Extra Guest Rates</h6>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label-custom">Extra price for child above 8 years (₹)</label>
-                            <input type="number" class="form-control-custom" name="extra_child_price" id="modalExtraChild" min="0" step="0.01">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group mb-0">
-                        <label class="form-label-custom">Reason / Notes</label>
-                        <input type="text" class="form-control-custom" name="reason" id="modalReason" placeholder="e.g. Diwali Festival, New Year Peak, Weekend Surge">
                     </div>
                 </div>
                 <div class="modal-footer bg-light py-12 px-24 border-top-0 d-flex justify-content-between">
@@ -631,6 +631,9 @@ if ($next_month > 12) {
         document.getElementById('modalEP').value = '';
         document.getElementById('modalCP').value = '';
         document.getElementById('modalMAP').value = '';
+        document.getElementById('modalSingleEP').value = '';
+        document.getElementById('modalSingleCP').value = '';
+        document.getElementById('modalSingleMAP').value = '';
         document.getElementById('modalTripleEP').value = '';
         document.getElementById('modalTripleCP').value = '';
         document.getElementById('modalTripleMAP').value = '';
@@ -652,6 +655,9 @@ if ($next_month > 12) {
         document.getElementById('modalEP').value = rule.ep_price;
         document.getElementById('modalCP').value = rule.cp_price;
         document.getElementById('modalMAP').value = rule.map_price;
+        document.getElementById('modalSingleEP').value = rule.price_single_ep || '';
+        document.getElementById('modalSingleCP').value = rule.price_single_cp || '';
+        document.getElementById('modalSingleMAP').value = rule.price_single_map || '';
         document.getElementById('modalTripleEP').value = rule.price_triple_ep || '';
         document.getElementById('modalTripleCP').value = rule.price_triple_cp || '';
         document.getElementById('modalTripleMAP').value = rule.price_triple_map || '';

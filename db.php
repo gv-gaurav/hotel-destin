@@ -58,7 +58,7 @@ function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $ro
         if ($rule) {
             $plan = strtolower(trim($meal_plan));
             
-            // Check occupancy (double vs triple)
+            // Check occupancy (single vs double vs triple)
             if ($adults >= 3) {
                 $col_name = "price_triple_" . $plan;
                 if (isset($rule[$col_name]) && (float)$rule[$col_name] > 0) {
@@ -67,8 +67,16 @@ function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $ro
                     // Fallback to Double rate
                     $base_price = (float)$rule[$plan . '_price'];
                 }
+            } elseif ($adults === 1) {
+                $col_name = "price_single_" . $plan;
+                if (isset($rule[$col_name]) && (float)$rule[$col_name] > 0) {
+                    $base_price = (float)$rule[$col_name];
+                } else {
+                    // Fallback to Double rate
+                    $base_price = (float)$rule[$plan . '_price'];
+                }
             } else {
-                // Double rate (or single)
+                // Double rate (or fallback)
                 $base_price = (float)$rule[$plan . '_price'];
             }
 
