@@ -106,7 +106,7 @@ if ($selected_category_id > 0) {
             WHERE room_category_id = ?
               AND start_date <= ?
               AND end_date >= ?
-            ORDER BY id ASC
+            ORDER BY DATEDIFF(end_date, start_date) DESC, id ASC
         ");
         $stmt->execute([$selected_category_id, $end_month_date, $start_month_date]);
         $calendar_rules = $stmt->fetchAll();

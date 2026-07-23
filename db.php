@@ -49,7 +49,7 @@ function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $ro
             WHERE room_category_id = ? 
               AND start_date <= ? 
               AND end_date >= ? 
-            ORDER BY id DESC 
+            ORDER BY DATEDIFF(end_date, start_date) ASC, id DESC 
             LIMIT 1
         ");
         $stmt->execute([$room_id, $date, $date]);
