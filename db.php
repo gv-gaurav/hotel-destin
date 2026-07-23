@@ -41,7 +41,7 @@ function get_setting($key, $default = '') {
 /**
  * Resolve room price for a specific date considering rate calendar overrides.
  */
-function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $room) {
+function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $room, $children = 0) {
     try {
         $stmt = $pdo->prepare("
             SELECT ep_price, cp_price, map_price 
@@ -65,10 +65,10 @@ function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $ro
                 $base_price = (float)$rule['ep_price'];
             }
 
-            // Add extra adult charge if adults > 2
-            if ($adults > 2) {
-                $extra_charge = isset($room['extra_adult_price']) ? (float)$room['extra_adult_price'] : 1000.00;
-                $base_price += ($adults - 2) * $extra_charge;
+            // Add extra child charge if children > 0
+            if ($children > 0) {
+                $child_charge = isset($room['extra_adult_price']) ? (float)$room['extra_adult_price'] : 1000.00;
+                $base_price += $children * $child_charge;
             }
             return $base_price;
         }
@@ -77,16 +77,23 @@ function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $ro
     }
     
     // Fallback: standard matrix pricing
-    $occupancy = ($adults >= 2) ? 'double' : 'single';
+    if ($adults >= 3) {
+        $occupancy = 'triple';
+    } elseif ($adults === 2) {
+        $occupancy = 'double';
+    } else {
+        $occupancy = 'single';
+    }
+    
     $plan = strtolower(trim($meal_plan));
     $column = "price_" . $occupancy . "_" . $plan;
     
     $base_price = isset($room[$column]) ? (float)$room[$column] : (float)$room['price'];
 
-    // Add extra adult charge if adults > 2
-    if ($adults > 2) {
-        $extra_charge = isset($room['extra_adult_price']) ? (float)$room['extra_adult_price'] : 1000.00;
-        $base_price += ($adults - 2) * $extra_charge;
+    // Add extra child charge if children > 0
+    if ($children > 0) {
+        $child_charge = isset($room['extra_adult_price']) ? (float)$room['extra_adult_price'] : 1000.00;
+        $base_price += $children * $child_charge;
     }
     
     return $base_price;

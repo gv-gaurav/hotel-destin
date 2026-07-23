@@ -71,44 +71,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Formulate premium HTML Invoice Email Body
                 $subject = "Booking Confirmed - Ref: " . $booking_id;
+                $child_ages_label = !empty($booking['child_ages']) ? " [Ages: " . htmlspecialchars($booking['child_ages']) . "]" : "";
+
                 $body = "
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e9ecf2; border-radius: 12px;'>
-                    <h2 style='color: #9c6047; text-align: center; border-bottom: 2px solid #9c6047; padding-bottom: 10px;'>HOTEL DESTIN GWALIOR</h2>
-                    <p>Dear <strong>" . htmlspecialchars($booking['customer_name']) . "</strong>,</p>
-                    <p>Thank you for booking with us. Your reservation is confirmed. Please find stay receipt particulars below:</p>
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e9ecf2; padding: 20px; border-radius: 8px;'>
+                    <h2 style='color: #3c7a4b; text-align: center;'>Hotel Destin - Booking Confirmed</h2>
+                    <p style='font-size: 15px;'>Dear " . htmlspecialchars($booking['customer_name']) . ",</p>
+                    <p style='font-size: 14px;'>Thank you for choosing Hotel Destin Gwalior. Your online transaction was completed successfully, and your stay details are listed below:</p>
                     
-                    <table style='width: 100%; border-collapse: collapse; margin: 20px 0;'>
+                    <table style='width: 100%; border-collapse: collapse; margin-top: 15px;'>
                         <tr style='background: #f7f9fc;'>
-                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Booking Reference ID</td>
-                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking_id) . "</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Booking ID / Ref</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold; color: #9c6047;'>" . htmlspecialchars($booking_id) . "</td>
                         </tr>
                         <tr>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Invoice Number</td>
-                            <td style='padding: 10px; border: 1px solid #e9ecf2;'><strong>" . htmlspecialchars($invoice_no) . "</strong></td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>" . htmlspecialchars($invoice_no) . "</td>
                         </tr>
                         <tr style='background: #f7f9fc;'>
-                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Room Type</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Room Category</td>
                             <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['room_title']) . "</td>
                         </tr>
-                        <tr style='background: #f7f9fc;'>
+                        <tr>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Check-In Date</td>
                             <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['check_in']) . "</td>
                         </tr>
-                        <tr>
+                        <tr style='background: #f7f9fc;'>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Check-Out Date</td>
                             <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['check_out']) . "</td>
                         </tr>
-                        <tr style='background: #f7f9fc;'>
-                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Nights</td>
+                        <tr>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Duration</td>
                             <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['total_nights']) . " night(s)</td>
                         </tr>
-                        <tr>
+                        <tr style='background: #f7f9fc;'>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Meal Plan</td>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>" . htmlspecialchars($booking['meal_plan']) . "</td>
                         </tr>
                         <tr style='background: #f7f9fc;'>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Guests Count</td>
-                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['guests']) . " guest(s) (Adults: " . htmlspecialchars($booking['adults']) . ", Children: " . htmlspecialchars($booking['children']) . ")</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['guests']) . " guest(s) (Adults: " . htmlspecialchars($booking['adults']) . ", Children: " . htmlspecialchars($booking['children']) . $child_ages_label . ")</td>
                         </tr>
                         <tr>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Base Amount</td>
@@ -154,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $booking_msg .= "*Check-out:* " . $booking['check_out'] . "\n";
                 $booking_msg .= "*Nights:* " . $booking['total_nights'] . " night(s)\n";
                 $booking_msg .= "*Meal Plan:* " . $booking['meal_plan'] . "\n";
-                $booking_msg .= "*Guests:* " . $booking['guests'] . " (Adults: " . $booking['adults'] . ", Children: " . $booking['children'] . ")\n";
+                $booking_msg .= "*Guests:* " . $booking['guests'] . " (Adults: " . $booking['adults'] . ", Children: " . $booking['children'] . $child_ages_label . ")\n";
                 $booking_msg .= "*Amount Paid:* ₹" . number_format($booking['total_amount'], 2) . "\n";
                 if (!empty($booking['special_request'])) {
                     $booking_msg .= "*Special Request:* " . $booking['special_request'] . "\n";

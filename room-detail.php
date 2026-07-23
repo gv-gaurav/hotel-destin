@@ -643,10 +643,17 @@ if (empty($images)) {
                                         <input id="detailAdults" class="form-control-custom" type="number" name="adults" value="<?= htmlspecialchars($adults) ?>" min="1" max="5" required style="height:38px; font-size:12.5px;">
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label-custom" style="font-size:11.5px; font-weight:700;">Child Guests</label>
-                                        <input id="detailChildren" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children) ?>" min="0" max="4" required style="height:38px; font-size:12.5px;">
-                                    </div>
-                                </div>
+                                         <label class="form-label-custom" style="font-size:11.5px; font-weight:700;">Child Guests</label>
+                                         <input id="detailChildren" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children) ?>" min="0" max="4" required style="height:38px; font-size:12.5px;" onchange="updateDetailChildAgesFields()">
+                                     </div>
+                                 </div>
+
+                                 <div class="col-12" id="detailChildAgesWrapper" style="display: none; margin-bottom: 15px; margin-top: 10px;">
+                                     <label class="form-label-custom" style="font-size: 11.5px; font-weight: 700; color: #9c6047;">Specify Child Ages *</label>
+                                     <div id="detailChildAgesFields" class="row g-2"></div>
+                                     <div id="detailOccupancyWarning" class="text-danger mt-2" style="display: none; font-size: 11.5px; font-weight: 700; background: #fff5f5; border: 1px solid #ffe3e3; padding: 6px 10px; border-radius: 4px;"></div>
+                                     <span style="font-size: 10.5px; color: #64748b; display: block; margin-top: 4px;">* Child Policy: Children under 8 years stay free. Children 8 years and above pay child rates.</span>
+                                 </div>
 
                                 <label class="form-label-custom mb-10" style="display:block; font-weight:700;">Select Tariff Meal Plan *</label>
 
@@ -736,6 +743,11 @@ if (empty($images)) {
                 EP: <?= floatval($room['price_double_ep'] ?? 0) ?>,
                 CP: <?= floatval($room['price_double_cp'] ?? 0) ?>,
                 MAP: <?= floatval($room['price_double_map'] ?? 0) ?>
+            },
+            triple: {
+                EP: <?= floatval($room['price_triple_ep'] ?? 0) ?>,
+                CP: <?= floatval($room['price_triple_cp'] ?? 0) ?>,
+                MAP: <?= floatval($room['price_triple_map'] ?? 0) ?>
             }
         };
 
@@ -782,6 +794,12 @@ if (empty($images)) {
             var checkIn = $('#detailCheckIn').val();
             var checkOut = $('#detailCheckOut').val();
             var adults = parseInt($('#detailAdults').val()) || 2;
+            var children = parseInt($('#detailChildren').val()) || 0;
+            var childAges = [];
+            $('.detail-child-age-input').each(function() {
+                var age = parseInt($(this).val()) || 0;
+                childAges.push(age);
+            });
             var roomId = <?= intval($room['id']) ?>;
 
             if (!checkIn || !checkOut) return;
@@ -794,6 +812,8 @@ if (empty($images)) {
                     check_in: checkIn,
                     check_out: checkOut,
                     adults: adults,
+                    children: children,
+                    child_ages: childAges,
                     room_id: roomId
                 },
                 dataType: 'json',
@@ -827,13 +847,75 @@ if (empty($images)) {
             });
         }
 
+        function updateDetailChildAgesFields() {
+            var numChildren = parseInt($('#detailChildren').val()) || 0;
+            var wrapper = $('#detailChildAgesWrapper');
+            var fieldsContainer = $('#detailChildAgesFields');
+            
+            if (numChildren > 0) {
+                var currentSelected = [];
+                $('.detail-child-age-input').each(function() {
+                    currentSelected.push($(this).val());
+                });
+                
+                fieldsContainer.empty();
+                for (var i = 1; i <= numChildren; i++) {
+                    var val = currentSelected[i - 1] || '5'; // default to 5 (free)
+                    var fieldHtml = `
+                        <div class="col-6">
+                            <div class="form-group mb-2">
+                                <label class="form-label-custom" style="font-size:11px;">Child ${i} Age</label>
+                                <select class="form-control-custom detail-child-age-input" name="child_ages[]" style="height:36px; padding: 0 10px; font-size:12px;">
+                                    ${Array.from({length: 18}, (_, k) => k).map(age => `
+                                        <option value="${age}" ${age == val ? 'selected' : ''}>${age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''))}</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                    fieldsContainer.append(fieldHtml);
+                }
+                wrapper.show();
+                $('.detail-child-age-input').off('change').on('change', function() {
+                    checkDetailEffectiveOccupancy();
+                    recalculateStayTotals();
+                });
+            } else {
+                fieldsContainer.empty();
+                wrapper.hide();
+            }
+            checkDetailEffectiveOccupancy();
+        }
+
+        function checkDetailEffectiveOccupancy() {
+            var adults = parseInt($('#detailAdults').val()) || 2;
+            var children = parseInt($('#detailChildren').val()) || 0;
+            
+            var errorMsg = '';
+            if (adults > 3) {
+                errorMsg = 'Exceeds max room capacity of 3 adults.';
+            } else if (adults === 3 && children > 0) {
+                errorMsg = 'Children not allowed when reserving for 3 adults.';
+            }
+            
+            if (errorMsg) {
+                $('#detailOccupancyWarning').text(errorMsg).show();
+                $('.btn-book-now').prop('disabled', true).addClass('opacity-50');
+            } else {
+                $('#detailOccupancyWarning').hide();
+                $('.btn-book-now').prop('disabled', false).removeClass('opacity-50');
+            }
+        }
+
         $(document).ready(function() {
             // Recalculate cost when dates or guest counts change
             $('#detailCheckIn, #detailCheckOut, #detailAdults, #detailChildren').change(function() {
+                updateDetailChildAgesFields();
                 recalculateStayTotals();
             });
 
             // Initial calculation run
+            updateDetailChildAgesFields();
             recalculateStayTotals();
 
             // Initialize Magnific Popup for room gallery

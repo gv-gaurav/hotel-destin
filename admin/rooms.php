@@ -48,6 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $price_double_ep = isset($_POST['price_double_ep']) ? floatval($_POST['price_double_ep']) : 0;
             $price_double_cp = isset($_POST['price_double_cp']) ? floatval($_POST['price_double_cp']) : 0;
             $price_double_map = isset($_POST['price_double_map']) ? floatval($_POST['price_double_map']) : 0;
+            $price_triple_ep = isset($_POST['price_triple_ep']) ? floatval($_POST['price_triple_ep']) : 0;
+            $price_triple_cp = isset($_POST['price_triple_cp']) ? floatval($_POST['price_triple_cp']) : 0;
+            $price_triple_map = isset($_POST['price_triple_map']) ? floatval($_POST['price_triple_map']) : 0;
             $status_badge = isset($_POST['status_badge']) ? htmlspecialchars(trim($_POST['status_badge'])) : 'POPULAR';
             $rating = isset($_POST['rating']) ? htmlspecialchars(trim($_POST['rating'])) : 'G 4.8 ★';
             $banner_text = isset($_POST['banner_text']) ? htmlspecialchars(trim($_POST['banner_text'])) : '';
@@ -62,8 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             } else {
                 if ($action === 'add') {
                     try {
-                        $stmt = $pdo->prepare("INSERT INTO rooms (slug, title, type, price, struck_price, discount, code, inventory, capacity_adults, capacity_children, description, status, price_single_ep, price_single_cp, price_single_map, price_double_ep, price_double_cp, price_double_map, status_badge, rating, banner_text, extra_adult_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmt->execute([$slug, $title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $banner_text, $extra_adult_price]);
+                        $stmt = $pdo->prepare("INSERT INTO rooms (slug, title, type, price, struck_price, discount, code, inventory, capacity_adults, capacity_children, description, status, price_single_ep, price_single_cp, price_single_map, price_double_ep, price_double_cp, price_double_map, price_triple_ep, price_triple_cp, price_triple_map, status_badge, rating, banner_text, extra_adult_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->execute([$slug, $title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $price_triple_ep, $price_triple_cp, $price_triple_map, $status_badge, $rating, $banner_text, $extra_adult_price]);
 
                         // Get last inserted room ID to add facilities
                         $new_room_id = $pdo->lastInsertId();
@@ -133,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 } else if ($action === 'edit') {
                     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
                     try {
-                        $stmt = $pdo->prepare("UPDATE rooms SET title = ?, type = ?, price = ?, struck_price = ?, discount = ?, code = ?, inventory = ?, capacity_adults = ?, capacity_children = ?, description = ?, status = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_double_ep = ?, price_double_cp = ?, price_double_map = ?, status_badge = ?, rating = ?, banner_text = ?, extra_adult_price = ? WHERE id = ?");
-                        $stmt->execute([$title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $banner_text, $extra_adult_price, $id]);
+                        $stmt = $pdo->prepare("UPDATE rooms SET title = ?, type = ?, price = ?, struck_price = ?, discount = ?, code = ?, inventory = ?, capacity_adults = ?, capacity_children = ?, description = ?, status = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_double_ep = ?, price_double_cp = ?, price_double_map = ?, price_triple_ep = ?, price_triple_cp = ?, price_triple_map = ?, status_badge = ?, rating = ?, banner_text = ?, extra_adult_price = ? WHERE id = ?");
+                        $stmt->execute([$title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $price_triple_ep, $price_triple_cp, $price_triple_map, $status_badge, $rating, $banner_text, $extra_adult_price, $id]);
 
                         // Process amenities update
                         if (isset($_POST['facilities'])) {
@@ -324,7 +327,7 @@ try {
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="form-label-custom">Extra Adult Charge (₹/night)</label>
+                        <label class="form-label-custom">Extra price for child above 8 years (₹/night)</label>
                         <input id="roomExtraAdultPrice" class="form-control-custom" type="number" name="extra_adult_price" step="0.01" value="1000.00" required>
                     </div>
                 </div>
@@ -415,6 +418,26 @@ try {
                     <div class="form-group">
                         <label class="form-label-custom">Double Occupancy MAP Price (₹) *</label>
                         <input id="roomPriceDoubleMAP" class="form-control-custom" type="number" name="price_double_map" step="0.01" required>
+                    </div>
+                </div>
+
+                <!-- Triple occupancy meal pricing -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label-custom">Triple Occupancy EP Price (₹) *</label>
+                        <input id="roomPriceTripleEP" class="form-control-custom" type="number" name="price_triple_ep" step="0.01" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label-custom">Triple Occupancy CP Price (₹) *</label>
+                        <input id="roomPriceTripleCP" class="form-control-custom" type="number" name="price_triple_cp" step="0.01" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label-custom">Triple Occupancy MAP Price (₹) *</label>
+                        <input id="roomPriceTripleMAP" class="form-control-custom" type="number" name="price_triple_map" step="0.01" required>
                     </div>
                 </div>
 
@@ -604,6 +627,9 @@ try {
         document.getElementById('roomPriceDoubleEP').value = room.price_double_ep || '';
         document.getElementById('roomPriceDoubleCP').value = room.price_double_cp || '';
         document.getElementById('roomPriceDoubleMAP').value = room.price_double_map || '';
+        document.getElementById('roomPriceTripleEP').value = room.price_triple_ep || '';
+        document.getElementById('roomPriceTripleCP').value = room.price_triple_cp || '';
+        document.getElementById('roomPriceTripleMAP').value = room.price_triple_map || '';
         document.getElementById('roomMainImage').value = '';
 
         // Display main image preview

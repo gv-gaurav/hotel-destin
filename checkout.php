@@ -38,7 +38,16 @@ if (isset($_POST['action']) && $_POST['action'] === 'get_pricing') {
     $check_in = isset($_POST['check_in']) ? trim($_POST['check_in']) : '';
     $check_out = isset($_POST['check_out']) ? trim($_POST['check_out']) : '';
     $adults = isset($_POST['adults']) ? intval($_POST['adults']) : 2;
+    $children = isset($_POST['children']) ? intval($_POST['children']) : 0;
+    $child_ages = isset($_POST['child_ages']) && is_array($_POST['child_ages']) ? $_POST['child_ages'] : [];
     $room_id = isset($_POST['room_id']) ? intval($_POST['room_id']) : 0;
+    
+    $chargeable_children = 0;
+    foreach ($child_ages as $age) {
+        if (intval($age) >= 8) {
+            $chargeable_children++;
+        }
+    }
 
     // Fetch room from DB
     $room_data = null;
@@ -68,9 +77,9 @@ if (isset($_POST['action']) && $_POST['action'] === 'get_pricing') {
     $curr_date_ptr = clone $date1;
     while ($curr_date_ptr < $date2) {
         $date_str = $curr_date_ptr->format('Y-m-d');
-        $ep_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'EP', $adults, $room_data);
-        $cp_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'CP', $adults, $room_data);
-        $map_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'MAP', $adults, $room_data);
+        $ep_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'EP', $adults, $room_data, $chargeable_children);
+        $cp_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'CP', $adults, $room_data, $chargeable_children);
+        $map_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'MAP', $adults, $room_data, $chargeable_children);
         $curr_date_ptr->modify('+1 day');
     }
 
@@ -105,6 +114,7 @@ $checkin_param = isset($_GET['checkin']) ? trim($_GET['checkin']) : '';
 $checkout_param = isset($_GET['checkout']) ? trim($_GET['checkout']) : '';
 $adults_param = isset($_GET['adults']) ? intval($_GET['adults']) : 2;
 $children_param = isset($_GET['children']) ? intval($_GET['children']) : 0;
+$child_ages_param = isset($_GET['child_ages']) && is_array($_GET['child_ages']) ? $_GET['child_ages'] : (isset($_GET['child_ages']) ? explode(',', $_GET['child_ages']) : []);
 $meal_plan_param = isset($_GET['meal_plan']) ? htmlspecialchars(trim($_GET['meal_plan'])) : 'EP';
 $room = null;
 
@@ -143,6 +153,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
     $check_out = isset($_POST['check_out']) ? htmlspecialchars(trim($_POST['check_out'])) : '';
     $adults = isset($_POST['adults']) ? intval($_POST['adults']) : 2;
     $children = isset($_POST['children']) ? intval($_POST['children']) : 0;
+    $child_ages = isset($_POST['child_ages']) && is_array($_POST['child_ages']) ? $_POST['child_ages'] : [];
+    $child_ages_str = !empty($child_ages) ? implode(',', $child_ages) : '';
+    
+    $chargeable_children = 0;
+    foreach ($child_ages as $age) {
+        if (intval($age) >= 8) {
+            $chargeable_children++;
+        }
+    }
+    
     $meal_plan = isset($_POST['meal_plan']) ? htmlspecialchars(trim($_POST['meal_plan'])) : 'EP';
     $coupon_code = isset($_POST['coupon_code']) ? strtoupper(trim($_POST['coupon_code'])) : '';
     $special_request = isset($_POST['special_request']) ? htmlspecialchars(trim($_POST['special_request'])) : '';
@@ -185,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         $end_date_ptr = new DateTime($check_out);
         while ($curr_date_ptr < $end_date_ptr) {
             $date_str = $curr_date_ptr->format('Y-m-d');
-            $base_price += get_resolved_room_price($pdo, $room['id'], $date_str, $meal_plan, $adults, $room);
+            $base_price += get_resolved_room_price($pdo, $room['id'], $date_str, $meal_plan, $adults, $room, $chargeable_children);
             $curr_date_ptr->modify('+1 day');
         }
         $discount_amount = 0.00;
@@ -220,11 +240,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             try {
                 $ins_stmt = $pdo->prepare("INSERT INTO bookings (
                     booking_id, customer_name, customer_email, customer_phone, 
-                    check_in, check_out, guests, meal_plan, adults, children, 
+                    check_in, check_out, guests, meal_plan, adults, children, child_ages,
                     room_id, coupon_code, total_nights, subtotal, tax, 
                     base_amount, tax_amount, discount_amount, total_amount, 
                     payment_status, booking_status, special_request, payment_method
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'confirmed', ?, 'Pay at Hotel')");
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'confirmed', ?, 'Pay at Hotel')");
 
                 $ins_stmt->execute([
                     $booking_id,
@@ -237,6 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     $meal_plan,
                     $adults,
                     $children,
+                    $child_ages_str,
                     $room['id'],
                     !empty($coupon_code) ? $coupon_code : null,
                     $nights,
@@ -252,6 +273,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 // Send HTML confirmation email
                 require_once __DIR__ . '/mail-helper.php';
                 $subject = "Reservation Confirmed (Pay Offline on Arrival) - Ref: " . $booking_id;
+                $child_ages_label = !empty($child_ages_str) ? " [Ages: " . htmlspecialchars($child_ages_str) . "]" : "";
+
                 $body = "
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e9ecf2; border-radius: 12px;'>
                     <h2 style='color: #9c6047; text-align: center; border-bottom: 2px solid #9c6047; padding-bottom: 10px;'>HOTEL DESTIN GWALIOR</h2>
@@ -286,7 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                         </tr>
                         <tr style='background: #f7f9fc;'>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Guests Count</td>
-                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($guests) . " guest(s) (Adults: " . htmlspecialchars($adults) . ", Children: " . htmlspecialchars($children) . ")</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($guests) . " guest(s) (Adults: " . htmlspecialchars($adults) . ", Children: " . htmlspecialchars($children) . $child_ages_label . ")</td>
                         </tr>
                         <tr>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Base Amount</td>
@@ -331,7 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 $booking_msg .= "*Check-out:* " . $check_out . "\n";
                 $booking_msg .= "*Nights:* " . $nights . " night(s)\n";
                 $booking_msg .= "*Meal Plan:* " . $meal_plan . "\n";
-                $booking_msg .= "*Guests:* " . $guests . " (Adults: " . $adults . ", Children: " . $children . ")\n";
+                $booking_msg .= "*Guests:* " . $guests . " (Adults: " . $adults . ", Children: " . $children . $child_ages_label . ")\n";
                 $booking_msg .= "*Total Cost:* ₹" . number_format($total_amount, 2) . "\n";
                 if (!empty($special_request)) {
                     $booking_msg .= "*Special Request:* " . $special_request . "\n";
@@ -359,11 +382,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             try {
                 $ins_stmt = $pdo->prepare("INSERT INTO bookings (
                     booking_id, customer_name, customer_email, customer_phone, 
-                    check_in, check_out, guests, meal_plan, adults, children, 
+                    check_in, check_out, guests, meal_plan, adults, children, child_ages,
                     room_id, coupon_code, total_nights, subtotal, tax, 
                     base_amount, tax_amount, discount_amount, total_amount, 
                     payment_status, booking_status, special_request, razorpay_order_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
 
                 $ins_stmt->execute([
                     $booking_id,
@@ -376,6 +399,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     $meal_plan,
                     $adults,
                     $children,
+                    $child_ages_str,
                     $room['id'],
                     !empty($coupon_code) ? $coupon_code : null,
                     $nights,
@@ -409,11 +433,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
                 $ins_stmt = $pdo->prepare("INSERT INTO bookings (
                     booking_id, customer_name, customer_email, customer_phone, 
-                    check_in, check_out, guests, meal_plan, adults, children, 
+                    check_in, check_out, guests, meal_plan, adults, children, child_ages,
                     room_id, coupon_code, total_nights, subtotal, tax, 
                     base_amount, tax_amount, discount_amount, total_amount, 
                     payment_status, booking_status, special_request, razorpay_order_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
 
                 $ins_stmt->execute([
                     $booking_id,
@@ -426,6 +450,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     $meal_plan,
                     $adults,
                     $children,
+                    $child_ages_str,
                     $room['id'],
                     !empty($coupon_code) ? $coupon_code : null,
                     $nights,
@@ -445,11 +470,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
                 $ins_stmt = $pdo->prepare("INSERT INTO bookings (
                     booking_id, customer_name, customer_email, customer_phone, 
-                    check_in, check_out, guests, meal_plan, adults, children, 
+                    check_in, check_out, guests, meal_plan, adults, children, child_ages,
                     room_id, coupon_code, total_nights, subtotal, tax, 
                     base_amount, tax_amount, discount_amount, total_amount, 
                     payment_status, booking_status, special_request, razorpay_order_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)");
 
                 $ins_stmt->execute([
                     $booking_id,
@@ -462,6 +487,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     $meal_plan,
                     $adults,
                     $children,
+                    $child_ages_str,
                     $room['id'],
                     !empty($coupon_code) ? $coupon_code : null,
                     $nights,
@@ -814,6 +840,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                             <input id="childrenInput" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children_param) ?>" min="0" max="4" required>
                                         </div>
                                     </div>
+                                    
+                                    <div class="col-12" id="childAgesWrapper" style="display: none; margin-bottom: 15px;">
+                                        <label class="form-label-custom" style="font-weight: 700; color: #9c6047;">Specify Child Ages *</label>
+                                        <div id="childAgesFields" class="row g-2"></div>
+                                        <div id="occupancyWarning" class="text-danger mt-2" style="display: none; font-size: 12px; font-weight: 700; background: #fff5f5; border: 1px solid #ffe3e3; padding: 6px 10px; border-radius: 4px;"></div>
+                                        <span style="font-size: 11px; color: #64748b; display: block; margin-top: 4px;">* Child Policy: Children under 8 years stay free. Children 8 years and above pay child rates.</span>
+                                    </div>
+
                                     <div class="col-md-6 col-12">
                                         <div class="form-group">
                                             <label class="form-label-custom">Meal Plan *</label>
@@ -1187,6 +1221,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 var checkIn = $('#checkInDate').val();
                 var checkOut = $('#checkOutDate').val();
                 var adults = parseInt($('#adultsInput').val()) || 2;
+                var children = parseInt($('#childrenInput').val()) || 0;
+                var childAges = [];
+                $('.child-age-input').each(function() {
+                    childAges.push($(this).val());
+                });
                 var mealPlan = $('#mealPlanSelect').val() || 'EP';
                 var roomId = <?= intval($room['id']) ?>;
 
@@ -1200,6 +1239,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                         check_in: checkIn,
                         check_out: checkOut,
                         adults: adults,
+                        children: children,
+                        child_ages: childAges,
                         room_id: roomId
                     },
                     dataType: 'json',
@@ -1277,6 +1318,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
             $(document).on('change', 'input[name="payment_method"]', updateSubmitButton);
 
+            // Dynamically populate child age fields (0-17 years old)
+            function updateChildAgesFields() {
+                var numChildren = parseInt($('#childrenInput').val()) || 0;
+                var wrapper = $('#childAgesWrapper');
+                var fieldsContainer = $('#childAgesFields');
+                
+                if (numChildren > 0) {
+                    var prefilledAges = <?= json_encode($child_ages_param) ?>;
+                    
+                    // Preserve any current user-selected child age values
+                    var currentSelectedAges = [];
+                    $('.child-age-input').each(function() {
+                        currentSelectedAges.push($(this).val());
+                    });
+                    
+                    fieldsContainer.empty();
+                    for (var i = 1; i <= numChildren; i++) {
+                        var val = currentSelectedAges[i - 1] || prefilledAges[i - 1] || '5'; // default to 5 years (free)
+                        var fieldHtml = `
+                            <div class="col-md-3 col-6">
+                                <div class="form-group mb-2">
+                                    <label class="form-label-custom" style="font-size:11px;">Child ${i} Age</label>
+                                    <select class="form-control-custom child-age-input" name="child_ages[]" style="height:36px; padding: 0 10px; font-size:12px;">
+                                        ${Array.from({length: 18}, (_, k) => k).map(age => `
+                                            <option value="${age}" ${age == val ? 'selected' : ''}>${age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''))}</option>
+                                        `).join('')}
+                                    </select>
+                                </div>
+                            </div>
+                        `;
+                        fieldsContainer.append(fieldHtml);
+                    }
+                    wrapper.show();
+                    // Bind change listener to new inputs to recalculate pricing and check occupancy warnings
+                    $('.child-age-input').off('change').on('change', function() {
+                        checkEffectiveOccupancy();
+                        recalculatePrices();
+                    });
+                } else {
+                    fieldsContainer.empty();
+                    wrapper.hide();
+                }
+                checkEffectiveOccupancy();
+            }
+
+            // Enforce occupancy rules
+            function checkEffectiveOccupancy() {
+                var adults = parseInt($('#adultsInput').val()) || 1;
+                var totalChildren = parseInt($('#childrenInput').val()) || 0;
+                
+                var errorMsg = '';
+                if (adults > 3) {
+                    errorMsg = 'Maximum room capacity is 3 adults.';
+                } else if (adults === 3 && totalChildren > 0) {
+                    errorMsg = 'Children are not allowed when reserving for 3 adults in a single room.';
+                }
+                
+                if (errorMsg) {
+                    $('#occupancyWarning').text(errorMsg).show();
+                    $('.btn-payment').prop('disabled', true).addClass('opacity-50');
+                } else {
+                    $('#occupancyWarning').hide();
+                    $('.btn-payment').prop('disabled', false).removeClass('opacity-50');
+                }
+            }
+
             // Enforce occupancy rules inside checkout form input fields
             $('#adultsInput, #childrenInput').on('change input', function() {
                 var adults = parseInt($('#adultsInput').val()) || 1;
@@ -1288,10 +1395,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 } else {
                     $('#childrenInput').attr('max', 4);
                 }
+                updateChildAgesFields();
                 recalculatePrices();
             });
 
             // Initial execution on page load
+            updateChildAgesFields();
             recalculatePrices();
         });
 
