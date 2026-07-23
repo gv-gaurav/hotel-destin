@@ -44,7 +44,7 @@ function get_setting($key, $default = '') {
 function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $room, $children = 0) {
     try {
         $stmt = $pdo->prepare("
-            SELECT ep_price, cp_price, map_price 
+            SELECT * 
             FROM room_rate_calendars 
             WHERE room_category_id = ? 
               AND start_date <= ? 
@@ -57,17 +57,29 @@ function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $ro
         
         if ($rule) {
             $plan = strtolower(trim($meal_plan));
-            if ($plan === 'cp') {
-                $base_price = (float)$rule['cp_price'];
-            } elseif ($plan === 'map') {
-                $base_price = (float)$rule['map_price'];
+            
+            // Check occupancy (double vs triple)
+            if ($adults >= 3) {
+                $col_name = "price_triple_" . $plan;
+                if (isset($rule[$col_name]) && (float)$rule[$col_name] > 0) {
+                    $base_price = (float)$rule[$col_name];
+                } else {
+                    // Fallback to Double rate
+                    $base_price = (float)$rule[$plan . '_price'];
+                }
             } else {
-                $base_price = (float)$rule['ep_price'];
+                // Double rate (or single)
+                $base_price = (float)$rule[$plan . '_price'];
             }
 
             // Add extra child charge if children > 0
             if ($children > 0) {
-                $child_charge = isset($room['extra_adult_price']) ? (float)$room['extra_adult_price'] : 1000.00;
+                $child_charge = 0.00;
+                if (isset($rule['extra_child_price']) && (float)$rule['extra_child_price'] > 0) {
+                    $child_charge = (float)$rule['extra_child_price'];
+                } else {
+                    $child_charge = isset($room['extra_adult_price']) ? (float)$room['extra_adult_price'] : 1000.00;
+                }
                 $base_price += $children * $child_charge;
             }
             return $base_price;
