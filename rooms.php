@@ -1155,25 +1155,52 @@ usort($rooms, function ($a, $b) {
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Group booking notice banner -->
-                <div class="bulk-booking-card" style="margin-top: 40px; margin-bottom: 20px;">
-                    <div class="bulk-card-wrapper">
-                        <div class="bulk-card-content">
-                            <div class="bulk-card-icon">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                </svg>
-                            </div>
-                            <div class="bulk-card-text">
-                                <h3>Looking to Book the Entire Hotel?</h3>
-                                <p>Host group events, weddings, or corporate stays. Get custom packages, dedicated service, and exclusive rates for booking all room categories together.</p>
+                <!-- Side-by-side Group Booking & Hourly Stay Banners -->
+                <div class="row" style="margin-top: 40px; margin-bottom: 20px;">
+                    <div class="col-12 col-lg-6 mb-20 mb-lg-0">
+                        <div class="bulk-booking-card" style="height: 100%;">
+                            <div class="bulk-card-wrapper" style="flex-direction: column; align-items: flex-start; gap: 15px; height: 100%;">
+                                <div class="bulk-card-content" style="display: flex; gap: 16px; align-items: flex-start;">
+                                    <div class="bulk-card-icon" style="flex-shrink: 0;">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="bulk-card-text">
+                                        <h3 style="font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 6px;">Looking to Book the Entire Hotel?</h3>
+                                        <p style="font-size: 13px; line-height: 1.5; color: #d1d5db; margin: 0;">Host group events, weddings, or corporate stays. Get custom packages, dedicated service, and exclusive rates for booking all room categories together.</p>
+                                    </div>
+                                </div>
+                                <div class="bulk-card-action" style="width: 100%; margin-top: auto; padding-top: 15px;">
+                                    <button class="bulk-booking-btn w-100" data-bs-toggle="modal" data-bs-target="#bulkBookingModal" style="padding: 12px; font-size: 14px; font-weight: 700; border-radius: 8px;">
+                                        Request Group Stay Quote
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="bulk-card-action">
-                            <button class="bulk-booking-btn" data-bs-toggle="modal" data-bs-target="#bulkBookingModal">
-                                Request Group Stay Quote
-                            </button>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="bulk-booking-card" style="height: 100%;">
+                            <div class="bulk-card-wrapper" style="flex-direction: column; align-items: flex-start; gap: 15px; height: 100%;">
+                                <div class="bulk-card-content" style="display: flex; gap: 16px; align-items: flex-start;">
+                                    <div class="bulk-card-icon" style="flex-shrink: 0; background: rgba(161, 122, 66, 0.15); color: #a17a42;">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="bulk-card-text">
+                                        <h3 style="font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 6px;">Need a Room for Few Hours?</h3>
+                                        <p style="font-size: 13px; line-height: 1.5; color: #d1d5db; margin: 0;">Book a room on hourly basis for short stays, transits, or business stops. Minimum booking is 4 hours with dynamic pricing starting from just ₹250/hour.</p>
+                                    </div>
+                                </div>
+                                <div class="bulk-card-action" style="width: 100%; margin-top: auto; padding-top: 15px;">
+                                    <button class="bulk-booking-btn w-100" data-bs-toggle="modal" data-bs-target="#hourlyStayModal" style="background: #a17a42; border-color: #a17a42; padding: 12px; font-size: 14px; font-weight: 700; border-radius: 8px;">
+                                        Book Hourly Stay Now
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

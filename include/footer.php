@@ -563,7 +563,170 @@
       left: 20px;
     }
   }
+
+  /* Hourly Stay Room Cards Styling */
+  .hourly-room-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .hourly-room-card:hover {
+    border-color: #cbd5e1;
+  }
+  .hourly-room-card.selected {
+    border-color: #a17a42 !important;
+    background: rgba(161, 122, 66, 0.03) !important;
+    box-shadow: 0 4px 10px rgba(161, 122, 66, 0.1) !important;
+  }
+  .hourly-room-card.selected::before {
+    content: '✓';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #a17a42;
+    color: #fff;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+    z-index: 5;
+  }
 </style>
+
+<?php
+// Load hourly rates for the 3 categories standard, executive, premium
+$hourly_rates = [
+    'standard' => 250,
+    'executive' => 350,
+    'premium' => 500
+];
+try {
+    if (isset($pdo)) {
+        $stmt_h = $pdo->query("SELECT key_name, val_content FROM settings WHERE key_name IN ('hourly_rate_standard', 'hourly_rate_executive', 'hourly_rate_premium')");
+        while ($row_h = $stmt_h->fetch()) {
+            if ($row_h['key_name'] === 'hourly_rate_standard') $hourly_rates['standard'] = (float)$row_h['val_content'];
+            if ($row_h['key_name'] === 'hourly_rate_executive') $hourly_rates['executive'] = (float)$row_h['val_content'];
+            if ($row_h['key_name'] === 'hourly_rate_premium') $hourly_rates['premium'] = (float)$row_h['val_content'];
+        }
+    }
+} catch (Exception $e) {
+    // Fail silently
+}
+
+// Load room categories and main images dynamically
+$hourly_rooms = [];
+try {
+    if (isset($pdo)) {
+        $stmt_r = $pdo->query("SELECT id, title, image_path FROM rooms WHERE id IN (1, 2, 3) ORDER BY id ASC");
+        $hourly_rooms = $stmt_r->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (Exception $e) {
+    // Fail silently
+}
+// Fallback if empty
+if (count($hourly_rooms) < 3) {
+    $hourly_rooms = [
+        ['id' => 1, 'title' => 'Standard Room - Hotel Destin', 'image_path' => 'assets/imgs/page/room/banner-room.png'],
+        ['id' => 2, 'title' => 'Executive Room - Hotel Destin', 'image_path' => 'assets/imgs/page/room/banner-room2.png'],
+        ['id' => 3, 'title' => 'Premium Room - Hotel Destin', 'image_path' => 'assets/imgs/page/pages/banner.png']
+    ];
+}
+?>
+
+<!-- Hourly Stay Modal -->
+<div class="modal fade" id="hourlyStayModal" tabindex="-1" aria-labelledby="hourlyStayModalLabel" aria-hidden="true" style="z-index: 99999;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+      <div class="modal-header border-bottom-0" style="padding: 25px 30px 10px 30px;">
+        <h3 class="modal-title font-heading" id="hourlyStayModalLabel" style="font-size: 20px; color: #0f172a; font-weight: 700;">Book Hourly Stay</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 14px;"></button>
+      </div>
+      <div class="modal-body" style="padding: 10px 30px 30px 30px;">
+        <div id="hourlyBookingAlert" class="alert d-none" role="alert" style="border-radius: 8px; font-size: 14px; padding: 10px 15px;"></div>
+        <form id="hourlyBookingForm">
+          <input type="hidden" name="csrf_token" value="<?= isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : '' ?>">
+
+          <div class="row mb-15">
+            <div class="col-md-6">
+              <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Full Name *</label>
+              <input type="text" name="name" class="form-control" placeholder="Enter your name" required style="border-radius: 8px; padding: 10px 14px; border: 1px solid #cbd5e1; width: 100%; box-sizing: border-box; font-size: 14.5px;">
+            </div>
+            <div class="col-md-6 mt-15 mt-md-0">
+              <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Phone Number *</label>
+              <input type="tel" name="phone" class="form-control" placeholder="10-digit mobile number" required style="border-radius: 8px; padding: 10px 14px; border: 1px solid #cbd5e1; width: 100%; box-sizing: border-box; font-size: 14.5px;">
+            </div>
+          </div>
+
+          <div class="row mb-15">
+            <div class="col-md-6">
+              <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Stay Date *</label>
+              <input type="date" name="stay_date" id="hourlyStayDate" class="form-control" required style="border-radius: 8px; padding: 10px 14px; border: 1px solid #cbd5e1; width: 100%; box-sizing: border-box; font-size: 14.5px;">
+            </div>
+            <div class="col-md-6 mt-15 mt-md-0">
+              <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Check-in Time *</label>
+              <input type="time" name="checkin_time" class="form-control" required style="border-radius: 8px; padding: 10px 14px; border: 1px solid #cbd5e1; width: 100%; box-sizing: border-box; font-size: 14.5px;">
+            </div>
+          </div>
+
+          <div class="form-group mb-15">
+            <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Stay Duration (Hours) *</label>
+            <select name="hours" id="hourlyStayHours" class="form-control" style="border-radius: 8px; padding: 10px 14px; border: 1px solid #cbd5e1; width: 100%; box-sizing: border-box; font-size: 14.5px;">
+              <option value="4">4 Hours (Minimum)</option>
+              <option value="5">5 Hours</option>
+              <option value="6">6 Hours</option>
+              <option value="7">7 Hours</option>
+              <option value="8">8 Hours</option>
+              <option value="9">9 Hours</option>
+              <option value="10">10 Hours</option>
+              <option value="11">11 Hours</option>
+              <option value="12">12 Hours</option>
+            </select>
+          </div>
+
+          <div class="form-group mb-15">
+            <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px; display: block;">Select Room Category *</label>
+            <div class="row g-2" id="hourlyRoomContainer">
+              <?php 
+              $slugs = ['standard', 'executive', 'premium'];
+              foreach ($hourly_rooms as $index => $hr): 
+                  $slug = $slugs[$index];
+                  $rate = $hourly_rates[$slug];
+              ?>
+              <div class="col-4">
+                <div class="hourly-room-card text-center <?= $index === 0 ? 'selected' : '' ?>" data-slug="<?= $slug ?>" data-rate="<?= $rate ?>" onclick="selectHourlyRoom(this)">
+                  <input type="radio" name="room_category" value="<?= htmlspecialchars($hr['title']) ?>" class="d-none" id="roomRadio_<?= $slug ?>" <?= $index === 0 ? 'checked' : '' ?> required>
+                  <img src="<?= htmlspecialchars($hr['image_path']) ?>" alt="<?= htmlspecialchars($hr['title']) ?>" style="height: 60px; width: 100%; object-fit: cover;">
+                  <div style="padding: 6px 4px;">
+                    <h6 style="font-size: 11px; font-weight: 700; margin-bottom: 1px; color: #0f172a; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="<?= htmlspecialchars($hr['title']) ?>"><?= htmlspecialchars($slug === 'standard' ? 'Standard' : ($slug === 'executive' ? 'Executive' : 'Premium')) ?></h6>
+                    <div style="font-size: 9.5px; color: #64748b; margin-bottom: 3px;">₹<?= number_format($rate) ?>/hr</div>
+                    <div class="room-total-badge" style="font-size: 10px; font-weight: 700; color: #a17a42; background: #faf5eb; border-radius: 4px; padding: 1px 3px; display: inline-block;">₹<?= number_format($rate * 4) ?></div>
+                  </div>
+                </div>
+              </div>
+              <?php endforeach; ?>
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; border-radius: 8px; padding: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+            <div class="d-flex justify-content-between align-items-center">
+              <span style="font-size: 13px; font-weight: 600; color: #475569;">Calculated Total Price:</span>
+              <span id="hourlyCalcTotal" style="font-size: 18px; font-weight: 800; color: #a17a42;">₹1,000</span>
+            </div>
+          </div>
+
+          <button type="submit" id="hourlySubmitBtn" class="btn w-100" style="background: #a17a42; color: #fff; font-weight: 700; padding: 12px; border-radius: 8px; border: none; font-size: 15px; cursor: pointer; transition: all 0.2s;">
+            Confirm Hourly Stay Request
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Bulk Booking Modal -->
 <div class="modal fade" id="bulkBookingModal" tabindex="-1" aria-labelledby="bulkBookingModalLabel" aria-hidden="true" style="z-index: 99999;">
@@ -685,6 +848,128 @@
           .finally(() => {
             submitBtn.disabled = false;
             submitBtn.innerText = 'Submit Request';
+          });
+      });
+    }
+
+    // Hourly Stay Modal Calculator & Submit Logic
+    var hourlyForm = document.getElementById('hourlyBookingForm');
+    var hourlyAlertBox = document.getElementById('hourlyBookingAlert');
+    var hourlySubmitBtn = document.getElementById('hourlySubmitBtn');
+    var hourlyHoursSelect = document.getElementById('hourlyStayHours');
+    var hourlyDateInput = document.getElementById('hourlyStayDate');
+
+    if (hourlyDateInput) {
+      hourlyDateInput.setAttribute('min', today);
+    }
+
+    function calculateHourlyTotals() {
+      var hours = parseInt(hourlyHoursSelect.value) || 4;
+      var cards = document.querySelectorAll('#hourlyRoomContainer .hourly-room-card');
+      var selectedCard = document.querySelector('#hourlyRoomContainer .hourly-room-card.selected');
+      
+      // Update each card badge price display
+      cards.forEach(function(card) {
+        var rate = parseFloat(card.getAttribute('data-rate')) || 0;
+        var total = rate * hours;
+        var badge = card.querySelector('.room-total-badge');
+        if (badge) {
+          badge.innerText = '₹' + total.toLocaleString('en-IN');
+        }
+      });
+
+      // Update summary total
+      if (selectedCard) {
+        var rate = parseFloat(selectedCard.getAttribute('data-rate')) || 0;
+        var total = rate * hours;
+        var summaryText = document.getElementById('hourlyCalcTotal');
+        if (summaryText) {
+          summaryText.innerText = '₹' + total.toLocaleString('en-IN');
+        }
+      }
+    }
+
+    if (hourlyHoursSelect) {
+      hourlyHoursSelect.addEventListener('change', calculateHourlyTotals);
+    }
+
+    // Expose selectHourlyRoom globally
+    window.selectHourlyRoom = function(card) {
+      document.querySelectorAll('#hourlyRoomContainer .hourly-room-card').forEach(function(c) {
+        c.classList.remove('selected');
+        var radio = c.querySelector('input[type="radio"]');
+        if (radio) radio.checked = false;
+      });
+      card.classList.add('selected');
+      var radio = card.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+      }
+      calculateHourlyTotals();
+    };
+
+    if (hourlyForm) {
+      // Trigger initial calculation
+      calculateHourlyTotals();
+
+      hourlyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        hourlySubmitBtn.disabled = true;
+        hourlySubmitBtn.innerText = 'Submitting Request...';
+
+        var formData = new FormData(hourlyForm);
+
+        // Fetch selected hourly details to submit
+        var selectedCard = document.querySelector('#hourlyRoomContainer .hourly-room-card.selected');
+        if (selectedCard) {
+          formData.append('hourly_rate', selectedCard.getAttribute('data-rate'));
+        }
+
+        fetch('submit-hourly-booking.php', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            hourlyAlertBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
+            hourlyAlertBox.innerText = data.message;
+            hourlyAlertBox.classList.remove('d-none');
+
+            if (data.success) {
+              hourlyForm.reset();
+              // Reset selection to standard
+              document.querySelectorAll('#hourlyRoomContainer .hourly-room-card').forEach(function(c, idx) {
+                if (idx === 0) {
+                  c.classList.add('selected');
+                  c.querySelector('input[type="radio"]').checked = true;
+                } else {
+                  c.classList.remove('selected');
+                  c.querySelector('input[type="radio"]').checked = false;
+                }
+              });
+              calculateHourlyTotals();
+
+              // Auto-hide modal after 4 seconds
+              setTimeout(function() {
+                var modalEl = document.getElementById('hourlyStayModal');
+                var modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) {
+                  modal.hide();
+                }
+                hourlyAlertBox.classList.add('d-none');
+              }, 4000);
+            }
+          })
+          .catch(error => {
+            hourlyAlertBox.className = 'alert alert-danger';
+            hourlyAlertBox.innerText = 'Something went wrong. Please try again.';
+            hourlyAlertBox.classList.remove('d-none');
+            console.error('Error:', error);
+          })
+          .finally(() => {
+            hourlySubmitBtn.disabled = false;
+            hourlySubmitBtn.innerText = 'Confirm Hourly Stay Request';
           });
       });
     }

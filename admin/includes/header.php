@@ -402,6 +402,16 @@ $active_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li>
+                <a href="hourly-settings.php" class="sidebar-link <?= $active_page === 'hourly-settings.php' ? 'active' : '' ?>">
+                    <!-- Clock/Time Icon -->
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Hourly Stay
+                </a>
+            </li>
+            <li>
                 <a href="rooms.php" class="sidebar-link <?= $active_page === 'rooms.php' ? 'active' : '' ?>">
                     <!-- Bed Icon -->
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
