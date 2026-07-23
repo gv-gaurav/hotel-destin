@@ -378,8 +378,13 @@ if ($active_type === 'all') {
                                     <?php endif; ?>
                                     <?php if (!empty($e['guests'])): ?>
                                         <div style="margin-bottom: 6px;">
-                                            <span style="color:#9c6047; font-weight:700;">👥 Guests:</span>
-                                            <strong style="color:#0f172a;"><?= htmlspecialchars($e['guests']) ?> Person(s)</strong>
+                                            <?php if ($e['category'] === 'hourly_booking'): ?>
+                                                <span style="color:#9c6047; font-weight:700;">⏱ Duration:</span>
+                                                <strong style="color:#0f172a;"><?= htmlspecialchars($e['guests']) ?> Hour(s)</strong>
+                                            <?php else: ?>
+                                                <span style="color:#9c6047; font-weight:700;">👥 Guests:</span>
+                                                <strong style="color:#0f172a;"><?= htmlspecialchars($e['guests']) ?> Person(s)</strong>
+                                            <?php endif; ?>
                                         </div>
                                     <?php endif; ?>
                                     <div style="color:#64748b; font-size:12.5px; border-top: 1px solid #f1f5f9; padding-top:6px; margin-top:4px;">
