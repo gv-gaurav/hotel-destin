@@ -21,12 +21,13 @@ if (isset($_GET['error'])) {
 // Define lead categories mapping
 $lead_types = [
     'all' => ['title' => 'All Leads', 'icon' => '📋'],
-    'contact' => ['title' => 'Contact Us', 'icon' => '📧'],
     'restaurant' => ['title' => 'Restaurant', 'icon' => '🍽️'],
     'banquet' => ['title' => 'Banquet & Events', 'icon' => '🎉'],
     'corporate' => ['title' => 'Corporate', 'icon' => '💼'],
     'airport_transfer' => ['title' => 'Airport Transfer', 'icon' => '🚗'],
-    'long_stay' => ['title' => 'Long Stay', 'icon' => '🏨']
+    'long_stay' => ['title' => 'Rooms & Long Stay', 'icon' => '🏨'],
+    'contact' => ['title' => 'Contact Us', 'icon' => '📧'],
+    'bulk_booking' => ['title' => 'Bulk Booking', 'icon' => '🏢']
 ];
 
 // Handle Delete Enquiry action
@@ -93,9 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Fetch enquiries from DB with date range filters
+// Fetch enquiries from DB with date range and status filters
 $start_date = isset($_GET['start_date']) ? trim($_GET['start_date']) : '';
 $end_date = isset($_GET['end_date']) ? trim($_GET['end_date']) : '';
+$status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
 
 $enquiries = [];
 try {
@@ -110,6 +112,10 @@ try {
     if ($end_date !== '') {
         $conditions[] = "created_at <= :end_date";
         $params['end_date'] = $end_date . " 23:59:59";
+    }
+    if ($status_filter !== '') {
+        $conditions[] = "status = :status";
+        $params['status'] = $status_filter;
     }
 
     if (count($conditions) > 0) {
@@ -166,65 +172,75 @@ if ($active_type === 'all') {
 ?>
 
 <style>
-.lead-nav-tabs {
-    border-bottom: 2px solid #f1f5f9;
-    gap: 4px;
-    margin-bottom: 30px;
-    display: flex;
-    flex-wrap: wrap;
-    padding-left: 0;
-    list-style: none;
-    max-width: fit-content; /* Reduced size, don't take full width */
-}
-.lead-nav-tabs .nav-item {
-    margin-bottom: -2px;
-}
-.lead-nav-tabs .nav-link {
-    border: none !important;
-    background: transparent !important;
-    color: #64748b !important;
-    font-weight: 600;
-    font-size: 13px; /* Reduced font size */
-    padding: 10px 14px !important; /* Reduced padding size */
-    position: relative;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    cursor: pointer;
-}
-.lead-nav-tabs .nav-link:hover {
-    color: #0f172a !important;
-}
-.lead-nav-tabs .nav-link.active {
-    color: #9c6047 !important;
-}
-.lead-nav-tabs .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: #9c6047;
-    border-radius: 3px 3px 0 0;
-}
-.lead-nav-tabs .badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 50px;
-    margin-left: 8px;
-    background-color: #f1f5f9;
-    color: #475569;
-    transition: all 0.2s ease;
-    border: 1px solid #e2e8f0;
-}
-.lead-nav-tabs .nav-link.active .badge {
-    background-color: #9c6047;
-    color: #ffffff;
-    border-color: #9c6047;
-}
+    .lead-nav-tabs {
+        border-bottom: 2px solid #f1f5f9;
+        gap: 4px;
+        margin-bottom: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        padding-left: 0;
+        list-style: none;
+        max-width: fit-content;
+        /* Reduced size, don't take full width */
+    }
+
+    .lead-nav-tabs .nav-item {
+        margin-bottom: -2px;
+    }
+
+    .lead-nav-tabs .nav-link {
+        border: none !important;
+        background: transparent !important;
+        color: #64748b !important;
+        font-weight: 600;
+        font-size: 13px;
+        /* Reduced font size */
+        padding: 10px 14px !important;
+        /* Reduced padding size */
+        position: relative;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .lead-nav-tabs .nav-link:hover {
+        color: #0f172a !important;
+    }
+
+    .lead-nav-tabs .nav-link.active {
+        color: #9c6047 !important;
+    }
+
+    .lead-nav-tabs .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #9c6047;
+        border-radius: 3px 3px 0 0;
+    }
+
+    .lead-nav-tabs .badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 50px;
+        margin-left: 8px;
+        background-color: #f1f5f9;
+        color: #475569;
+        transition: all 0.2s ease;
+        border: 1px solid #e2e8f0;
+    }
+
+    .lead-nav-tabs .nav-link.active .badge {
+        background-color: #9c6047;
+        color: #ffffff;
+        border-color: #9c6047;
+    }
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-35">
@@ -252,7 +268,7 @@ if ($active_type === 'all') {
 <ul class="lead-nav-tabs">
     <?php foreach ($lead_types as $key => $type): ?>
         <li class="nav-item">
-            <a class="nav-link <?= ($active_type === $key) ? 'active' : '' ?>" href="enquiries.php?type=<?= $key ?>&start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>">
+            <a class="nav-link <?= ($active_type === $key) ? 'active' : '' ?>" href="enquiries.php?type=<?= $key ?>&start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>&status=<?= urlencode($status_filter) ?>">
                 <span class="me-1"><?= $type['icon'] ?></span> <?= htmlspecialchars($type['title']) ?>
                 <span class="badge"><?= $counts[$key] ?></span>
             </a>
@@ -271,25 +287,41 @@ if ($active_type === 'all') {
     <!-- Search & Filter Bar -->
     <form method="GET" class="row g-3 align-items-end mb-30" style="background-color: #fafaf9; padding: 18px; border-radius: 12px; border: 1px solid #f1f1f0; margin: 0 0 25px 0;">
         <input type="hidden" name="type" value="<?= htmlspecialchars($active_type) ?>">
-        <div class="col-6 col-md-3">
+        
+        <div class="col-6 col-md-2">
             <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">From Date</label>
             <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($start_date) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
         </div>
-        <div class="col-6 col-md-3">
+        
+        <div class="col-6 col-md-2">
             <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">To Date</label>
             <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($end_date) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
         </div>
-        <div class="col-12 col-md-6 d-flex gap-2">
-            <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0 20px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#9c6047; border:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#824c36';" onmouseout="this.style.backgroundColor='#9c6047';">
+
+        <div class="col-6 col-md-2">
+            <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Lead Status</label>
+            <select name="status" class="form-select" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
+                <option value="">All Statuses</option>
+                <option value="pending" <?= ($status_filter === 'pending') ? 'selected' : '' ?>>Pending</option>
+                <option value="contacted" <?= ($status_filter === 'contacted') ? 'selected' : '' ?>>Follow Back</option>
+                <option value="converted" <?= ($status_filter === 'converted') ? 'selected' : '' ?>>Converted</option>
+                <option value="rejected" <?= ($status_filter === 'rejected') ? 'selected' : '' ?>>Rejected</option>
+            </select>
+        </div>
+
+        <div class="col-6 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100" style="height: 38px; padding: 0 12px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#9c6047; border:none; transition: all 0.2s ease; white-space:nowrap;" onmouseover="this.style.backgroundColor='#824c36';" onmouseout="this.style.backgroundColor='#9c6047';">
                 🔍 Filter
             </button>
-            <?php if ($start_date !== '' || $end_date !== ''): ?>
-                <a href="enquiries.php?type=<?= htmlspecialchars($active_type) ?>" class="btn btn-light border d-inline-flex align-items-center justify-content-center" style="height: 38px; padding: 0 15px; border-radius: 8px; font-weight:700; font-size:13px; border-color:#cbd5e1; color:#475569; background-color:#ffffff; text-decoration:none;">
+            <?php if ($start_date !== '' || $end_date !== '' || $status_filter !== ''): ?>
+                <a href="enquiries.php?type=<?= htmlspecialchars($active_type) ?>" class="btn btn-light border d-inline-flex align-items-center justify-content-center w-100" style="height: 38px; padding: 0 10px; border-radius: 8px; font-weight:700; font-size:13px; border-color:#cbd5e1; color:#475569; background-color:#ffffff; text-decoration:none; white-space:nowrap;">
                     Reset
                 </a>
             <?php endif; ?>
-            
-            <a href="export-enquiries.php?type=<?= urlencode($active_type) ?>&start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>" class="btn btn-success ms-auto d-inline-flex align-items-center gap-2" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#16a34a; border:none; color:#ffffff; text-decoration:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#15803d';" onmouseout="this.style.backgroundColor='#16a34a';">
+        </div>
+
+        <div class="col-12 col-md-3">
+            <a href="export-enquiries.php?type=<?= urlencode($active_type) ?>&start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>&status=<?= urlencode($status_filter) ?>" class="btn btn-success w-100 d-inline-flex align-items-center justify-content-center gap-2" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#16a34a; border:none; color:#ffffff; text-decoration:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#15803d';" onmouseout="this.style.backgroundColor='#16a34a';">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
@@ -340,13 +372,13 @@ if ($active_type === 'all') {
                                 <div style="font-size:13px; max-width: 320px; word-break: break-word; color:#475569; line-height:1.5; font-weight:550;">
                                     <?php if (!empty($e['date']) && $e['date'] !== '0000-00-00'): ?>
                                         <div style="margin-bottom: 4px;">
-                                            <span style="color:#9c6047; font-weight:700;">📅 Booking Date:</span> 
+                                            <span style="color:#9c6047; font-weight:700;">📅 Booking Date:</span>
                                             <strong style="color:#0f172a;"><?= date('d M Y', strtotime($e['date'])) ?></strong>
                                         </div>
                                     <?php endif; ?>
                                     <?php if (!empty($e['guests'])): ?>
                                         <div style="margin-bottom: 6px;">
-                                            <span style="color:#9c6047; font-weight:700;">👥 Guests:</span> 
+                                            <span style="color:#9c6047; font-weight:700;">👥 Guests:</span>
                                             <strong style="color:#0f172a;"><?= htmlspecialchars($e['guests']) ?> Person(s)</strong>
                                         </div>
                                     <?php endif; ?>
@@ -387,7 +419,7 @@ if ($active_type === 'all') {
                                         <input type="hidden" name="enquiry_id" value="<?= $e['id'] ?>">
                                         <input type="hidden" name="active_type" value="<?= htmlspecialchars($active_type) ?>">
                                         <input type="hidden" name="followup_note" id="note-input-<?= $e['id'] ?>" value="">
-                                        
+
                                         <select class="form-select" name="status" onchange="handleStatusChange(this, <?= $e['id'] ?>, '<?= htmlspecialchars($e['status']) ?>')" style="font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px; background-color: #ffffff; width: 100%; color: #334155; cursor: pointer;">
                                             <option value="pending" <?= $e['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
                                             <option value="contacted" <?= $e['status'] === 'contacted' ? 'selected' : '' ?>>Follow Back</option>
@@ -443,48 +475,48 @@ if ($active_type === 'all') {
 </div>
 
 <script>
-let activeEnquiryId = null;
-let activeSelectElement = null;
-let previousStatusVal = null;
+    let activeEnquiryId = null;
+    let activeSelectElement = null;
+    let previousStatusVal = null;
 
-function handleStatusChange(selectElement, enquiryId, currentStatus) {
-    if (selectElement.value === 'contacted') {
-        activeEnquiryId = enquiryId;
-        activeSelectElement = selectElement;
-        previousStatusVal = currentStatus;
-        
-        // Clear previous note
-        document.getElementById('followUpNoteInput').value = '';
-        
-        // Open the modal
+    function handleStatusChange(selectElement, enquiryId, currentStatus) {
+        if (selectElement.value === 'contacted') {
+            activeEnquiryId = enquiryId;
+            activeSelectElement = selectElement;
+            previousStatusVal = currentStatus;
+
+            // Clear previous note
+            document.getElementById('followUpNoteInput').value = '';
+
+            // Open the modal
+            var modalEl = document.getElementById('followUpModal');
+            var myModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            myModal.show();
+        } else {
+            selectElement.form.submit();
+        }
+    }
+
+    function submitFollowUpStatus() {
+        if (activeEnquiryId && activeSelectElement) {
+            const note = document.getElementById('followUpNoteInput').value;
+            document.getElementById('note-input-' + activeEnquiryId).value = note;
+            activeSelectElement.form.submit();
+        }
+    }
+
+    // When the modal is dismissed (via cancel button or clicking outside/close)
+    document.addEventListener('DOMContentLoaded', function() {
         var modalEl = document.getElementById('followUpModal');
-        var myModal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        myModal.show();
-    } else {
-        selectElement.form.submit();
-    }
-}
-
-function submitFollowUpStatus() {
-    if (activeEnquiryId && activeSelectElement) {
-        const note = document.getElementById('followUpNoteInput').value;
-        document.getElementById('note-input-' + activeEnquiryId).value = note;
-        activeSelectElement.form.submit();
-    }
-}
-
-// When the modal is dismissed (via cancel button or clicking outside/close)
-document.addEventListener('DOMContentLoaded', function() {
-    var modalEl = document.getElementById('followUpModal');
-    if (modalEl) {
-        modalEl.addEventListener('hidden.bs.modal', function () {
-            // If the form wasn't submitted, revert the dropdown
-            if (activeSelectElement && activeSelectElement.value === 'contacted') {
-                activeSelectElement.value = previousStatusVal;
-            }
-        });
-    }
-});
+        if (modalEl) {
+            modalEl.addEventListener('hidden.bs.modal', function() {
+                // If the form wasn't submitted, revert the dropdown
+                if (activeSelectElement && activeSelectElement.value === 'contacted') {
+                    activeSelectElement.value = previousStatusVal;
+                }
+            });
+        }
+    });
 </script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

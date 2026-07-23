@@ -582,11 +582,11 @@
                       <?php endif; ?>
 
                       <!-- Sliding images wrapper -->
-                      <div class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: <?= count($room['images']) * 100 ?>%;">
+                      <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>" class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: 100%;">
                         <?php foreach ($room['images'] as $img_path): ?>
                           <img src="<?= htmlspecialchars($img_path) ?>" alt="<?= htmlspecialchars($room['name']) ?>" style="flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; transition: none;">
                         <?php endforeach; ?>
-                      </div>
+                      </a>
                     </div>
                     <div class="content-box">
                       <div class="title-row">

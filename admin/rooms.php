@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $status_badge = isset($_POST['status_badge']) ? htmlspecialchars(trim($_POST['status_badge'])) : 'POPULAR';
             $rating = isset($_POST['rating']) ? htmlspecialchars(trim($_POST['rating'])) : 'G 4.8 ★';
             $banner_text = isset($_POST['banner_text']) ? htmlspecialchars(trim($_POST['banner_text'])) : '';
+            $extra_adult_price = isset($_POST['extra_adult_price']) ? floatval($_POST['extra_adult_price']) : 1000.00;
 
             // Build slug from title
             $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
@@ -61,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             } else {
                 if ($action === 'add') {
                     try {
-                        $stmt = $pdo->prepare("INSERT INTO rooms (slug, title, type, price, struck_price, discount, code, inventory, capacity_adults, capacity_children, description, status, price_single_ep, price_single_cp, price_single_map, price_double_ep, price_double_cp, price_double_map, status_badge, rating, banner_text) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmt->execute([$slug, $title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $banner_text]);
+                        $stmt = $pdo->prepare("INSERT INTO rooms (slug, title, type, price, struck_price, discount, code, inventory, capacity_adults, capacity_children, description, status, price_single_ep, price_single_cp, price_single_map, price_double_ep, price_double_cp, price_double_map, status_badge, rating, banner_text, extra_adult_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->execute([$slug, $title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $banner_text, $extra_adult_price]);
 
                         // Get last inserted room ID to add facilities
                         $new_room_id = $pdo->lastInsertId();
@@ -132,8 +133,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 } else if ($action === 'edit') {
                     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
                     try {
-                        $stmt = $pdo->prepare("UPDATE rooms SET title = ?, type = ?, price = ?, struck_price = ?, discount = ?, code = ?, inventory = ?, capacity_adults = ?, capacity_children = ?, description = ?, status = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_double_ep = ?, price_double_cp = ?, price_double_map = ?, status_badge = ?, rating = ?, banner_text = ? WHERE id = ?");
-                        $stmt->execute([$title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $banner_text, $id]);
+                        $stmt = $pdo->prepare("UPDATE rooms SET title = ?, type = ?, price = ?, struck_price = ?, discount = ?, code = ?, inventory = ?, capacity_adults = ?, capacity_children = ?, description = ?, status = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_double_ep = ?, price_double_cp = ?, price_double_map = ?, status_badge = ?, rating = ?, banner_text = ?, extra_adult_price = ? WHERE id = ?");
+                        $stmt->execute([$title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $status_badge, $rating, $banner_text, $extra_adult_price, $id]);
 
                         // Process amenities update
                         if (isset($_POST['facilities'])) {
@@ -319,6 +320,12 @@ try {
                     <div class="form-group">
                         <label class="form-label-custom">Promo Banner Text (Offer Text)</label>
                         <input id="roomBannerText" class="form-control-custom" type="text" name="banner_text" placeholder="e.g., Get Destin, and get 25% off (up to ₹1,000) on your booking">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="form-label-custom">Extra Adult Charge (₹/night)</label>
+                        <input id="roomExtraAdultPrice" class="form-control-custom" type="number" name="extra_adult_price" step="0.01" value="1000.00" required>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -532,6 +539,7 @@ try {
         document.getElementById('roomDiscount').value = '';
         document.getElementById('roomCode').value = 'DESTIN';
         document.getElementById('roomBannerText').value = '';
+        document.getElementById('roomExtraAdultPrice').value = '1000.00';
         document.getElementById('roomInventory').value = '1';
         document.getElementById('roomAdults').value = '2';
         document.getElementById('roomChildren').value = '1';
@@ -576,6 +584,7 @@ try {
         document.getElementById('roomDiscount').value = room.discount;
         document.getElementById('roomCode').value = room.code;
         document.getElementById('roomBannerText').value = room.banner_text || '';
+        document.getElementById('roomExtraAdultPrice').value = room.extra_adult_price || '1000.00';
         document.getElementById('roomInventory').value = room.inventory;
         document.getElementById('roomAdults').value = room.capacity_adults;
         document.getElementById('roomChildren').value = room.capacity_children;

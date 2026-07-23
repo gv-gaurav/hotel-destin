@@ -35,6 +35,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         $razorpay_key_id = isset($_POST['razorpay_key_id']) ? trim($_POST['razorpay_key_id']) : '';
         $razorpay_key_secret = isset($_POST['razorpay_key_secret']) ? trim($_POST['razorpay_key_secret']) : '';
 
+        // Banquet settings
+        $banquet_hall_name = isset($_POST['banquet_hall_name']) ? trim($_POST['banquet_hall_name']) : '';
+        $banquet_hall_capacity = isset($_POST['banquet_hall_capacity']) ? trim($_POST['banquet_hall_capacity']) : '';
+        $banquet_hall_size = isset($_POST['banquet_hall_size']) ? trim($_POST['banquet_hall_size']) : '';
+        $banquet_rental_charges = isset($_POST['banquet_rental_charges']) ? trim($_POST['banquet_rental_charges']) : '';
+        $banquet_decor_management_text = isset($_POST['banquet_decor_management_text']) ? trim($_POST['banquet_decor_management_text']) : '';
+        $banquet_hero_bg = isset($_POST['banquet_hero_bg']) ? trim($_POST['banquet_hero_bg']) : '';
+        $banquet_showcase_bg = isset($_POST['banquet_showcase_bg']) ? trim($_POST['banquet_showcase_bg']) : '';
+        $banquet_description = isset($_POST['banquet_description']) ? trim($_POST['banquet_description']) : '';
+        $banquet_exact_location = isset($_POST['banquet_exact_location']) ? trim($_POST['banquet_exact_location']) : '';
+
         try {
             $stmt = $pdo->prepare("INSERT INTO settings (key_name, val_content) VALUES (?, ?) ON DUPLICATE KEY UPDATE val_content = VALUES(val_content)");
             
@@ -48,6 +59,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
             $stmt->execute(['google_analytics', $google_analytics]);
             $stmt->execute(['razorpay_key_id', $razorpay_key_id]);
             $stmt->execute(['razorpay_key_secret', $razorpay_key_secret]);
+
+            // Save banquet settings
+            $stmt->execute(['banquet_hall_name', $banquet_hall_name]);
+            $stmt->execute(['banquet_hall_capacity', $banquet_hall_capacity]);
+            $stmt->execute(['banquet_hall_size', $banquet_hall_size]);
+            $stmt->execute(['banquet_rental_charges', $banquet_rental_charges]);
+            $stmt->execute(['banquet_decor_management_text', $banquet_decor_management_text]);
+            $stmt->execute(['banquet_hero_bg', $banquet_hero_bg]);
+            $stmt->execute(['banquet_showcase_bg', $banquet_showcase_bg]);
+            $stmt->execute(['banquet_description', $banquet_description]);
+            $stmt->execute(['banquet_exact_location', $banquet_exact_location]);
 
             header("Location: settings.php?success=1");
             exit;
@@ -70,7 +92,16 @@ $settings = [
     'meta_pixel' => '',
     'google_analytics' => '',
     'razorpay_key_id' => '',
-    'razorpay_key_secret' => ''
+    'razorpay_key_secret' => '',
+    'banquet_hall_name' => '',
+    'banquet_hall_capacity' => '',
+    'banquet_hall_size' => '',
+    'banquet_rental_charges' => '',
+    'banquet_decor_management_text' => '',
+    'banquet_hero_bg' => '',
+    'banquet_showcase_bg' => '',
+    'banquet_description' => '',
+    'banquet_exact_location' => ''
 ];
 
 try {

@@ -182,7 +182,7 @@ try {
                 $date2 = new DateTime($search_checkout);
                 $nights = $date2->diff($date1)->format("%a");
                 $nights = max(1, (int)$nights);
-                
+
                 $total_base_price = 0.00;
                 $curr_date_ptr = clone $date1;
                 while ($curr_date_ptr < $date2) {
@@ -388,6 +388,7 @@ usort($rooms, function ($a, $b) {
                 padding: 12px 0;
                 overflow: hidden;
             }
+
             /* Visual fade-out effect on the right to indicate more content */
             .inclusions-strip::after {
                 content: '';
@@ -400,37 +401,48 @@ usort($rooms, function ($a, $b) {
                 pointer-events: none;
                 z-index: 5;
             }
+
             .inclusions-strip .row {
                 display: flex !important;
                 flex-wrap: nowrap !important;
                 overflow-x: auto !important;
                 -webkit-overflow-scrolling: touch;
                 justify-content: flex-start !important;
-                padding: 4px 20px 10px 20px !important; /* Added bottom padding for custom scrollbar, side padding for buffer */
+                padding: 4px 20px 10px 20px !important;
+                /* Added bottom padding for custom scrollbar, side padding for buffer */
                 margin-left: -15px !important;
                 margin-right: -15px !important;
                 gap: 10px;
-                scrollbar-width: thin; /* Firefox */
-                scrollbar-color: #c5a880 rgba(0, 0, 0, 0.05); /* Firefox thumb/track */
+                scrollbar-width: thin;
+                /* Firefox */
+                scrollbar-color: #c5a880 rgba(0, 0, 0, 0.05);
+                /* Firefox thumb/track */
             }
+
             .inclusions-strip .row::-webkit-scrollbar {
                 display: block !important;
-                height: 3px !important; /* Elegant thin scrollbar */
+                height: 3px !important;
+                /* Elegant thin scrollbar */
             }
+
             .inclusions-strip .row::-webkit-scrollbar-track {
                 background: rgba(0, 0, 0, 0.03) !important;
                 border-radius: 10px !important;
             }
+
             .inclusions-strip .row::-webkit-scrollbar-thumb {
-                background: #c5a880 !important; /* Theme gold accent */
+                background: #c5a880 !important;
+                /* Theme gold accent */
                 border-radius: 10px !important;
             }
+
             .inclusions-strip [class*="col-"] {
                 flex: 0 0 auto !important;
                 width: auto !important;
                 max-width: none !important;
                 padding: 0 !important;
             }
+
             .inclusion-item {
                 padding: 8px 14px;
                 font-size: 13px;
@@ -566,7 +578,7 @@ usort($rooms, function ($a, $b) {
             padding: 0 !important;
             border: 1px solid rgba(161, 122, 66, 0.2) !important;
             border-radius: 16px !important;
-            box-shadow: 0 12px 36px rgba(161, 122, 66, 0.08), 0 4px 12px rgba(0,0,0,0.03) !important;
+            box-shadow: 0 12px 36px rgba(161, 122, 66, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03) !important;
             overflow: visible !important;
         }
 
@@ -639,7 +651,7 @@ usort($rooms, function ($a, $b) {
             border: none !important;
             transition: all 0.2s ease !important;
         }
-        
+
         .rooms-search-wrapper .box-bottom-search .btn-black-lg:hover {
             transform: translateY(-1px) !important;
             box-shadow: 0 6px 18px rgba(161, 122, 66, 0.35) !important;
@@ -679,7 +691,7 @@ usort($rooms, function ($a, $b) {
             .rooms-search-wrapper .box-search-advance {
                 border-radius: 20px !important;
                 border: 1px solid rgba(161, 122, 66, 0.2) !important;
-                box-shadow: 0 12px 36px rgba(161, 122, 66, 0.08), 0 4px 12px rgba(0,0,0,0.03) !important;
+                box-shadow: 0 12px 36px rgba(161, 122, 66, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03) !important;
                 background: #ffffff !important;
                 overflow: hidden !important;
                 width: 100% !important;
@@ -1051,6 +1063,7 @@ usort($rooms, function ($a, $b) {
                             <a href="rooms.php" class="text-danger" style="text-decoration: underline; font-weight:600;">Clear Dates</a>
                         </div>
                     <?php endif; ?>
+
                 </div>
 
                 <!-- Responsive Grid: stacks on mobile, 2 cols on tablets, 3 cols on desktop -->
@@ -1076,11 +1089,11 @@ usort($rooms, function ($a, $b) {
                                     <?php endif; ?>
 
                                     <!-- Sliding images wrapper -->
-                                    <div class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: <?= count($room['images']) * 100 ?>%;">
+                                    <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>" class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: 100%;">
                                         <?php foreach ($room['images'] as $img_path): ?>
                                             <img src="<?= htmlspecialchars($img_path) ?>" alt="<?= htmlspecialchars($room['name']) ?>" style="flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; transition: none;">
                                         <?php endforeach; ?>
-                                    </div>
+                                    </a>
                                 </div>
                                 <div class="content-box">
                                     <div class="title-row">
@@ -1141,8 +1154,166 @@ usort($rooms, function ($a, $b) {
                         </div>
                     <?php endforeach; ?>
                 </div>
+
+                <!-- Group booking notice banner -->
+                <div class="bulk-booking-card" style="margin-top: 40px; margin-bottom: 20px;">
+                    <div class="bulk-card-wrapper">
+                        <div class="bulk-card-content">
+                            <div class="bulk-card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                            </div>
+                            <div class="bulk-card-text">
+                                <h3>Looking to Book the Entire Hotel?</h3>
+                                <p>Host group events, weddings, or corporate stays. Get custom packages, dedicated service, and exclusive rates for booking all room categories together.</p>
+                            </div>
+                        </div>
+                        <div class="bulk-card-action">
+                            <button class="bulk-booking-btn" data-bs-toggle="modal" data-bs-target="#bulkBookingModal">
+                                Request Group Stay Quote
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+
+        <style>
+            .bulk-booking-card {
+                background: linear-gradient(135deg, #1e1b18 0%, #12100e 100%);
+                border: 1px solid rgba(161, 122, 66, 0.35);
+                border-radius: 16px;
+                padding: 24px 30px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .bulk-booking-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: #a17a42;
+                /* Premium Gold Theme */
+            }
+
+            .bulk-card-wrapper {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+
+            .bulk-card-content {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex: 1;
+                min-width: 280px;
+            }
+
+            .bulk-card-icon {
+                background: rgba(161, 122, 66, 0.15);
+                border: 1px solid rgba(161, 122, 66, 0.3);
+                color: #a17a42;
+                width: 56px;
+                height: 56px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+
+            .bulk-card-text {
+                text-align: left;
+            }
+
+            .bulk-card-text h3 {
+                margin: 0 0 6px 0 !important;
+                color: #ffffff !important;
+                font-size: 19px !important;
+                font-weight: 700 !important;
+                font-family: 'Outfit', sans-serif;
+                letter-spacing: 0.2px;
+            }
+
+            .bulk-card-text p {
+                margin: 0 !important;
+                color: #b0b0b0 !important;
+                font-size: 14px !important;
+                line-height: 1.5 !important;
+            }
+
+            .bulk-booking-btn {
+                background: linear-gradient(135deg, #a17a42 0%, #8c6734 100%);
+                color: #ffffff !important;
+                font-weight: 700 !important;
+                font-size: 14.5px !important;
+                padding: 14px 28px !important;
+                border-radius: 10px !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                cursor: pointer !important;
+                transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+                box-shadow: 0 4px 15px rgba(161, 122, 66, 0.25) !important;
+                white-space: nowrap;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .bulk-booking-btn:hover {
+                transform: translateY(-2px);
+                background: linear-gradient(135deg, #b58b4f 0%, #9e763f 100%);
+                box-shadow: 0 6px 20px rgba(161, 122, 66, 0.4) !important;
+            }
+
+            .bulk-booking-btn:active {
+                transform: translateY(0);
+            }
+
+            @media (max-width: 991px) {
+                .bulk-card-wrapper {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 20px;
+                }
+
+                .bulk-card-action {
+                    width: 100%;
+                }
+
+                .bulk-booking-btn {
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+
+            @media (max-width: 575px) {
+                .bulk-booking-card {
+                    padding: 20px;
+                }
+
+                .bulk-card-content {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 15px;
+                }
+
+                .bulk-card-text h3 {
+                    font-size: 17.5px !important;
+                }
+
+                .bulk-card-text p {
+                    font-size: 13px !important;
+                }
+            }
+        </style>
 
 
 

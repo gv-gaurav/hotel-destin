@@ -122,6 +122,86 @@ function send_enquiry_alert($category, $name, $email, $phone, $date = null, $gue
         </p>
     </div>";
     
+    // Build and send WhatsApp notification to the owner
+    $wa_message = "🔔 *NEW ENQUIRY RECEIVED* 🔔\n\n";
+    $wa_message .= "*Category:* " . strtoupper(str_replace('_', ' ', $category)) . "\n";
+    $wa_message .= "*Name:* {$name}\n";
+    $wa_message .= "*Email:* {$email}\n";
+    $wa_message .= "*Phone:* {$phone}\n";
+
+    if (!empty($date)) {
+        $wa_message .= "*Date:* {$date}\n";
+    }
+    if (!empty($guests)) {
+        $wa_message .= "*Guests:* {$guests}\n";
+    }
+
+    if (!empty($additional_details)) {
+        $wa_message .= "\n*Additional Info:*\n";
+        foreach ($additional_details as $label => $value) {
+            if (!empty($value) || $value === 0 || $value === '0') {
+                $wa_message .= "- *{$label}:* " . strip_tags($value) . "\n";
+            }
+        }
+    }
+
+    send_whatsapp_message($wa_message);
+    
     return send_mail(OWNER_EMAIL, $subject, $body, true);
+}
+
+/**
+ * Sends a WhatsApp notification using Green API.
+ *
+ * @param string $message Text body to send
+ * @return bool True on success, false on failure
+ */
+function send_whatsapp_message($message) {
+    if (!defined('WHATSAPP_NOTIFICATION_ENABLED') || !WHATSAPP_NOTIFICATION_ENABLED) {
+        return false;
+    }
+    if (empty(GREEN_API_URL) || empty(GREEN_API_INSTANCE_ID) || empty(GREEN_API_TOKEN) || empty(WHATSAPP_RECEIVER_NUMBER)) {
+        return false;
+    }
+
+    // Format chat ID for Green API personal numbers (e.g., "919873272462@c.us")
+    $chatId = WHATSAPP_RECEIVER_NUMBER . '@c.us';
+
+    $payload = json_encode([
+        'chatId' => $chatId,
+        'message' => $message
+    ]);
+
+    $url = GREEN_API_URL . "/waInstance" . GREEN_API_INSTANCE_ID . "/sendMessage/" . GREEN_API_TOKEN;
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($payload)
+    ]);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err = curl_error($ch);
+    curl_close($ch);
+
+    if ($err) {
+        error_log("WhatsApp Alert Fail (Green API): " . $err);
+        return false;
+    }
+
+    $res_data = json_decode($response, true);
+    if ($http_code === 200 && isset($res_data['idMessage'])) {
+        return true;
+    } else {
+        error_log("WhatsApp Alert Fail (Green API): Code {$http_code}, Response: {$response}");
+        return false;
+    }
 }
 ?>

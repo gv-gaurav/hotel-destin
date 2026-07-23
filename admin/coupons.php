@@ -54,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $discount_percent = isset($_POST['discount_percent']) ? intval($_POST['discount_percent']) : 0;
             $expiry_date = isset($_POST['expiry_date']) ? trim($_POST['expiry_date']) : '';
             $status = isset($_POST['status']) && $_POST['status'] === 'inactive' ? 'inactive' : 'active';
+            $show_in_checkout = isset($_POST['show_in_checkout']) ? 1 : 0;
 
             if (empty($title) || empty($code) || $discount_percent <= 0 || empty($expiry_date)) {
                 header("Location: coupons.php?error=req");
@@ -61,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             } else {
                 if ($action === 'add') {
                     try {
-                        $stmt = $pdo->prepare("INSERT INTO coupons (title, code, discount_percent, expiry_date, status) VALUES (?, ?, ?, ?, ?)");
-                        $stmt->execute([$title, $code, $discount_percent, $expiry_date, $status]);
+                        $stmt = $pdo->prepare("INSERT INTO coupons (title, code, discount_percent, expiry_date, status, show_in_checkout) VALUES (?, ?, ?, ?, ?, ?)");
+                        $stmt->execute([$title, $code, $discount_percent, $expiry_date, $status, $show_in_checkout]);
                         header("Location: coupons.php?success=add");
                         exit;
                     } catch (Exception $e) {
@@ -73,8 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 } else if ($action === 'edit') {
                     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
                     try {
-                        $stmt = $pdo->prepare("UPDATE coupons SET title = ?, code = ?, discount_percent = ?, expiry_date = ?, status = ? WHERE id = ?");
-                        $stmt->execute([$title, $code, $discount_percent, $expiry_date, $status, $id]);
+                        $stmt = $pdo->prepare("UPDATE coupons SET title = ?, code = ?, discount_percent = ?, expiry_date = ?, status = ?, show_in_checkout = ? WHERE id = ?");
+                        $stmt->execute([$title, $code, $discount_percent, $expiry_date, $status, $show_in_checkout, $id]);
                         header("Location: coupons.php?success=edit");
                         exit;
                     } catch (Exception $e) {
@@ -207,6 +208,14 @@ try {
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-12 mt-10">
+                            <div class="form-check form-switch d-flex align-items-center gap-10">
+                                <input class="form-check-input" type="checkbox" id="couponShowInCheckout" name="show_in_checkout" value="1" checked style="width: 38px; height: 20px; cursor: pointer;">
+                                <label class="form-check-label mb-0" for="couponShowInCheckout" style="font-size: 13.5px; font-weight: 600; color: #334155; cursor: pointer; padding-left: 10px;">
+                                    Show this coupon code publicly in Checkout
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer border-top-0 d-flex gap-10" style="padding: 0 30px 30px 30px;">
@@ -259,9 +268,12 @@ try {
                                 </span>
                             </td>
                             <td>
-                                <span class="badge" style="background: <?= ($cp['status'] === 'active' && !$expired) ? '#eef7f0; color:#3c7a4b;' : '#fff0f0; color:#d13232;' ?> font-size:11px; padding:5px 10px; font-weight:700;">
+                                <span class="badge" style="background: <?= ($cp['status'] === 'active' && !$expired) ? '#eef7f0; color:#3c7a4b;' : '#fff0f0; color:#d13232;' ?>; font-size:11px; padding:5px 10px; font-weight:700;">
                                     <?= $expired ? 'inactive' : htmlspecialchars($cp['status']) ?>
                                 </span>
+                                <?php if (isset($cp['show_in_checkout']) && (int)$cp['show_in_checkout'] === 1 && !$expired): ?>
+                                    <br><span style="font-size: 10px; color:#475569; font-weight:600; display:inline-block; margin-top:4px;">👁️ Public Checkout</span>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center" style="gap: 12px;">
@@ -358,6 +370,7 @@ try {
         document.getElementById('couponDiscount').value = '';
         document.getElementById('couponExpiry').value = '';
         document.getElementById('couponStatus').value = 'active';
+        document.getElementById('couponShowInCheckout').checked = true;
 
         initCouponModal().show();
     }
@@ -372,6 +385,7 @@ try {
         document.getElementById('couponDiscount').value = cp.discount_percent;
         document.getElementById('couponExpiry').value = cp.expiry_date;
         document.getElementById('couponStatus').value = cp.status;
+        document.getElementById('couponShowInCheckout').checked = (parseInt(cp.show_in_checkout) === 1);
 
         initCouponModal().show();
     }

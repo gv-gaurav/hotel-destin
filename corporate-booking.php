@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company = isset($_POST['company']) ? htmlspecialchars(trim($_POST['company'])) : '';
     $date = isset($_POST['date']) ? htmlspecialchars(trim($_POST['date'])) : '';
     $guests = isset($_POST['guests']) ? intval($_POST['guests']) : 10;
-    $package = isset($_POST['package']) ? htmlspecialchars(trim($_POST['package'])) : 'Classic Boardroom';
+    $package = 'Corporate Event';
     $remarks = isset($_POST['remarks']) ? htmlspecialchars(trim($_POST['remarks'])) : '';
 
     if (empty($name)) {
@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -67,201 +68,230 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
     <title>Corporate Events & Conferences - Hotel Destin Gwalior</title>
-    
+
     <style>
-        .corp-hero {
-            background: linear-gradient(0deg, rgba(14, 14, 14, 0.65) 0%, rgba(14, 14, 14, 0.45) 100%), url('assets/imgs/page/pages/banner2.png') no-repeat center center;
+        .corp-split-hero {
+            background: linear-gradient(0deg, rgba(14, 14, 14, 0.75) 0%, rgba(14, 14, 14, 0.5) 100%), url('uploads/corporate_booking_hero.jpg') no-repeat center center;
             background-size: cover;
-            min-height: 380px;
+            min-height: 520px;
+            padding: 80px 0;
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
         }
+
         .corp-hero-title {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 600;
             color: #ffffff;
             letter-spacing: -1px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            font-family: var(--bs-font-serif, "Playfair Display", serif);
+            line-height: 1.25;
         }
+
         .corp-hero-subtitle {
-            font-size: 17px;
-            color: rgba(255,255,255,0.9);
-            max-width: 600px;
-            margin: 0 auto;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 520px;
+            line-height: 1.6;
         }
-        .packages-grid {
-            margin-top: 50px;
-        }
-        .package-card {
-            border: 1px solid #e9ecf2;
-            border-radius: 16px;
-            padding: 30px;
-            background: #ffffff;
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        .package-card:hover {
-            box-shadow: 0 12px 30px rgba(0,0,0,0.04);
-            border-color: #9c6047;
-        }
-        .package-price {
-            font-size: 28px;
-            color: #9c6047;
-            font-weight: 700;
-            margin: 15px 0;
-        }
-        .form-section {
-            padding: 60px 0;
-            background: #fbfbfb;
-            border-top: 1px solid #eee;
-        }
-        .form-wrapper {
-            background: #ffffff;
-            border: 1px solid #e9ecf2;
+
+        .form-wrapper-split {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.01);
+            padding: 30px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Feature items on left column */
+        .features-list {
+            margin-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 20px;
+        }
+
+        .feature-icon-gold {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffffff;
+            background: #9c6047;
+            flex-shrink: 0;
+        }
+
+        .form-label-custom {
+            font-size: 10.5px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.6px !important;
+            font-weight: 700 !important;
+            color: #475569 !important;
+            margin-bottom: 4px !important;
+            display: block;
+        }
+
+        .form-control-custom {
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            padding: 8px 12px !important;
+            background-color: #f8fafc !important;
+            font-size: 13.5px !important;
+            font-weight: 500 !important;
+            color: #0f172a !important;
+            transition: all 0.2s ease;
+        }
+
+        .form-control-custom:focus {
+            border-color: #9c6047 !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(156, 96, 71, 0.15) !important;
+            outline: none !important;
+        }
+
+        .btn-submit-custom {
+            height: 44px !important;
+            background-color: #9c6047 !important;
+            border: none !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+            transition: all 0.25s ease !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(156, 96, 71, 0.2) !important;
+            width: 100%;
+        }
+
+        .btn-submit-custom:hover {
+            background-color: #834f39 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 6px 16px rgba(156, 96, 71, 0.3) !important;
+        }
+
+        @media (max-width: 991.98px) {
+            .corp-split-hero {
+                padding: 40px 0;
+                min-height: auto;
+            }
+            .corp-hero-title {
+                font-size: 28px;
+            }
+            .corp-hero-subtitle {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+            .form-wrapper-split {
+                padding: 20px;
+                border-radius: 16px;
+            }
         }
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
+
 <body>
 
     <?php include("include/header.php"); ?>
 
     <main class="main">
-        <!-- Hero Header -->
-        <section class="corp-hero wow fadeIn">
-            <div>
-                <h1 class="corp-hero-title">Corporate Meetings & Events</h1>
-                <p class="corp-hero-subtitle">Gwalior's premier conference venue with top-tier executive arrangements and seamless technical services.</p>
-            </div>
-        </section>
-
-        <!-- Package Options -->
-        <section class="section-box py-50">
+        <!-- Hero & Form Split Section -->
+        <section class="corp-split-hero">
             <div class="container">
-                <div class="text-center mb-40">
-                    <h2 class="font-heading neutral-1000">Flexible Meeting Packages</h2>
-                    <p class="neutral-500 max-width-600 mx-auto">Select a standard conference structure or request custom menus and catering setups.</p>
-                </div>
-                <div class="row g-4 packages-grid">
-                    <div class="col-md-4">
-                        <div class="package-card text-center wow fadeInUp">
-                            <h3 class="font-heading">Classic Boardroom</h3>
-                            <p class="neutral-400 mt-5">Perfect for brief business roundtables</p>
-                            <div class="package-price">₹650 <span style="font-size: 14px; font-weight: normal;">/ plate</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Projector & High Speed Wi-Fi</li>
-                                <li class="mb-5">Standard sound system</li>
-                                <li class="mb-5">High Tea & Cookies refreshments</li>
-                            </ul>
+                <div class="row align-items-center">
+                    <!-- Left Column: Heading & Features -->
+                    <div class="col-lg-6 col-12 text-lg-start text-center mb-40 mb-lg-0 text-white">
+                        <span class="badge mb-15" style="background-color: rgba(255, 255, 255, 0.15); color: #ffffff; font-weight: 700; padding: 6px 12px; font-size:11px; border-radius: 4px; letter-spacing: 0.8px; text-transform: uppercase;">Premium Conference Venues</span>
+                        <h1 class="corp-hero-title">Corporate Meetings &amp; Events</h1>
+                        <p class="corp-hero-subtitle mb-30">Gwalior's premier conference venue with top-tier executive arrangements and seamless technical services.</p>
+                        
+                        <div class="features-list d-none d-lg-block">
+                            <div class="feature-item d-flex align-items-center mb-15">
+                                <span class="feature-icon-gold">✓</span>
+                                <span style="font-size: 14.5px; font-weight: 500;">High-Speed Fiber Wi-Fi &amp; AV Projector Screens</span>
+                            </div>
+                            <div class="feature-item d-flex align-items-center mb-15">
+                                <span class="feature-icon-gold">✓</span>
+                                <span style="font-size: 14.5px; font-weight: 500;">Dedicated Technical Coordinator On-Site</span>
+                            </div>
+                            <div class="feature-item d-flex align-items-center mb-15">
+                                <span class="feature-icon-gold">✓</span>
+                                <span style="font-size: 14.5px; font-weight: 500;">Custom Boardroom &amp; Banquet Seating Setups</span>
+                            </div>
+                            <div class="feature-item d-flex align-items-center">
+                                <span class="feature-icon-gold">✓</span>
+                                <span style="font-size: 14.5px; font-weight: 500;">Fine Catering &amp; Custom Lunch/High-Tea Menus</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="package-card text-center wow fadeInUp" style="border-color: #9c6047; box-shadow: 0 8px 24px rgba(156,96,71,0.05);">
-                            <span class="badge bg-dark mb-10 text-white" style="font-size: 10px; padding: 4px 10px;">MOST POPULAR</span>
-                            <h3 class="font-heading">Executive Seminar</h3>
-                            <p class="neutral-400 mt-5">Ideal for training & product launches</p>
-                            <div class="package-price">₹850 <span style="font-size: 14px; font-weight: normal;">/ plate</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Premium LCD Wall Screens</li>
-                                <li class="mb-5">Wireless mics & podium set</li>
-                                <li class="mb-5">Buffet Lunch & High Tea snacks</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="package-card text-center wow fadeInUp">
-                            <h3 class="font-heading">Deluxe VIP Summit</h3>
-                            <p class="neutral-400 mt-5">Designed for elite corporate banquets</p>
-                            <div class="package-price">₹1,150 <span style="font-size: 14px; font-weight: normal;">/ plate</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Dual Projector Screens setup</li>
-                                <li class="mb-5">Dedicated tech support coordinator</li>
-                                <li class="mb-5">Premium VIP multi-cuisine lunch</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Enquiry Form -->
-        <section class="form-section">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="form-wrapper">
-                            <h3 class="font-heading text-center mb-10">Request Corporate Callback</h3>
-                            <p class="neutral-500 text-center mb-30">Fill the booking schedule and our events manager will call you within 2 business hours.</p>
+                    
+                    <!-- Right Column: Glassmorphic Callback Form -->
+                    <div class="col-lg-6 col-12">
+                        <div class="form-wrapper-split">
+                            <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 4px; text-align: left;">Request Callback</h3>
+                            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px; text-align: left;">Our events manager will reach out within 2 business hours.</p>
                             
                             <?php if ($message_sent): ?>
-                                <div class="alert alert-success" style="border-radius: 8px; font-size: 14px; margin-bottom: 25px; background: rgba(156, 96, 71, 0.08); border: 1px solid rgba(156, 96, 71, 0.2); color: #9c6047; padding: 12px 20px;">
-                                    Thank you! Your corporate booking request has been logged successfully. We will connect shortly.
+                                <div class="alert alert-success" style="border-radius: 8px; font-size: 13.5px; margin-bottom: 20px; background: rgba(156, 96, 71, 0.08); border: 1px solid rgba(156, 96, 71, 0.2); color: #9c6047; padding: 10px 16px;">
+                                    Thank you! Your callback request was sent successfully.
                                 </div>
                             <?php endif; ?>
 
                             <form action="corporate-booking.php" method="POST">
-                                <div class="row g-3">
+                                <div class="row g-2">
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-2">
                                             <label class="form-label-custom">Full Name *</label>
-                                            <input class="form-control-custom" type="text" name="name" placeholder="Contact Person Name" required>
+                                            <input class="form-control-custom w-100" type="text" name="name" placeholder="Contact Name" required style="height: 40px; font-size: 13px;">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-2">
                                             <label class="form-label-custom">Company Name</label>
-                                            <input class="form-control-custom" type="text" name="company" placeholder="e.g. Acme Corp">
+                                            <input class="form-control-custom w-100" type="text" name="company" placeholder="Acme Corp" style="height: 40px; font-size: 13px;">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-2">
                                             <label class="form-label-custom">Company Email *</label>
-                                            <input class="form-control-custom" type="email" name="email" placeholder="work@company.com" required>
+                                            <input class="form-control-custom w-100" type="email" name="email" placeholder="work@company.com" required style="height: 40px; font-size: 13px;">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-2">
                                             <label class="form-label-custom">Contact Number *</label>
-                                            <input class="form-control-custom" type="text" name="phone" placeholder="Phone Number" required>
+                                            <input class="form-control-custom w-100" type="text" name="phone" placeholder="Phone Number" required style="height: 40px; font-size: 13px;">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label-custom">Preferred Event Date *</label>
-                                            <input class="form-control-custom" type="date" name="date" required>
+                                        <div class="form-group mb-2">
+                                            <label class="form-label-custom">Event Date *</label>
+                                            <input class="form-control-custom w-100" type="date" name="date" required style="height: 40px; font-size: 13px;">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label-custom">Estimated Attendees</label>
-                                            <input class="form-control-custom" type="number" name="guests" value="10" min="5" max="300">
+                                        <div class="form-group mb-2">
+                                            <label class="form-label-custom">Attendees</label>
+                                            <input class="form-control-custom w-100" type="number" name="guests" value="10" min="5" max="300" style="height: 40px; font-size: 13px;">
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="form-label-custom">Select Package Choice</label>
-                                            <select class="form-control-custom" name="package" style="height: 50px; background-position: right 20px center;">
-                                                <option value="Classic Boardroom">Classic Boardroom Package (₹650/plate)</option>
-                                                <option value="Executive Seminar" selected>Executive Seminar Package (₹850/plate)</option>
-                                                <option value="Deluxe VIP Summit">Deluxe VIP Summit Package (₹1,150/plate)</option>
-                                                <option value="Custom Event Setup">Custom Event Setup (To be discussed)</option>
-                                            </select>
+                                        <div class="form-group mb-3">
+                                            <label class="form-label-custom">Specify Seating &amp; AV Requirements</label>
+                                            <textarea class="form-control-custom w-100" name="remarks" rows="2" placeholder="Specify boardroom setup, projector options..." style="font-size: 13px;"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="form-label-custom">Specify Seating & AV Requirements</label>
-                                            <textarea class="form-control-custom" name="remarks" rows="3" placeholder="Specify boardroom setup, projector options, food restrictions..."></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 text-center mt-25">
-                                        <button class="btn btn-black text-white" type="submit" style="padding: 12px 35px; border-radius: 8px;">
+                                        <button class="btn-submit-custom" type="submit">
                                             Send Conference Request
                                         </button>
                                     </div>
@@ -275,7 +305,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
     <?php include("include/footer.php"); ?>
-    
+
     <!-- Vendors Scripts -->
     <script src="assets/js/vendor/jquery-3.7.1.min.js"></script>
     <script src="assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
@@ -293,4 +323,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Custom template script -->
     <script src="assets/js/maine209.js?v=1.0.0"></script>
 </body>
+
 </html>

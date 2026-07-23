@@ -39,31 +39,32 @@ if (isset($_POST['action']) && $_POST['action'] === 'get_pricing') {
     $check_out = isset($_POST['check_out']) ? trim($_POST['check_out']) : '';
     $adults = isset($_POST['adults']) ? intval($_POST['adults']) : 2;
     $room_id = isset($_POST['room_id']) ? intval($_POST['room_id']) : 0;
-    
+
     // Fetch room from DB
     $room_data = null;
     try {
         $stmt = $pdo->prepare("SELECT * FROM rooms WHERE id = ?");
         $stmt->execute([$room_id]);
         $room_data = $stmt->fetch();
-    } catch (Exception $e) {}
-    
+    } catch (Exception $e) {
+    }
+
     if (!$room_data) {
         echo json_encode(['success' => false, 'message' => 'Room not found']);
         exit;
     }
-    
+
     // Calculate nights
     $date1 = new DateTime($check_in);
     $date2 = new DateTime($check_out);
     $nights = $date2->diff($date1)->format("%a");
     $nights = max(1, (int)$nights);
-    
+
     // Sum prices day-by-day for each plan
     $ep_base_price = 0.00;
     $cp_base_price = 0.00;
     $map_base_price = 0.00;
-    
+
     $curr_date_ptr = clone $date1;
     while ($curr_date_ptr < $date2) {
         $date_str = $curr_date_ptr->format('Y-m-d');
@@ -72,7 +73,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'get_pricing') {
         $map_base_price += get_resolved_room_price($pdo, $room_id, $date_str, 'MAP', $adults, $room_data);
         $curr_date_ptr->modify('+1 day');
     }
-    
+
     echo json_encode([
         'success' => true,
         'nights' => $nights,
@@ -315,13 +316,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
                 // Dispatch copy to Customer
                 send_mail($email, $subject, $body, true);
-                
+
                 // Dispatch copy to Hotel Owner/Admin alerts
                 send_mail(OWNER_EMAIL, "NEW OFFLINE BOOKING - " . $booking_id, $body, true);
 
+                // Send WhatsApp notification to the owner
+                $booking_msg = "🏨 *NEW OFFLINE BOOKING (PAY AT HOTEL)* 🏨\n\n";
+                $booking_msg .= "*Booking ID:* " . $booking_id . "\n";
+                $booking_msg .= "*Name:* " . $name . "\n";
+                $booking_msg .= "*Phone:* " . $phone . "\n";
+                $booking_msg .= "*Email:* " . $email . "\n";
+                $booking_msg .= "*Room Type:* " . $room['title'] . "\n";
+                $booking_msg .= "*Check-in:* " . $check_in . "\n";
+                $booking_msg .= "*Check-out:* " . $check_out . "\n";
+                $booking_msg .= "*Nights:* " . $nights . " night(s)\n";
+                $booking_msg .= "*Meal Plan:* " . $meal_plan . "\n";
+                $booking_msg .= "*Guests:* " . $guests . " (Adults: " . $adults . ", Children: " . $children . ")\n";
+                $booking_msg .= "*Total Cost:* ₹" . number_format($total_amount, 2) . "\n";
+                if (!empty($special_request)) {
+                    $booking_msg .= "*Special Request:* " . $special_request . "\n";
+                }
+                send_whatsapp_message($booking_msg);
+
                 header("Location: thank-you.php?ref=" . urlencode($booking_id));
                 exit;
-
             } catch (Exception $e) {
                 error_log("Offline booking DB insert error: " . $e->getMessage());
                 $booking_error = 'Error saving stay transaction: ' . $e->getMessage();
@@ -652,27 +670,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         }
 
         /* Check State Rules */
-        .btn-check:checked + .payment-option-card {
+        .btn-check:checked+.payment-option-card {
             border-color: #9c6047;
             background: rgba(156, 96, 71, 0.02);
             box-shadow: 0 4px 16px rgba(156, 96, 71, 0.08);
         }
 
-        .btn-check:checked + .payment-option-card .payment-icon-wrapper {
+        .btn-check:checked+.payment-option-card .payment-icon-wrapper {
             background: rgba(156, 96, 71, 0.1);
             color: #9c6047;
         }
 
-        .btn-check:checked + .payment-option-card .payment-title {
+        .btn-check:checked+.payment-option-card .payment-title {
             color: #9c6047;
         }
 
-        .btn-check:checked + .payment-option-card .payment-indicator {
+        .btn-check:checked+.payment-option-card .payment-indicator {
             border-color: #9c6047;
         }
 
-        .btn-check:checked + .payment-option-card .payment-indicator::after {
+        .btn-check:checked+.payment-option-card .payment-indicator::after {
             transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Payment Gateway Badges Under Submit Button */
+        .pay-gateway-badge:hover {
+            transform: translateY(-2px);
+            border-color: #9c6047 !important;
+            box-shadow: 0 4px 6px rgba(156, 96, 71, 0.1) !important;
+        }
+
+        /* Available Coupons styling */
+        .available-coupon-tag {
+            background: rgba(156, 96, 71, 0.05) !important;
+            border: 1px dashed rgba(156, 96, 71, 0.3) !important;
+            border-radius: 6px !important;
+            padding: 6px 10px !important;
+            font-size: 11.5px !important;
+            font-weight: 600 !important;
+            color: #9c6047 !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+            margin: 0 !important;
+            line-height: 1 !important;
+        }
+
+        .available-coupon-tag:hover {
+            background: #9c6047 !important;
+            color: #ffffff !important;
+            border-style: solid !important;
+            border-color: #9c6047 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 8px rgba(156, 96, 71, 0.15) !important;
+        }
+
+        .coupon-tag-code {
+            font-weight: 750 !important;
+            text-transform: uppercase !important;
+        }
+
+        .coupon-tag-percent {
+            opacity: 0.85 !important;
+            font-size: 10.5px !important;
+            border-left: 1px solid rgba(156, 96, 71, 0.25);
+            padding-left: 6px;
+        }
+        
+        .available-coupon-tag:hover .coupon-tag-percent {
+            border-left-color: rgba(255, 255, 255, 0.35);
         }
     </style>
     <?php include("include/head-scripts.php"); ?>
@@ -793,6 +862,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                 </div>
                                 <div id="couponStatus" class="mb-15" style="font-size:13px; display:none;"></div>
 
+                                <?php
+                                $public_coupons = [];
+                                try {
+                                    $stmt = $pdo->prepare("SELECT * FROM coupons WHERE status = 'active' AND show_in_checkout = 1 AND expiry_date >= CURDATE() ORDER BY discount_percent DESC");
+                                    $stmt->execute();
+                                    $public_coupons = $stmt->fetchAll();
+                                } catch (Exception $e) {
+                                    error_log("Database error loading public coupons: " . $e->getMessage());
+                                }
+                                if (count($public_coupons) > 0):
+                                ?>
+                                    <div class="available-coupons-wrapper mb-15">
+                                        <span class="d-block mb-5" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px; text-align: left;">Available Promo Code(s)</span>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <?php foreach ($public_coupons as $pub_cp): ?>
+                                                <button type="button" class="available-coupon-tag" onclick="selectCouponCode('<?= htmlspecialchars($pub_cp['code']) ?>')" title="<?= htmlspecialchars($pub_cp['title']) ?>">
+                                                    <span class="coupon-tag-code"><?= htmlspecialchars($pub_cp['code']) ?></span>
+                                                    <span class="coupon-tag-percent"><?= htmlspecialchars($pub_cp['discount_percent']) ?>% OFF</span>
+                                                </button>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
                                 <!-- Pricing Breakdown -->
                                 <div class="price-row">
                                     <span>Room Rate (1 Night)</span>
@@ -818,55 +911,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                     <span>GST Taxes (5%)</span>
                                     <span>₹<span id="taxAmount"><?= number_format($room['price'] * 0.05, 2) ?></span></span>
                                 </div>
-                                 <!-- Select Payment Option -->
-                                 <div class="mt-20 mb-15 pt-15" style="border-top: 1px dashed #cbd5e1;">
-                                     <label class="form-label-custom mb-10">Select Payment Option *</label>
-                                     <div class="row g-2">
-                                         <!-- Online Payment Card -->
-                                         <div class="col-6">
-                                             <input type="radio" class="btn-check" name="payment_method" id="pay_online" value="online" checked autocomplete="off">
-                                             <label class="payment-option-card d-flex align-items-center gap-2 px-2 py-2 w-100 h-100" for="pay_online" style="min-height: 52px;">
-                                                 <div class="payment-icon-wrapper d-flex align-items-center justify-content-center" style="width:28px; height:28px; border-radius:5px; flex-shrink:0;">
-                                                     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="payment-icon">
-                                                         <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
-                                                         <line x1="2" y1="10" x2="22" y2="10"></line>
-                                                     </svg>
-                                                 </div>
-                                                 <div class="payment-content flex-grow-1" style="min-width: 0;">
-                                                     <div class="d-flex align-items-center justify-content-between">
-                                                         <span class="payment-title" style="font-size: 12px; display: block; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pay Online</span>
-                                                         <div class="payment-indicator" style="width:14px; height:14px; flex-shrink:0;"></div>
-                                                     </div>
-                                                     <span style="font-size: 9.5px; color:#64748b; display:block; line-height:1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">Instant Confirm</span>
-                                                 </div>
-                                             </label>
-                                         </div>
-                                         
-                                         <!-- Offline Payment Card -->
-                                         <div class="col-6">
-                                             <input type="radio" class="btn-check" name="payment_method" id="pay_offline" value="offline" autocomplete="off">
-                                             <label class="payment-option-card d-flex align-items-center gap-2 px-2 py-2 w-100 h-100" for="pay_offline" style="min-height: 52px;">
-                                                 <div class="payment-icon-wrapper d-flex align-items-center justify-content-center" style="width:28px; height:28px; border-radius:5px; flex-shrink:0;">
-                                                     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="payment-icon">
-                                                         <path d="M3 21h18M3 7v14M21 7v14M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2zM12 11h.01M12 15h.01M8 11h.01M8 15h.01M16 11h.01M16 15h.01"></path>
-                                                     </svg>
-                                                 </div>
-                                                 <div class="payment-content flex-grow-1" style="min-width: 0;">
-                                                     <div class="d-flex align-items-center justify-content-between">
-                                                         <span class="payment-title" style="font-size: 12px; display: block; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pay at Hotel</span>
-                                                         <div class="payment-indicator" style="width:14px; height:14px; flex-shrink:0;"></div>
-                                                     </div>
-                                                     <span style="font-size: 9.5px; color:#64748b; display:block; line-height:1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">Pay on Arrival</span>
-                                                 </div>
-                                             </label>
-                                         </div>
-                                     </div>
-                                 </div>
+                                <!-- Select Payment Option -->
+                                <div class="mt-20 mb-15 pt-15" style="border-top: 1px dashed #cbd5e1;">
+                                    <label class="form-label-custom mb-10">Select Payment Option *</label>
+                                    <div class="row g-2">
+                                        <!-- Online Payment Card -->
+                                        <div class="col-6">
+                                            <input type="radio" class="btn-check" name="payment_method" id="pay_online" value="online" checked autocomplete="off">
+                                            <label class="payment-option-card d-flex align-items-center gap-2 px-2 py-2 w-100 h-100" for="pay_online" style="min-height: 52px;">
+                                                <div class="payment-icon-wrapper d-flex align-items-center justify-content-center" style="width:28px; height:28px; border-radius:5px; flex-shrink:0;">
+                                                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="payment-icon">
+                                                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                                                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                                                    </svg>
+                                                </div>
+                                                <div class="payment-content flex-grow-1" style="min-width: 0;">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <span class="payment-title" style="font-size: 12px; display: block; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pay Online</span>
+                                                        <div class="payment-indicator" style="width:14px; height:14px; flex-shrink:0;"></div>
+                                                    </div>
+                                                    <span style="font-size: 9.5px; color:#64748b; display:block; line-height:1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">Instant Confirm</span>
+                                                </div>
+                                            </label>
+                                        </div>
 
-                                 <div class="price-total">
-                                     <span>Total Payable</span>
-                                     <span>₹<span id="grandTotal"><?= number_format($room['price'] * 1.05, 2) ?></span></span>
-                                 </div>
+                                        <!-- Offline Payment Card -->
+                                        <div class="col-6">
+                                            <input type="radio" class="btn-check" name="payment_method" id="pay_offline" value="offline" autocomplete="off">
+                                            <label class="payment-option-card d-flex align-items-center gap-2 px-2 py-2 w-100 h-100" for="pay_offline" style="min-height: 52px;">
+                                                <div class="payment-icon-wrapper d-flex align-items-center justify-content-center" style="width:28px; height:28px; border-radius:5px; flex-shrink:0;">
+                                                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="payment-icon">
+                                                        <path d="M3 21h18M3 7v14M21 7v14M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2zM12 11h.01M12 15h.01M8 11h.01M8 15h.01M16 11h.01M16 15h.01"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="payment-content flex-grow-1" style="min-width: 0;">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <span class="payment-title" style="font-size: 12px; display: block; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pay at Hotel</span>
+                                                        <div class="payment-indicator" style="width:14px; height:14px; flex-shrink:0;"></div>
+                                                    </div>
+                                                    <span style="font-size: 9.5px; color:#64748b; display:block; line-height:1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">Pay on Arrival</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="price-total">
+                                    <span>Total Payable</span>
+                                    <span>₹<span id="grandTotal"><?= number_format($room['price'] * 1.05, 2) ?></span></span>
+                                </div>
 
                                 <button class="btn-payment" type="submit">
                                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
@@ -874,6 +967,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                     </svg>
                                     Proceed to Online Payment
                                 </button>
+
+                                 <div class="online-payment-gateways" style="margin-top: 15px; text-align: center;">
+                                     <span style="font-size: 10.5px; color: #64748b; font-weight: 600; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Guaranteed Safe &amp; Secure Checkout</span>
+                                     <div style="display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: nowrap; width: 100%;">
+                                         <!-- UPI -->
+                                         <div class="pay-gateway-badge" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0; display: inline-flex; align-items: center; justify-content: center; height: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: all 0.2s; cursor: default; overflow: hidden; flex: 1.5 1 auto; max-width: 72px; min-width: 44px; flex-shrink: 1;">
+                                             <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" style="max-height: 50%; max-width: 85%; object-fit: contain;">
+                                         </div>
+                                         <!-- Google Pay -->
+                                         <div class="pay-gateway-badge" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0; display: inline-flex; align-items: center; justify-content: center; height: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: all 0.2s; cursor: default; overflow: hidden; flex: 1 1 auto; max-width: 48px; min-width: 32px; flex-shrink: 1;">
+                                             <img src="https://www.svgrepo.com/show/508690/google-pay.svg" alt="Google Pay" style="max-height: 85%; max-width: 85%; object-fit: contain; transform: scale(1.1); margin-top: 1px;">
+                                         </div>
+                                         <!-- Apple Pay -->
+                                         <div class="pay-gateway-badge" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0; display: inline-flex; align-items: center; justify-content: center; height: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: all 0.2s; cursor: default; overflow: hidden; flex: 1 1 auto; max-width: 48px; min-width: 32px; flex-shrink: 1;">
+                                             <img src="https://www.svgrepo.com/show/508402/apple-pay.svg" alt="Apple Pay" style="max-height: 80%; max-width: 85%; object-fit: contain; transform: scale(1.1); margin-top: 1px;">
+                                         </div>
+                                         <!-- Mastercard -->
+                                         <div class="pay-gateway-badge" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0; display: inline-flex; align-items: center; justify-content: center; height: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: all 0.2s; cursor: default; overflow: hidden; flex: 1 1 auto; max-width: 48px; min-width: 32px; flex-shrink: 1;">
+                                             <img src="https://www.svgrepo.com/show/508703/mastercard.svg" alt="Mastercard" style="max-height: 65%; max-width: 85%; object-fit: contain;">
+                                         </div>
+                                         <!-- Visa -->
+                                         <div class="pay-gateway-badge" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0; display: inline-flex; align-items: center; justify-content: center; height: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: all 0.2s; cursor: default; overflow: hidden; flex: 1 1 auto; max-width: 48px; min-width: 32px; flex-shrink: 1;">
+                                             <img src="https://www.svgrepo.com/show/508730/visa-classic.svg" alt="Visa" style="max-height: 60%; max-width: 85%; object-fit: contain;">
+                                         </div>
+                                         <!-- PayPal -->
+                                         <div class="pay-gateway-badge" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0; display: inline-flex; align-items: center; justify-content: center; height: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: all 0.2s; cursor: default; overflow: hidden; flex: 1 1 auto; max-width: 48px; min-width: 32px; flex-shrink: 1;">
+                                             <img src="https://cdn.jsdelivr.net/gh/aaronfagan/svg-credit-card-payment-icons@main/flat/paypal.svg" alt="PayPal" style="max-height: 60%; max-width: 85%; object-fit: contain;">
+                                         </div>
+                                     </div>
+                                 </div>
                             </div>
                         </div>
                     </div>
@@ -1085,7 +1208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                             var nights = response.nights;
                             var basePrice = 0;
                             var ratePerNight = 0;
-                            
+
                             if (mealPlan === 'CP') {
                                 basePrice = response.cp_base_price;
                                 ratePerNight = response.cp_average_rate;
@@ -1129,46 +1252,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             }
 
             // Payment method dynamic text toggle helper
-                                    function updateSubmitButton() {
-                                        var payOffline = document.getElementById('pay_offline');
-                                        var btnPayment = document.querySelector('.btn-payment');
-                                        if (payOffline && payOffline.checked) {
-                                            btnPayment.innerHTML = `
+            function updateSubmitButton() {
+                var payOffline = document.getElementById('pay_offline');
+                var btnPayment = document.querySelector('.btn-payment');
+                var gatewayLogos = document.querySelector('.online-payment-gateways');
+                if (payOffline && payOffline.checked) {
+                    btnPayment.innerHTML = `
                                                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
                                                 Confirm Booking (Pay at Hotel)
                                             `;
-                                        } else {
-                                            btnPayment.innerHTML = `
+                    if (gatewayLogos) gatewayLogos.style.display = 'none';
+                } else {
+                    btnPayment.innerHTML = `
                                                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                                 </svg>
                                                 Proceed to Online Payment
                                             `;
-                                        }
-                                    }
+                    if (gatewayLogos) gatewayLogos.style.display = 'flex';
+                }
+            }
 
-                                    $(document).on('change', 'input[name="payment_method"]', updateSubmitButton);
+            $(document).on('change', 'input[name="payment_method"]', updateSubmitButton);
 
-                                    // Enforce occupancy rules inside checkout form input fields
-                                    $('#adultsInput, #childrenInput').on('change input', function() {
-                                        var adults = parseInt($('#adultsInput').val()) || 1;
-                                        var children = parseInt($('#childrenInput').val()) || 0;
-                                        
-                                        if (adults >= 3) {
-                                            $('#adultsInput').val(3);
-                                            $('#childrenInput').val(0).attr('max', 0);
-                                        } else {
-                                            $('#childrenInput').attr('max', 4);
-                                        }
-                                        recalculatePrices();
-                                    });
+            // Enforce occupancy rules inside checkout form input fields
+            $('#adultsInput, #childrenInput').on('change input', function() {
+                var adults = parseInt($('#adultsInput').val()) || 1;
+                var children = parseInt($('#childrenInput').val()) || 0;
 
-                                    // Initial execution on page load
-                                    recalculatePrices();
-                                });
-                            </script>
-                        </body>
+                if (adults >= 3) {
+                    $('#adultsInput').val(3);
+                    $('#childrenInput').val(0).attr('max', 0);
+                } else {
+                    $('#childrenInput').attr('max', 4);
+                }
+                recalculatePrices();
+            });
 
-                        </html>
+            // Initial execution on page load
+            recalculatePrices();
+        });
+
+        function selectCouponCode(code) {
+            var input = document.getElementById('couponInput');
+            if (input) {
+                input.value = code;
+                var applyBtn = document.getElementById('btnApplyCoupon');
+                if (applyBtn) {
+                    applyBtn.click();
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

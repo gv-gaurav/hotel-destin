@@ -141,6 +141,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Dispatch copy to Hotel Owner/Admin alerts
                 send_mail(OWNER_EMAIL, "NEW ONLINE BOOKING - " . $booking_id, $body, true);
+
+                // Send WhatsApp notification to the owner
+                $booking_msg = "💳 *NEW ONLINE BOOKING (PAID ONLINE)* 💳\n\n";
+                $booking_msg .= "*Booking ID:* " . $booking_id . "\n";
+                $booking_msg .= "*Invoice No:* " . $invoice_no . "\n";
+                $booking_msg .= "*Name:* " . $booking['customer_name'] . "\n";
+                $booking_msg .= "*Phone:* " . $booking['customer_phone'] . "\n";
+                $booking_msg .= "*Email:* " . $booking['customer_email'] . "\n";
+                $booking_msg .= "*Room Type:* " . $booking['room_title'] . "\n";
+                $booking_msg .= "*Check-in:* " . $booking['check_in'] . "\n";
+                $booking_msg .= "*Check-out:* " . $booking['check_out'] . "\n";
+                $booking_msg .= "*Nights:* " . $booking['total_nights'] . " night(s)\n";
+                $booking_msg .= "*Meal Plan:* " . $booking['meal_plan'] . "\n";
+                $booking_msg .= "*Guests:* " . $booking['guests'] . " (Adults: " . $booking['adults'] . ", Children: " . $booking['children'] . ")\n";
+                $booking_msg .= "*Amount Paid:* ₹" . number_format($booking['total_amount'], 2) . "\n";
+                if (!empty($booking['special_request'])) {
+                    $booking_msg .= "*Special Request:* " . $booking['special_request'] . "\n";
+                }
+                send_whatsapp_message($booking_msg);
             }
             
             // Redirect to success page

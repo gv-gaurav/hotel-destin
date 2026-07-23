@@ -10,6 +10,7 @@ if (empty($_SESSION['admin_logged_in'])) {
 // Get active filters
 $start_date = isset($_GET['start_date']) ? trim($_GET['start_date']) : '';
 $end_date = isset($_GET['end_date']) ? trim($_GET['end_date']) : '';
+$status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
 $active_type = isset($_GET['type']) ? strtolower(trim($_GET['type'])) : 'all';
 
 // Define lead categories mapping for display names
@@ -19,7 +20,8 @@ $lead_titles = [
     'banquet' => 'Banquet & Events',
     'corporate' => 'Corporate',
     'airport_transfer' => 'Airport Transfer',
-    'long_stay' => 'Long Stay'
+    'long_stay' => 'Long Stay',
+    'bulk_booking' => 'Bulk Booking'
 ];
 
 // Build SQL query
@@ -34,6 +36,10 @@ if ($start_date !== '') {
 if ($end_date !== '') {
     $conditions[] = "created_at <= :end_date";
     $params['end_date'] = $end_date . " 23:59:59";
+}
+if ($status_filter !== '') {
+    $conditions[] = "status = :status";
+    $params['status'] = $status_filter;
 }
 
 // Filter by category slug (handle 'wedding' mapping to 'banquet' as done in frontend)

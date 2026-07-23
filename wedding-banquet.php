@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = isset($_POST['phone']) ? htmlspecialchars(trim($_POST['phone'])) : '';
     $date = isset($_POST['date']) ? htmlspecialchars(trim($_POST['date'])) : '';
     $guests = isset($_POST['guests']) ? intval($_POST['guests']) : 150;
-    $package = isset($_POST['package']) ? htmlspecialchars(trim($_POST['package'])) : 'Standard Wedding Royale';
+    $package = 'Wedding Banquet';
     $remarks = isset($_POST['remarks']) ? htmlspecialchars(trim($_POST['remarks'])) : '';
 
     if (empty($name)) {
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <style>
         .wedding-hero {
-            background: linear-gradient(0deg, rgba(14, 14, 14, 0.6) 0%, rgba(14, 14, 14, 0.35) 100%), url('assets/imgs/page/pages/banner.png') no-repeat center center;
+            background: linear-gradient(0deg, rgba(14, 14, 14, 0.6) 0%, rgba(14, 14, 14, 0.35) 100%), url('uploads/wedding_banquet_hero.jpg') no-repeat center center;
             background-size: cover;
             min-height: 400px;
             display: flex;
@@ -137,57 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </section>
 
-        <!-- Package Options -->
-        <section class="section-box py-50">
-            <div class="container">
-                <div class="text-center mb-40">
-                    <h2 class="font-heading neutral-1000">Exquisite Wedding Packages</h2>
-                    <p class="neutral-500 max-width-600 mx-auto">We offer comprehensive arrangements including gourmet menus, floral design themes, and luxury rooms for families.</p>
-                </div>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="wedding-pkg-card text-center wow fadeInUp">
-                            <h3 class="font-heading">Standard Royale</h3>
-                            <p class="neutral-400 mt-5">Perfect for intimate family weddings</p>
-                            <div class="pkg-price">₹450 <span style="font-size: 14px; font-weight: normal;">/ plate</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Fully Decorated Banquet Entry</li>
-                                <li class="mb-5">Standard Stage Decor & lighting</li>
-                                <li class="mb-5">Complimentary Deluxe Room (1 night)</li>
-                                <li class="mb-5">Full Buffet Dinner (Veg)</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="wedding-pkg-card text-center wow fadeInUp" style="border-color: #9c6047; background: #fffcf9; box-shadow: 0 8px 24px rgba(156,96,71,0.06);">
-                            <span class="badge bg-dark mb-10 text-white" style="font-size: 10px; padding: 4px 10px; background-color: #9c6047 !important;">SIGNATURE SELECTION</span>
-                            <h3 class="font-heading">Elite Imperial</h3>
-                            <p class="neutral-400 mt-5">Ideal for premium grand receptions</p>
-                            <div class="pkg-price">₹550 <span style="font-size: 14px; font-weight: normal;">/ plate</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Themed Floral decorations</li>
-                                <li class="mb-5">Premium carpeted stage setup & DJ spot</li>
-                                <li class="mb-5">2 Complimentary Executive Rooms (1 night)</li>
-                                <li class="mb-5">Expanded Dinner menu with live counters</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="wedding-pkg-card text-center wow fadeInUp">
-                            <h3 class="font-heading">Majestic Destination</h3>
-                            <p class="neutral-400 mt-5">Ultimate luxury celebration package</p>
-                            <div class="pkg-price">₹700 <span style="font-size: 14px; font-weight: normal;">/ plate</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Custom designer walkthrough passage</li>
-                                <li class="mb-5">Specialized photography platform setup</li>
-                                <li class="mb-5">Complimentary Premium Suite (1 night)</li>
-                                <li class="mb-5">Multi-cuisine live catering counters</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <!-- Enquiry Form -->
         <section class="form-section">
@@ -230,21 +180,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <input class="form-control-custom" type="date" name="date" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="form-label-custom">Estimated Guests Count</label>
                                             <input class="form-control-custom" type="number" name="guests" value="150" min="50" max="500">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label-custom">Select Wedding Package</label>
-                                            <select class="form-control-custom" name="package" style="height: 50px; background-position: right 20px center;">
-                                                <option value="Standard Wedding Royale">Standard Royale Package (₹450/plate)</option>
-                                                <option value="Elite Imperial Wedding" selected>Elite Imperial Package (₹550/plate)</option>
-                                                <option value="Majestic Destination Wedding">Majestic Destination Package (₹700/plate)</option>
-                                                <option value="Custom Floral Plan">Custom Floral & Event Planning</option>
-                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-12">

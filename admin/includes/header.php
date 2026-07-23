@@ -467,6 +467,15 @@ $active_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li>
+                <a href="banquet-settings.php" class="sidebar-link <?= $active_page === 'banquet-settings.php' ? 'active' : '' ?>">
+                    <!-- Sparkles/Stars Icon -->
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.286L13 21l-2.286-6.857L5 12l5.714-2.286L13 3z"></path>
+                    </svg>
+                    Banquet Hall
+                </a>
+            </li>
+            <li>
                 <a href="settings.php" class="sidebar-link <?= $active_page === 'settings.php' ? 'active' : '' ?>">
                     <!-- Sliders Adjust icon -->
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

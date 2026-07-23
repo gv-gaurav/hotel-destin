@@ -36,55 +36,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $description = isset($_POST['description']) ? htmlspecialchars(trim($_POST['description'])) : '';
             $media_type = isset($_POST['media_type']) ? trim($_POST['media_type']) : 'image';
 
-            // Handle Media Upload
-            if (isset($_FILES['gallery_file']) && $_FILES['gallery_file']['error'] === UPLOAD_ERR_OK) {
-                $file_tmp = $_FILES['gallery_file']['tmp_name'];
-                $file_name = $_FILES['gallery_file']['name'];
-                $file_size = $_FILES['gallery_file']['size'];
-                $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+            // Handle Multiple Media Uploads
+            if (isset($_FILES['gallery_files'])) {
+                $files = $_FILES['gallery_files'];
+                $file_count = count($files['name']);
+                $uploaded_count = 0;
+                $has_errors = false;
 
-                if ($media_type === 'video') {
-                    $allowed_extensions = ['mp4', 'webm', 'mov', 'm4v'];
-                    $max_size = 15 * 1024 * 1024; // 15MB
-                } else {
-                    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                    $max_size = 5 * 1024 * 1024; // 5MB
+                for ($i = 0; $i < $file_count; $i++) {
+                    if ($files['error'][$i] !== UPLOAD_ERR_OK) {
+                        continue;
+                    }
+
+                    $file_tmp = $files['tmp_name'][$i];
+                    $file_name = $files['name'][$i];
+                    $file_size = $files['size'][$i];
+                    $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+                    if ($media_type === 'video') {
+                        $allowed_extensions = ['mp4', 'webm', 'mov', 'm4v'];
+                        $max_size = 15 * 1024 * 1024; // 15MB
+                    } else {
+                        $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                        $max_size = 5 * 1024 * 1024; // 5MB
+                    }
+
+                    if (!in_array($file_ext, $allowed_extensions)) {
+                        header("Location: gallery.php?error=format");
+                        exit;
+                    } else if ($file_size > $max_size) {
+                        header("Location: gallery.php?error=size");
+                        exit;
+                    } else {
+                        // Create uploads directory if it does not exist
+                        $upload_dir = __DIR__ . '/../uploads/';
+                        if (!is_dir($upload_dir)) {
+                            mkdir($upload_dir, 0755, true);
+                        }
+
+                        // Generate safe unique filename
+                        $prefix = ($media_type === 'video') ? 'vid_' : 'img_';
+                        $new_filename = uniqid($prefix, true) . '.' . $file_ext;
+                        $dest_path = $upload_dir . $new_filename;
+                        $db_image_path = 'uploads/' . $new_filename;
+
+                        if (move_uploaded_file($file_tmp, $dest_path)) {
+                            try {
+                                $adjusted_title = ($file_count > 1) ? $title . " (" . ($uploaded_count + 1) . ")" : $title;
+                                $stmt = $pdo->prepare("INSERT INTO gallery (title, category, image_path, description) VALUES (?, ?, ?, ?)");
+                                $stmt->execute([$adjusted_title, $category, $db_image_path, $description]);
+                                $uploaded_count++;
+                            } catch (Exception $e) {
+                                error_log("Gallery insertion database failure: " . $e->getMessage());
+                                $has_errors = true;
+                            }
+                        } else {
+                            $has_errors = true;
+                        }
+                    }
                 }
 
-                if (!in_array($file_ext, $allowed_extensions)) {
-                    header("Location: gallery.php?error=format");
-                    exit;
-                } else if ($file_size > $max_size) {
-                    header("Location: gallery.php?error=size");
+                if ($uploaded_count > 0) {
+                    header("Location: gallery.php?success=add");
                     exit;
                 } else {
-                    // Create uploads directory if it does not exist
-                    $upload_dir = __DIR__ . '/../uploads/';
-                    if (!is_dir($upload_dir)) {
-                        mkdir($upload_dir, 0755, true);
-                    }
-
-                    // Generate safe unique filename
-                    $prefix = ($media_type === 'video') ? 'vid_' : 'img_';
-                    $new_filename = uniqid($prefix, true) . '.' . $file_ext;
-                    $dest_path = $upload_dir . $new_filename;
-                    $db_image_path = 'uploads/' . $new_filename;
-
-                    if (move_uploaded_file($file_tmp, $dest_path)) {
-                        try {
-                            $stmt = $pdo->prepare("INSERT INTO gallery (title, category, image_path, description) VALUES (?, ?, ?, ?)");
-                            $stmt->execute([$title, $category, $db_image_path, $description]);
-                            header("Location: gallery.php?success=add");
-                            exit;
-                        } catch (Exception $e) {
-                            error_log("Gallery insertion database failure: " . $e->getMessage());
-                            header("Location: gallery.php?error=db");
-                            exit;
-                        }
-                    } else {
-                        header("Location: gallery.php?error=upload");
-                        exit;
-                    }
+                    header("Location: gallery.php?error=upload");
+                    exit;
                 }
             } else {
                 header("Location: gallery.php?error=invalid_file");
@@ -181,9 +198,9 @@ try {
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="form-label-custom" id="fileLabel">Select Image File *</label>
-                    <input class="form-control-custom" type="file" name="gallery_file" id="galleryFile" accept="image/*" required style="padding-top:10px;">
-                    <span id="fileHelper" style="font-size:11.5px; color:#777; display:block; margin-top:5px;">Allowed formats: JPG, JPEG, PNG, GIF, WEBP. Max size: 5MB.</span>
+                    <label class="form-label-custom" id="fileLabel">Select Image File(s) *</label>
+                    <input class="form-control-custom" type="file" name="gallery_files[]" id="galleryFile" accept="image/*" multiple required style="padding-top:10px;">
+                    <span id="fileHelper" style="font-size:11.5px; color:#777; display:block; margin-top:5px;">Allowed formats: JPG, JPEG, PNG, GIF, WEBP. Max size: 5MB per file. Select one or more files.</span>
                 </div>
             </div>
             <div class="col-md-6">
@@ -290,13 +307,13 @@ try {
 
         if (type === 'video') {
             fileInput.accept = 'video/mp4,video/webm,video/quicktime,video/x-m4v';
-            fileLabel.textContent = 'Select Video File *';
-            fileHelper.textContent = 'Allowed formats: MP4, WEBM, MOV, M4V. Max size: 15MB.';
+            fileLabel.textContent = 'Select Video File(s) *';
+            fileHelper.textContent = 'Allowed formats: MP4, WEBM, MOV, M4V. Max size: 15MB per file. Select one or more files.';
             mediaTitle.placeholder = 'e.g. Deluxe Suite Video Walkthrough';
         } else {
             fileInput.accept = 'image/*';
-            fileLabel.textContent = 'Select Image File *';
-            fileHelper.textContent = 'Allowed formats: JPG, JPEG, PNG, GIF, WEBP. Max size: 5MB.';
+            fileLabel.textContent = 'Select Image File(s) *';
+            fileHelper.textContent = 'Allowed formats: JPG, JPEG, PNG, GIF, WEBP. Max size: 5MB per file. Select one or more files.';
             mediaTitle.placeholder = 'e.g. Deluxe Room Bedding';
         }
     }

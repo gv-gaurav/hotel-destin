@@ -23,7 +23,8 @@ if (!$room) {
         $stmt = $pdo->prepare("SELECT * FROM rooms WHERE slug LIKE ? AND status = 'active' LIMIT 1");
         $stmt->execute(['%' . $room_slug . '%']);
         $room = $stmt->fetch();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+    }
 }
 
 if (!$room) {
@@ -57,7 +58,8 @@ try {
     $img_stmt = $pdo->prepare("SELECT image_path FROM room_images WHERE room_id = ?");
     $img_stmt->execute([$room['id']]);
     $images = $img_stmt->fetchAll(PDO::FETCH_COLUMN);
-} catch (Exception $e) {}
+} catch (Exception $e) {
+}
 
 if (empty($images)) {
     $images = [$room['image_path']];
@@ -65,6 +67,7 @@ if (empty($images)) {
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -72,7 +75,7 @@ if (empty($images)) {
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
     <title><?= htmlspecialchars($room['title']) ?> - Hotel Destin Gwalior</title>
-    
+
     <style>
         :root {
             --primary-gold: #9c6047;
@@ -144,7 +147,7 @@ if (empty($images)) {
         .gallery-thumbs::-webkit-scrollbar {
             height: 3px;
         }
-        
+
         .gallery-thumbs::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 3px;
@@ -156,14 +159,15 @@ if (empty($images)) {
             border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
-            border: 2.5px solid transparent;
+            border: 2px solid transparent;
             opacity: 0.65;
             transition: all 0.25s ease;
             background: #eaeae7;
             flex-shrink: 0;
         }
 
-        .gallery-thumb.active, .gallery-thumb:hover {
+        .gallery-thumb.active,
+        .gallery-thumb:hover {
             border-color: var(--primary-gold);
             opacity: 1;
             transform: translateY(-1px);
@@ -181,7 +185,7 @@ if (empty($images)) {
             border: 1px solid #f0f0ed;
             border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.015);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.015);
             margin-bottom: 16px;
         }
 
@@ -314,11 +318,13 @@ if (empty($images)) {
             font-weight: 500 !important;
             color: var(--charcoal) !important;
         }
+
         .form-control-custom:focus {
             border-color: var(--primary-gold) !important;
             box-shadow: 0 0 0 3px rgba(156, 96, 71, 0.1) !important;
             outline: none !important;
         }
+
         .form-label-custom {
             font-size: 10.5px !important;
             text-transform: uppercase !important;
@@ -445,11 +451,13 @@ if (empty($images)) {
             .gallery-main {
                 height: 300px;
             }
+
             .sticky-form-sidebar {
                 position: relative;
                 top: 0;
                 margin-top: 20px;
             }
+
             .specs-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -459,28 +467,36 @@ if (empty($images)) {
             .gallery-main {
                 height: 220px;
             }
+
             .specs-grid {
                 grid-template-columns: 1fr;
                 gap: 8px;
             }
+
             .detail-card {
                 padding: 16px;
             }
+
             .room-detail-hero-box h1 {
                 font-size: 24px !important;
             }
+
             .tariff-option-card {
                 padding: 12px;
             }
+
             .tariff-title {
                 font-size: 13.5px;
             }
+
             .tariff-desc {
                 font-size: 11px;
             }
+
             .tariff-price {
                 font-size: 15px;
             }
+
             .amenity-grid {
                 grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             }
@@ -488,8 +504,9 @@ if (empty($images)) {
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
+
 <body>
-    
+
     <?php include("include/header.php"); ?>
 
     <main class="main">
@@ -502,7 +519,7 @@ if (empty($images)) {
                     </svg>
                     Back to All Rooms
                 </a>
-                
+
                 <div class="row align-items-end mt-10">
                     <div class="col-lg-8 col-12">
                         <span class="badge" style="background-color: rgba(156, 96, 71, 0.08); color: var(--primary-gold); font-weight: 700; padding: 6px 12px; font-size:11px; border-radius: 4px; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 8px; display: inline-block;">
@@ -533,10 +550,19 @@ if (empty($images)) {
                     <div class="col-lg-7 col-12">
                         <!-- Image Slider Container -->
                         <div class="gallery-main" style="position: relative;">
-                            <img id="mainGalleryImg" src="<?= htmlspecialchars($images[0]) ?>" alt="Featured Room Image">
-                            <div id="galleryCountOverlay" style="position: absolute; bottom: 15px; right: 15px; background: rgba(15, 23, 42, 0.75); color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; letter-spacing: 0.5px;">
+                            <a id="mainGalleryLink" href="#" style="display: block;">
+                                <img id="mainGalleryImg" src="<?= htmlspecialchars($images[0]) ?>" alt="Featured Room Image" style="cursor: zoom-in; width: 100%; display: block;">
+                            </a>
+                            <div id="galleryCountOverlay" style="position: absolute; bottom: 15px; right: 15px; background: rgba(15, 23, 42, 0.75); color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; letter-spacing: 0.5px; z-index: 2;">
                                 <span id="currentImgNum">1</span> / <?= count($images) ?> Images
                             </div>
+                        </div>
+
+                        <!-- Hidden anchors for full gallery popup -->
+                        <div style="display: none;">
+                            <?php foreach ($images as $index => $img_path): ?>
+                                <a href="<?= htmlspecialchars($img_path) ?>" class="room-gallery-link" data-index="<?= $index ?>"></a>
+                            <?php endforeach; ?>
                         </div>
                         <?php if (count($images) > 1): ?>
                             <div class="gallery-thumbs mb-15">
@@ -554,7 +580,7 @@ if (empty($images)) {
                             <div style="font-size: 15px; line-height: 1.75; color: #4b5563; font-weight:500; margin-bottom: 0;">
                                 <?= $room['description'] ?>
                             </div>
-                            
+
                             <!-- Key Technical Specifications -->
                             <div class="specs-grid">
                                 <div class="spec-item">
@@ -599,10 +625,10 @@ if (empty($images)) {
                     <div class="col-lg-5 col-12">
                         <div class="detail-card sticky-form-sidebar">
                             <h3 style="border-bottom:none; margin-bottom:15px; padding-bottom:0;">Configure Stay & Meal Plan</h3>
-                            
+
                             <form id="stayConfigForm" method="GET" action="checkout.php">
                                 <input type="hidden" name="room" value="<?= htmlspecialchars($room['slug']) ?>">
-                                
+
                                 <div class="row g-2 mb-10">
                                     <div class="col-6">
                                         <label class="form-label-custom" style="font-size:11.5px; font-weight:700;">Check-In Date *</label>
@@ -623,7 +649,7 @@ if (empty($images)) {
                                 </div>
 
                                 <label class="form-label-custom mb-10" style="display:block; font-weight:700;">Select Tariff Meal Plan *</label>
-                                
+
                                 <!-- EP Card -->
                                 <div class="tariff-option-card selected" onclick="selectTariffPlan(this, 'EP')">
                                     <div class="tariff-content">
@@ -696,7 +722,8 @@ if (empty($images)) {
     <!-- Scripts -->
     <script src="assets/js/vendor/jquery-3.7.1.min.js"></script>
     <script src="assets/js/vendor/bootstrap.bundle.min.js"></script>
-    
+    <script src="assets/js/plugins/magnific-popup.js"></script>
+
     <script>
         // Build pricing matrix dynamically from database values
         const pricingMatrix = {
@@ -714,7 +741,7 @@ if (empty($images)) {
 
         var galleryImages = <?= json_encode($images) ?>;
         var currentGalleryIdx = 0;
-        
+
         function autoSlideGallery() {
             if (galleryImages.length <= 1) return;
             currentGalleryIdx++;
@@ -726,13 +753,14 @@ if (empty($images)) {
                 switchGalleryImgHelper(thumb[0], galleryImages[currentGalleryIdx]);
             }
         }
-        
+
         var autoSlideInterval = setInterval(autoSlideGallery, 3000);
 
         function switchGalleryImgHelper(element, imgPath) {
             $('.gallery-thumb').removeClass('active');
             $(element).addClass('active');
             $('#mainGalleryImg').attr('src', imgPath);
+            $('#mainGalleryLink').attr('href', imgPath);
             var idx = $('.gallery-thumb').index(element);
             $('#currentImgNum').text(idx + 1);
         }
@@ -807,7 +835,28 @@ if (empty($images)) {
 
             // Initial calculation run
             recalculateStayTotals();
+
+            // Initialize Magnific Popup for room gallery
+            $('.room-gallery-link').magnificPopup({
+                type: 'image',
+                gallery: {
+                    enabled: true,
+                    navigateByImgClick: true,
+                    preload: [0, 1]
+                },
+                mainClass: 'mfp-fade',
+                removalDelay: 300
+            });
+
+            // Click handler for main image link
+            $('#mainGalleryLink').on('click', function(e) {
+                e.preventDefault();
+                var currentIndex = $('.gallery-thumb.active').index();
+                if (currentIndex < 0) currentIndex = 0;
+                $('.room-gallery-link').eq(currentIndex).trigger('click');
+            });
         });
     </script>
 </body>
+
 </html>

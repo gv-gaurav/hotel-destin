@@ -270,6 +270,11 @@
             .highlight-info p {
                 font-size: 13.5px;
             }
+            @media (max-width: 768px) {
+                .map-container iframe {
+                    height: 320px !important;
+                }
+            }
         }
     </style>
     <?php include("include/head-scripts.php"); ?>
@@ -580,6 +585,22 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Google Maps Location Section -->
+        <section class="section-box location-section py-tight" id="map" style="background-color: #ffffff; border-top: 1px solid #e9ecef;">
+            <div class="container">
+                <div class="text-center mb-40 wow fadeInUp">
+                    <h2 class="neutral-1000 font-heading" style="font-size: 30px; font-weight: 500;">Find Us In Gwalior</h2>
+                    <p class="text-md neutral-500 max-width-600 mx-auto mt-10">
+                        Conveniently located on Sachin Tendulkar Road. Check the map below for directions.
+                    </p>
+                </div>
+                
+                <div class="map-container wow fadeInUp" style="border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e9ecef; line-height: 0;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d894.9536802284084!2d78.20265274966889!3d26.202704763374193!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3976c38e096f2457%3A0xdf2b8e952f5cd731!2sHotel%20DESTIN%20GWALIOR!5e0!3m2!1sen!2sin!4v1783328622750!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
         </section>

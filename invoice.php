@@ -190,7 +190,7 @@ $hotel_address = get_setting('hotel_address') ?: 'Sachin Tendulkar Road, Kailash
                     <strong>Booking Ref:</strong> <?= htmlspecialchars($booking['booking_id']) ?><br>
                     <strong>Date:</strong> <?= date('d M Y', strtotime($booking['created_at'])) ?><br>
                     <strong>Payment Method:</strong> <?= htmlspecialchars($booking['payment_method'] ?: 'Razorpay') ?><br>
-                    <strong>Status:</strong> <span style="text-transform: uppercase; font-weight: 700; color: <?= $booking['payment_status'] === 'paid' ? '#3c7a4b' : ($booking['payment_status'] === 'refunded' ? '#3b82f6' : '#dc2626') ?>;"><?= htmlspecialchars($booking['payment_status']) ?></span>
+                    <strong>Payment Status:</strong> <span style="text-transform: uppercase; font-weight: 700; color: <?= $booking['payment_status'] === 'paid' ? '#3c7a4b' : ($booking['payment_status'] === 'refunded' ? '#3b82f6' : '#dc2626') ?>;"><?= htmlspecialchars($booking['payment_status']) ?></span>
                 </td>
             </tr>
         </table>

@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = isset($_POST['phone']) ? htmlspecialchars(trim($_POST['phone'])) : '';
     $date = isset($_POST['date']) ? htmlspecialchars(trim($_POST['date'])) : '';
     $time = isset($_POST['time']) ? htmlspecialchars(trim($_POST['time'])) : '';
-    $vehicle = isset($_POST['vehicle']) ? htmlspecialchars(trim($_POST['vehicle'])) : 'Premium Executive Sedan';
+    $vehicle = 'Airport Cab';
     $flight = isset($_POST['flight']) ? htmlspecialchars(trim($_POST['flight'])) : '';
     $remarks = isset($_POST['remarks']) ? htmlspecialchars(trim($_POST['remarks'])) : '';
 
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <style>
         .ride-hero {
-            background: linear-gradient(0deg, rgba(14, 14, 14, 0.7) 0%, rgba(14, 14, 14, 0.45) 100%), url('assets/imgs/page/pages/banner2.png') no-repeat center center;
+            background: linear-gradient(0deg, rgba(14, 14, 14, 0.7) 0%, rgba(14, 14, 14, 0.45) 100%), url('uploads/airport_transfer_hero.jpg') no-repeat center center;
             background-size: cover;
             min-height: 380px;
             display: flex;
@@ -142,54 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </section>
 
-        <!-- Fleet Grid -->
-        <section class="section-box py-50">
-            <div class="container">
-                <div class="text-center mb-40">
-                    <h2 class="font-heading neutral-1000">Our Premium Fleet Options</h2>
-                    <p class="neutral-500 max-width-600 mx-auto">Choose from our clean, air-conditioned vehicles with professional, licensed English-speaking drivers.</p>
-                </div>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="vehicle-card text-center wow fadeInUp">
-                            <h3 class="font-heading">Prime Sedan</h3>
-                            <p class="neutral-400 mt-5">Perfect for business travelers or couples</p>
-                            <div class="vehicle-price">₹1,200 <span style="font-size: 13px; font-weight: normal;">/ trip</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Chauffeur driven Dzire/Etios</li>
-                                <li class="mb-5">Fits up to 3 passengers</li>
-                                <li class="mb-5">2 Standard luggage pieces</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="vehicle-card text-center wow fadeInUp" style="border-color: #9c6047; box-shadow: 0 8px 24px rgba(156,96,71,0.04);">
-                            <span class="badge bg-dark mb-10 text-white" style="font-size: 10px; padding: 4px 10px;">RECOMMENDED</span>
-                            <h3 class="font-heading">Premium Executive Sedan</h3>
-                            <p class="neutral-400 mt-5">Luxury comfort sedan class ride</p>
-                            <div class="vehicle-price">₹2,000 <span style="font-size: 13px; font-weight: normal;">/ trip</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Chauffeur driven Ciaz/Honda City</li>
-                                <li class="mb-5">Fits up to 4 passengers comfortably</li>
-                                <li class="mb-5">3 Standard luggage pieces</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="vehicle-card text-center wow fadeInUp">
-                            <h3 class="font-heading">Luxury SUV</h3>
-                            <p class="neutral-400 mt-5">Spacious transport for families & luggage</p>
-                            <div class="vehicle-price">₹2,800 <span style="font-size: 13px; font-weight: normal;">/ trip</span></div>
-                            <ul class="text-start mt-20" style="padding-left: 20px; font-size: 13.5px; color: #555;">
-                                <li class="mb-5">Chauffeur driven Toyota Innova</li>
-                                <li class="mb-5">Fits up to 6 passengers</li>
-                                <li class="mb-5">4 Large luggage bags capacity</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <!-- Booking Form -->
         <section class="form-section">
@@ -242,16 +195,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="form-group">
                                             <label class="form-label-custom">Expected Pickup Time *</label>
                                             <input class="form-control-custom" type="time" name="time" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="form-label-custom">Select Vehicle Class</label>
-                                            <select class="form-control-custom" name="vehicle" style="height: 50px; background-position: right 20px center;">
-                                                <option value="Prime Sedan">Prime Sedan Dzire/Etios class (₹1,200/trip)</option>
-                                                <option value="Premium Executive Sedan" selected>Premium Executive Sedan class (₹2,000/trip)</option>
-                                                <option value="Luxury SUV">Luxury SUV Innova class (₹2,800/trip)</option>
-                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-12">

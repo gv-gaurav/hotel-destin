@@ -8,7 +8,7 @@ $errors = [];
 if (isset($_SESSION['banquet_success']) && $_SESSION['banquet_success'] === true) {
     $message_sent = true;
     $success_name = isset($_SESSION['banq_name']) ? $_SESSION['banq_name'] : '';
-    $success_guests = isset($_SESSION['banq_guests']) ? $_SESSION['banq_guests'] : 150;
+    $success_guests = isset($_SESSION['banq_guests']) ? $_SESSION['banq_guests'] : null;
     $success_date = isset($_SESSION['banq_date']) ? $_SESSION['banq_date'] : '';
 
     // Clear session
@@ -18,27 +18,33 @@ if (isset($_SESSION['banquet_success']) && $_SESSION['banquet_success'] === true
     unset($_SESSION['banq_date']);
 }
 
-$hall_name = "Banquet Oh Saathi Re";
-$hall_capacity = "300 Guests";
-$hall_size = "3,800 Sq. Ft.";
-$rental_charges = "₹15,000 for 6 hours";
-$decor_management_text = "Flexible event packages, delicious catering, and dedicated service available";
+$hall_name = get_setting('banquet_hall_name', "Banquet Oh Saathi Re");
+$hall_capacity = get_setting('banquet_hall_capacity', "300 Guests");
+$hall_size = get_setting('banquet_hall_size', "3,800 Sq. Ft.");
+$rental_charges = get_setting('banquet_rental_charges', "₹15,000 for 6 hours");
+$decor_management_text = get_setting('banquet_decor_management_text', "Custom event packages, delicious catering, and dedicated service available");
+
+$banquet_hero_bg = get_setting('banquet_hero_bg', 'assets/imgs/page/hotel/banner-hotel.png');
+$banquet_showcase_bg = get_setting('banquet_showcase_bg', 'assets/imgs/page/room/banner-room.png');
+$banquet_description = get_setting('banquet_description', "Banquet Oh Saathi Re is Gwalior's premier pillar-free venue, perfect for weddings, receptions, birthday celebrations, corporate meetings, conferences, and other social events. We offer flexible event packages, delicious catering, and dedicated service to make every event a success.");
+$banquet_exact_location = get_setting('banquet_exact_location', "Hotel Destin Gwalior");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Collect form data
     $name = isset($_POST['name']) ? htmlspecialchars(trim($_POST['name'])) : '';
-    $email = isset($_POST['email']) ? htmlspecialchars(trim($_POST['email'])) : '';
+    $email = isset($_POST['email']) && trim($_POST['email']) !== '' ? htmlspecialchars(trim($_POST['email'])) : 'no-email@hoteldestin.in';
     $phone = isset($_POST['phone']) ? htmlspecialchars(trim($_POST['phone'])) : '';
     $event_type = isset($_POST['event_type']) ? htmlspecialchars(trim($_POST['event_type'])) : '';
     $date = isset($_POST['date']) ? htmlspecialchars(trim($_POST['date'])) : '';
-    $guests = isset($_POST['guests']) ? intval($_POST['guests']) : 150;
+    $guests_input = isset($_POST['guests']) ? trim($_POST['guests']) : '';
+    $guests = ($guests_input !== '') ? intval($guests_input) : null;
     $remarks = isset($_POST['remarks']) ? htmlspecialchars(trim($_POST['remarks'])) : '';
     
     // Server-side validation
     if (empty($name)) {
         $errors['name'] = 'Name is required';
     }
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if ($email !== 'no-email@hoteldestin.in' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Valid email is required';
     }
     if (empty($phone)) {
@@ -47,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($date)) {
         $errors['date'] = 'Event date is required';
     }
-    if ($guests < 10 || $guests > 300) {
+    if ($guests !== null && ($guests < 10 || $guests > 300)) {
         $errors['guests'] = 'Our hall capacity is up to 300 guests';
     }
     
@@ -148,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .banquet-hero {
             position: relative;
-            background: linear-gradient(rgba(14, 14, 14, 0.55), rgba(14, 14, 14, 0.75)), url('assets/imgs/page/hotel/banner-hotel.png') no-repeat center center;
+            background: linear-gradient(rgba(14, 14, 14, 0.55), rgba(14, 14, 14, 0.75)), url('<?= $banquet_hero_bg ?>') no-repeat center center;
             background-size: cover;
             height: 300px;
             display: flex;
@@ -209,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .showcase-img-panel {
             min-height: 350px;
-            background: url('assets/imgs/page/room/banner-room.png') no-repeat center center;
+            background: url('<?= $banquet_showcase_bg ?>') no-repeat center center;
             background-size: cover;
             position: relative;
         }
@@ -554,6 +560,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             line-height: 1.6;
             margin: 0;
         }
+
+        .banquet-note-box {
+            margin-top: 25px;
+            background: rgba(156, 96, 71, 0.05);
+            border-left: 3.5px solid #9c6047;
+            border-radius: 8px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #475569;
+            font-size: 13.5px;
+            font-weight: 550;
+            line-height: 1.5;
+            text-align: left;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+        }
+
+        .banquet-note-icon {
+            color: #9c6047;
+            flex-shrink: 0;
+        }
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
@@ -573,7 +601,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <h3 class="heading-3 mb-10" style="color: #0f172a; font-weight: 800; font-size: 22px;">Enquiry Submitted!</h3>
                 <p class="text-md neutral-500 mb-20" style="font-size: 14.5px; line-height: 1.6; color: #64748b;">
-                    Thank you, <strong><?= htmlspecialchars($success_name) ?></strong>. We have registered your banquet enquiry for <strong><?= htmlspecialchars($success_guests) ?> guests</strong> on <strong><?= date('d M Y', strtotime($success_date)) ?></strong>.
+                    Thank you, <strong><?= htmlspecialchars($success_name) ?></strong>. We have registered your banquet enquiry<?php if (!empty($success_guests)): ?> for <strong><?= htmlspecialchars($success_guests) ?> guests</strong><?php endif; ?> on <strong><?= date('d M Y', strtotime($success_date)) ?></strong>.
                 </p>
                 <p class="text-sm neutral-400" style="font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 0;">
                     Our events manager will review your request and reach out shortly to discuss plate budgets, decorations, and customize your configurations.
@@ -627,7 +655,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="col-lg-6 col-12 showcase-info-panel d-flex flex-column justify-content-center">
                             <h2 class="showcase-title"><?= $hall_name ?></h2>
                             <p class="showcase-description">
-                                Banquet Oh Saathi Re is Gwalior's premier pillar-free venue, perfect for weddings, receptions, birthday celebrations, corporate meetings, conferences, and other social events. We offer flexible event packages, delicious catering, and dedicated service to make every event a success.
+                                <?= $banquet_description ?>
                             </p>
                             
                             <div class="spec-grid">
@@ -648,30 +676,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <p class="spec-label">Hall Size</p>
                                         <p class="spec-val"><?= $hall_size ?></p>
                                     </div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-icon">
-                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H7M19 8H5M12 12a4 4 0 100-8 4 4 0 000 8z"/></svg>
-                                    </div>
-                                    <div>
-                                        <p class="spec-label">Rental charges</p>
-                                        <p class="spec-val"><?= $rental_charges ?></p>
-                                    </div>
-                                </div>
-                                <div class="spec-item">
-                                    <div class="spec-icon">
-                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
-                                    </div>
-                                    <div>
-                                        <p class="spec-label">Exact Location</p>
-                                        <p class="spec-val">Hotel Destin Gwalior</p>
-                                    </div>
-                                </div>
                             </div>
 
-                            <p style="font-size: 13.5px; color: var(--bs-neutral-500); line-height: 1.5; margin: 5px 0 0 0; font-weight: 500;">
-                                💡 <em>* Flexible event packages, delicious catering, and dedicated service available.</em>
-                            </p>
+                            <div class="banquet-note-box">
+                                <svg class="banquet-note-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                                <span><?= htmlspecialchars($decor_management_text) ?></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -697,25 +709,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input class="form-control-custom" type="text" id="enq_name" name="name" value="<?= isset($name) ? $name : '' ?>" placeholder="e.g. Alice Roses" required>
                             </div>
                             <div class="col-md-6 col-12 form-group-custom">
-                                <label class="form-label-custom" for="enq_email">Email Address *</label>
-                                <input class="form-control-custom" type="email" id="enq_email" name="email" value="<?= isset($email) ? $email : '' ?>" placeholder="e.g. alice@example.com" required>
+                                <label class="form-label-custom" for="enq_email">Email Address (Optional)</label>
+                                <input class="form-control-custom" type="email" id="enq_email" name="email" value="<?= isset($email) && $email !== 'no-email@hoteldestin.in' ? $email : '' ?>" placeholder="e.g. alice@example.com">
                             </div>
                             <div class="col-md-6 col-12 form-group-custom">
                                 <label class="form-label-custom" for="enq_phone">Phone Number *</label>
                                 <input class="form-control-custom" type="tel" id="enq_phone" name="phone" value="<?= isset($phone) ? $phone : '' ?>" placeholder="e.g. +91 99119 11645" required>
                             </div>
                             <div class="col-md-6 col-12 form-group-custom">
-                                <label class="form-label-custom" for="enq_event">Event Type *</label>
-                                <select class="form-control-custom" id="enq_event" name="event_type" required>
-                                    <option value="birthday celebration">Birthday Celebration</option>
-                                    <option value="wedding & reception">Wedding & Reception</option>
-                                    <option value="corporate meeting">Corporate Meeting</option>
-                                    <option value="conference & summit">Conference & Summit</option>
-                                    <option value="product launch">Product Launch</option>
-                                    <option value="team offsite">Team Offsite</option>
-                                    <option value="social gathering">Social Gathering</option>
-                                    <option value="award ceremony">Award Ceremony</option>
-                                    <option value="others">Others</option>
+                                <label class="form-label-custom" for="enq_event">Event Type (Optional)</label>
+                                <select class="form-control-custom" id="enq_event" name="event_type">
+                                    <option value="">-- Select Event Type --</option>
+                                    <option value="birthday celebration" <?= (isset($event_type) && $event_type === 'birthday celebration') ? 'selected' : '' ?>>Birthday Celebration</option>
+                                    <option value="wedding & reception" <?= (isset($event_type) && $event_type === 'wedding & reception') ? 'selected' : '' ?>>Wedding & Reception</option>
+                                    <option value="corporate meeting" <?= (isset($event_type) && $event_type === 'corporate meeting') ? 'selected' : '' ?>>Corporate Meeting</option>
+                                    <option value="conference & summit" <?= (isset($event_type) && $event_type === 'conference & summit') ? 'selected' : '' ?>>Conference & Summit</option>
+                                    <option value="product launch" <?= (isset($event_type) && $event_type === 'product launch') ? 'selected' : '' ?>>Product Launch</option>
+                                    <option value="team offsite" <?= (isset($event_type) && $event_type === 'team offsite') ? 'selected' : '' ?>>Team Offsite</option>
+                                    <option value="social gathering" <?= (isset($event_type) && $event_type === 'social gathering') ? 'selected' : '' ?>>Social Gathering</option>
+                                    <option value="award ceremony" <?= (isset($event_type) && $event_type === 'award ceremony') ? 'selected' : '' ?>>Award Ceremony</option>
+                                    <option value="others" <?= (isset($event_type) && $event_type === 'others') ? 'selected' : '' ?>>Others</option>
                                 </select>
                             </div>
                             <div class="col-md-6 col-12 form-group-custom">
@@ -723,8 +736,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input class="form-control-custom" type="date" id="enq_date" name="date" value="<?= isset($date) ? $date : '' ?>" required min="<?= date('Y-m-d') ?>">
                             </div>
                             <div class="col-md-6 col-12 form-group-custom">
-                                <label class="form-label-custom" for="enq_guests">Estimated Guests *</label>
-                                <input class="form-control-custom" type="number" id="enq_guests" name="guests" value="<?= isset($guests) ? $guests : '150' ?>" required min="10" max="300" placeholder="Up to 300 guests">
+                                <label class="form-label-custom" for="enq_guests">Estimated Guests (Optional)</label>
+                                <input class="form-control-custom" type="number" id="enq_guests" name="guests" value="<?= isset($guests) ? $guests : '' ?>" min="10" max="300" placeholder="Up to 300 guests">
                                 <?php if (isset($errors['guests'])): ?>
                                     <div class="form-error" style="color: #ef4444; font-size:12px; margin-top:5px; font-weight:600;"><?= $errors['guests'] ?></div>
                                 <?php endif; ?>

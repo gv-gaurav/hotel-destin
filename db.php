@@ -58,12 +58,19 @@ function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $ro
         if ($rule) {
             $plan = strtolower(trim($meal_plan));
             if ($plan === 'cp') {
-                return (float)$rule['cp_price'];
+                $base_price = (float)$rule['cp_price'];
             } elseif ($plan === 'map') {
-                return (float)$rule['map_price'];
+                $base_price = (float)$rule['map_price'];
             } else {
-                return (float)$rule['ep_price'];
+                $base_price = (float)$rule['ep_price'];
             }
+
+            // Add extra adult charge if adults > 2
+            if ($adults > 2) {
+                $extra_charge = isset($room['extra_adult_price']) ? (float)$room['extra_adult_price'] : 1000.00;
+                $base_price += ($adults - 2) * $extra_charge;
+            }
+            return $base_price;
         }
     } catch (Exception $e) {
         error_log("Rate calendar lookup error on date $date: " . $e->getMessage());
@@ -74,7 +81,15 @@ function get_resolved_room_price($pdo, $room_id, $date, $meal_plan, $adults, $ro
     $plan = strtolower(trim($meal_plan));
     $column = "price_" . $occupancy . "_" . $plan;
     
-    return isset($room[$column]) ? (float)$room[$column] : (float)$room['price'];
+    $base_price = isset($room[$column]) ? (float)$room[$column] : (float)$room['price'];
+
+    // Add extra adult charge if adults > 2
+    if ($adults > 2) {
+        $extra_charge = isset($room['extra_adult_price']) ? (float)$room['extra_adult_price'] : 1000.00;
+        $base_price += ($adults - 2) * $extra_charge;
+    }
+    
+    return $base_price;
 }
 
 /**
