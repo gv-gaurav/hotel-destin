@@ -587,7 +587,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div>
                                 <p class="info-strip-title">Phone & Support</p>
-                                <p class="info-strip-val"><?= htmlspecialchars($restaurant_phone) ?></p>
+                                <p class="info-strip-val"><a href="tel:<?= htmlspecialchars($restaurant_phone) ?>" style="color: inherit; text-decoration: none;"><?= htmlspecialchars($restaurant_phone) ?></a></p>
                             </div>
                         </div>
                     </div>
@@ -737,7 +737,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             
                             <div style="background: rgba(var(--res-primary-rgb), 0.1); border: 1px solid rgba(var(--res-primary-rgb), 0.25); border-radius: 12px; padding: 18px; margin-top: 20px;">
                                 <h6 style="color: var(--res-accent); font-size: 13px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Direct Inquiries</h6>
-                                <p style="color: #ffffff; font-size: 15px; font-weight: 700; margin: 0 0 4px 0;"><?= htmlspecialchars($restaurant_phone) ?></p>
+                                <p style="margin: 0 0 4px 0;"><a href="tel:<?= htmlspecialchars($restaurant_phone) ?>" style="color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none;"><?= htmlspecialchars($restaurant_phone) ?></a></p>
                                 <p style="color: var(--bs-neutral-400); font-size: 12.5px; margin: 0;">For groups larger than 10, please contact us directly.</p>
                             </div>
                         </div>
