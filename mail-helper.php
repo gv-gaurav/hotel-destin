@@ -122,6 +122,97 @@ function send_enquiry_alert($category, $name, $email, $phone, $date = null, $gue
         </p>
     </div>";
     
-    return send_mail(OWNER_EMAIL, $subject, $body, true);
+    $mail_success = send_mail(OWNER_EMAIL, $subject, $body, true);
+
+    // Trigger WhatsApp notification if enabled
+    if (defined('WHATSAPP_NOTIFICATION_ENABLED') && WHATSAPP_NOTIFICATION_ENABLED) {
+        $wa_msg = "🔔 *NEW ENQUIRY RECEIVED*\n\n"
+                . "• *Category*: " . strtoupper(str_replace('_', ' ', $category)) . "\n"
+                . "• *Name*: " . $name . "\n"
+                . "• *Phone*: " . $phone . "\n";
+        
+        if (!empty($date)) {
+            $wa_msg .= "• *Date*: " . $date . "\n";
+        }
+        if (!empty($guests)) {
+            $wa_msg .= "• *Guests*: " . $guests . "\n";
+        }
+        
+        foreach ($additional_details as $lbl => $val) {
+            if (!empty($val) || $val === 0 || $val === '0') {
+                $wa_msg .= "• *" . $lbl . "*: " . str_replace('<br>', "\n", str_replace('<br/>', "\n", $val)) . "\n";
+            }
+        }
+        
+        send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, $wa_msg);
+    }
+
+    return $mail_success;
+}
+
+/**
+ * Sends a WhatsApp text notification via Meta Cloud API.
+ *
+ * @param string $to Recipient phone number (e.g., 919873272462)
+ * @param string $message Text message content
+ * @return bool True on API success, false otherwise
+ */
+function send_whatsapp_notification($to, $message) {
+    if (!defined('META_WA_ACCESS_TOKEN') || !defined('META_WA_PHONE_NUMBER_ID')) {
+        error_log("Meta WhatsApp credentials not defined.");
+        return false;
+    }
+
+    $token = META_WA_ACCESS_TOKEN;
+    $phone_id = META_WA_PHONE_NUMBER_ID;
+
+    if (empty($token) || empty($phone_id)) {
+        error_log("Meta WhatsApp credentials are empty.");
+        return false;
+    }
+
+    $url = "https://graph.facebook.com/v18.0/" . $phone_id . "/messages";
+
+    $data = [
+        'messaging_product' => 'whatsapp',
+        'recipient_type'    => 'individual',
+        'to'                => $to,
+        'type'              => 'text',
+        'text'              => [
+            'preview_url' => false,
+            'body'        => $message
+        ]
+    ];
+
+    $headers = [
+        "Authorization: Bearer " . $token,
+        "Content-Type: application/json"
+    ];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
+    curl_close($ch);
+
+    if ($curl_error) {
+        error_log("Meta WhatsApp API Curl Error: " . $curl_error);
+        return false;
+    }
+
+    $res_json = json_decode($response, true);
+    if ($http_code >= 200 && $http_code < 300 && isset($res_json['messages'])) {
+        return true;
+    } else {
+        error_log("Meta WhatsApp API Error (HTTP " . $http_code . "): " . $response);
+        return false;
+    }
 }
 ?>
