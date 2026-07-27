@@ -138,26 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </p>
                 </div>";
 
-                // Dispatch copy to Customer
-                send_mail($booking['customer_email'], $subject, $body, true);
-                
-                // Dispatch copy to Hotel Owner/Admin alerts
-                send_mail(OWNER_EMAIL, "NEW ONLINE BOOKING - " . $booking_id, $body, true);
-
-                // WhatsApp Notification Alert
-                if (defined('WHATSAPP_NOTIFICATION_ENABLED') && WHATSAPP_NOTIFICATION_ENABLED) {
-                    $wa_msg = "🏨 *NEW ONLINE BOOKING*\n\n"
-                            . "• *Booking ID*: " . $booking_id . "\n"
-                            . "• *Customer*: " . $booking['customer_name'] . "\n"
-                            . "• *Phone*: " . $booking['customer_phone'] . "\n"
-                            . "• *Room Type*: " . $booking['room_title'] . "\n"
-                            . "• *Check-in*: " . $booking['check_in'] . "\n"
-                            . "• *Check-out*: " . $booking['check_out'] . "\n"
-                            . "• *Nights*: " . $booking['total_nights'] . "\n"
-                            . "• *Meal Plan*: " . $booking['meal_plan'] . "\n"
-                            . "• *Total Paid*: ₹" . number_format($booking['total_amount'], 2) . " (Paid via Razorpay)\n";
-                    send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, $wa_msg);
-                }
+                // Trigger background notifications (both SMTP emails and WhatsApp)
+                trigger_booking_notification($booking_id, 'online');
 
             }
             

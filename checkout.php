@@ -337,26 +337,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     </p>
                 </div>";
 
-                // Dispatch copy to Customer
-                send_mail($email, $subject, $body, true);
-
-                // Dispatch copy to Hotel Owner/Admin alerts
-                send_mail(OWNER_EMAIL, "NEW OFFLINE BOOKING - " . $booking_id, $body, true);
-
-                // WhatsApp Notification Alert
-                if (defined('WHATSAPP_NOTIFICATION_ENABLED') && WHATSAPP_NOTIFICATION_ENABLED) {
-                    $wa_msg = "🏨 *NEW OFFLINE BOOKING*\n\n"
-                            . "• *Booking ID*: " . $booking_id . "\n"
-                            . "• *Customer*: " . $name . "\n"
-                            . "• *Phone*: " . $phone . "\n"
-                            . "• *Room Type*: " . $room['title'] . "\n"
-                            . "• *Check-in*: " . $check_in . "\n"
-                            . "• *Check-out*: " . $check_out . "\n"
-                            . "• *Nights*: " . $nights . "\n"
-                            . "• *Meal Plan*: " . $meal_plan . "\n"
-                            . "• *Total Cost*: ₹" . number_format($total_amount, 2) . " (Pay at Hotel)\n";
-                    send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, $wa_msg);
-                }
+                // Trigger background notifications (both SMTP emails and WhatsApp)
+                trigger_booking_notification($booking_id, 'offline');
 
                 header("Location: thank-you.php?ref=" . urlencode($booking_id));
                 exit;
