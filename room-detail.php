@@ -447,6 +447,15 @@ if (empty($images)) {
             transform: translateY(-1px);
         }
 
+        .btn-book-online:disabled {
+            background: #cbd5e1 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+            opacity: 0.65;
+        }
+
         @media (max-width: 991px) {
             .gallery-main {
                 height: 300px;
@@ -842,6 +851,17 @@ if (empty($images)) {
                         $('#subtotalCost').text(subtotal.toFixed(2));
                         $('#taxCost').text(tax.toFixed(2));
                         $('#totalCost').text(total.toFixed(2));
+
+                        if (total <= 0) {
+                            $('.btn-book-online').prop('disabled', true);
+                        } else {
+                            var adults = parseInt($('#detailAdults').val()) || 2;
+                            var children = parseInt($('#detailChildren').val()) || 0;
+                            var hasOccupancyError = (adults > 3 || (adults === 3 && children > 0));
+                            if (!hasOccupancyError) {
+                                $('.btn-book-online').prop('disabled', false);
+                            }
+                        }
                     }
                 }
             });
@@ -900,10 +920,15 @@ if (empty($images)) {
             
             if (errorMsg) {
                 $('#detailOccupancyWarning').text(errorMsg).show();
-                $('.btn-book-now').prop('disabled', true).addClass('opacity-50');
+                $('.btn-book-online').prop('disabled', true);
             } else {
                 $('#detailOccupancyWarning').hide();
-                $('.btn-book-now').prop('disabled', false).removeClass('opacity-50');
+                var totalVal = parseFloat($('#totalCost').text()) || 0;
+                if (totalVal > 0) {
+                    $('.btn-book-online').prop('disabled', false);
+                } else {
+                    $('.btn-book-online').prop('disabled', true);
+                }
             }
         }
 
@@ -936,6 +961,16 @@ if (empty($images)) {
                 var currentIndex = $('.gallery-thumb.active').index();
                 if (currentIndex < 0) currentIndex = 0;
                 $('.room-gallery-link').eq(currentIndex).trigger('click');
+            });
+
+            // Prevent booking submission if total cost is 0 or occupancy warning exists
+            $('#stayConfigForm').on('submit', function(e) {
+                var totalVal = parseFloat($('#totalCost').text()) || 0;
+                var warningVisible = $('#detailOccupancyWarning').is(':visible');
+                if (totalVal <= 0 || warningVisible) {
+                    e.preventDefault();
+                    return false;
+                }
             });
         });
     </script>

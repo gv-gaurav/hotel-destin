@@ -33,6 +33,7 @@ $default_configs = [
     'restaurant_hero_title' => 'The Heights Rooftop & Club Bar',
     'restaurant_hero_tagline' => 'Elevated Gastronomy & Celestial Libations',
     'restaurant_hero_hours' => '07:00 AM to 11:30 PM',
+    'restaurant_phone' => '+91 92035 09944',
     'restaurant_food_types' => 'We have both veg and non-veg food available with club bar facility at rooftop',
     'restaurant_room_service_text' => 'Room Service & Restaurant Facilities Available',
 
@@ -287,6 +288,10 @@ foreach ($default_configs as $key => $default_val) {
                         <div class="form-group mb-3">
                             <label class="form-label-custom">Operating Hours *</label>
                             <input type="text" name="restaurant_hero_hours" class="form-control-custom" value="<?= htmlspecialchars($current_configs['restaurant_hero_hours']) ?>" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label-custom">Phone & Support *</label>
+                            <input type="text" name="restaurant_phone" class="form-control-custom" value="<?= htmlspecialchars($current_configs['restaurant_phone']) ?>" required>
                         </div>
                     </div>
                 </div>

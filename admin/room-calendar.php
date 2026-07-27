@@ -265,8 +265,8 @@ if ($next_month > 12) {
     .calendar-day-cell {
         border-right: 1px solid #e2e8f0;
         border-bottom: 1px solid #e2e8f0;
-        min-height: 120px;
-        padding: 12px;
+        min-height: 75px;
+        padding: 8px 10px;
         background: #ffffff;
         display: flex;
         flex-direction: column;
@@ -363,7 +363,7 @@ if ($next_month > 12) {
         <div class="d-flex gap-20 align-items-center">
             <div class="legend-item">
                 <span class="legend-color" style="background:#eff6ff; border:1.5px solid #3b82f6;"></span>
-                <span>All Rooms Free</span>
+                <span>Available (No Bookings)</span>
             </div>
             <div class="legend-item">
                 <span class="legend-color" style="background:#f0fdf4; border:1.5px solid #22c55e;"></span>
@@ -408,18 +408,14 @@ if ($next_month > 12) {
                 if ($day_data['booked'] > 0) {
                     $cell_class = 'cell-booked';
                     $status_html .= '<div class="status-item text-success" style="font-weight:700; font-size:12.5px;">🛌 ' . $day_data['booked'] . ' Booked</div>';
-                    $status_html .= '<div class="status-item text-primary" style="font-size:11.5px;">🔑 ' . $day_data['available'] . ' Vacant</div>';
                     if ($day_data['cancelled'] > 0) {
                         $status_html .= '<div class="status-item text-danger" style="font-size:11px;">❌ ' . $day_data['cancelled'] . ' Cancelled</div>';
                     }
                 } elseif ($day_data['cancelled'] > 0) {
                     $cell_class = 'cell-cancelled';
                     $status_html .= '<div class="status-item text-danger" style="font-weight:700; font-size:12.5px;">❌ ' . $day_data['cancelled'] . ' Cancelled</div>';
-                    $status_html .= '<div class="status-item text-primary" style="font-size:11.5px;">🔑 ' . $day_data['available'] . ' Vacant</div>';
                 } else {
                     $cell_class = 'cell-available';
-                    $status_html .= '<div class="status-item text-primary" style="font-weight:700; font-size:12.5px;">🔑 ' . $day_data['available'] . ' Vacant</div>';
-                    $status_html .= '<div class="status-item text-muted" style="font-size:11.5px; font-weight: normal;">All Rooms Free</div>';
                 }
             ?>
                 <div class="calendar-day-cell <?= $cell_class ?>" data-date="<?= $curr_date ?>" data-day="<?= $day ?>">
@@ -429,80 +425,6 @@ if ($next_month > 12) {
                     </div>
                 </div>
             <?php endfor; ?>
-        </div>
-    </div>
-</div>
-
-<!-- Collapsible Advanced Timeline Grid section -->
-<div class="card mt-35 border-0 shadow-sm" style="border-radius: 12px; overflow: hidden; background: #ffffff; border: 1px solid #e2e8f0;">
-    <div class="card-header bg-light border-0 py-15 px-20 d-flex justify-content-between align-items-center" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#timelineSection" aria-expanded="false" aria-controls="timelineSection">
-        <h5 class="mb-0 font-heading" style="font-size: 15px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 8px;">
-            <span>📋</span> Advanced Room-wise Stay Chart (Timeline View)
-        </h5>
-        <span class="text-neutral-500" style="font-size: 12px; font-weight: 600;">Click to Open / Close</span>
-    </div>
-    <div class="collapse" id="timelineSection">
-        <div class="card-body p-20 border-top" style="background: #fafafa;">
-            <p class="text-muted text-xs mb-15">This advanced chart maps individual active bookings directly to configured physical rooms (Room 101, 102 etc.). Hover over blocks to view guest details, or click on a block to inspect stays.</p>
-            <div class="calendar-grid-wrapper">
-                <table class="calendar-table">
-                    <thead>
-                        <tr>
-                            <th class="room-col-header">Physical Room</th>
-                            <?php for ($day = 1; $day <= $days_in_month; $day++): ?>
-                                <th>
-                                    <?= $day ?><br>
-                                    <span style="font-size: 9px; font-weight:normal; color:#64748b;">
-                                        <?= substr(date('D', mktime(0, 0, 0, $month, $day, $year)), 0, 1) ?>
-                                    </span>
-                                </th>
-                            <?php endfor; ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (count($physical_rooms) > 0): ?>
-                            <?php foreach ($physical_rooms as $pr): ?>
-                                <tr>
-                                    <td class="room-col">
-                                        <strong style="color: #9c6047; font-size:14.5px;">Room <?= htmlspecialchars($pr['room_number']) ?></strong><br>
-                                        <span style="font-size: 11px; color: #64748b;"><?= htmlspecialchars($pr['category_title']) ?></span>
-                                    </td>
-                                    <?php for ($day = 1; $day <= $days_in_month; $day++): 
-                                        $curr_date = sprintf("%04d-%02d-%02d", $year, $month, $day);
-                                        $booking = isset($occupancy[$pr['id']][$curr_date]) ? $occupancy[$pr['id']][$curr_date] : null;
-                                    ?>
-                                        <td class="day-cell">
-                                            <?php if ($booking): ?>
-                                                <?php 
-                                                $css_class = 'pending';
-                                                if ($booking['booking_status'] === 'confirmed') $css_class = 'confirmed';
-                                                if ($booking['booking_status'] === 'checked_in') $css_class = 'checked_in';
-                                                if ($booking['booking_status'] === 'checked_out') $css_class = 'checked_out';
-                                                
-                                                // Show guest name on check-in day
-                                                $show_text = '';
-                                                if ($booking['check_in'] === $curr_date) {
-                                                    $show_text = htmlspecialchars($booking['customer_name']);
-                                                }
-                                                ?>
-                                                <a href="booking-details.php?id=<?= $booking['id'] ?>" 
-                                                   class="booking-block <?= $css_class ?>" 
-                                                   title="Invoice: <?= htmlspecialchars($booking['invoice_no'] ?: $booking['booking_id']) ?> | Guest: <?= htmlspecialchars($booking['customer_name']) ?> (<?= $booking['check_in'] ?> to <?= $booking['check_out'] ?>)">
-                                                    <?= $show_text ? $show_text : '&nbsp;' ?>
-                                                </a>
-                                            <?php endif; ?>
-                                        </td>
-                                    <?php endfor; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="<?= $days_in_month + 1 ?>" class="text-center py-40 text-neutral-500">No physical rooms configured. Please add rooms in Physical Rooms tab first.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
 </div>

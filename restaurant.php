@@ -6,6 +6,7 @@ $restaurant_hero_bg = get_setting('restaurant_hero_bg', 'assets/imgs/page/restau
 $restaurant_name = get_setting('restaurant_hero_title', 'The Heights Rooftop & Club Bar');
 $restaurant_tagline = get_setting('restaurant_hero_tagline', 'Elevated Gastronomy & Celestial Libations');
 $restaurant_hours = get_setting('restaurant_hero_hours', '07:00 AM to 11:30 PM');
+$restaurant_phone = get_setting('restaurant_phone', '+91 92035 09944');
 $food_types_text = get_setting('restaurant_food_types', 'We have both veg and non-veg food available with club bar facility at rooftop');
 $room_service_text = get_setting('restaurant_room_service_text', 'Room Service & Restaurant Facilities Available');
 
@@ -527,6 +528,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .gallery-item-wrap:hover .gallery-overlay {
             opacity: 1 !important;
         }
+        .restaurant-gallery-popup {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
@@ -580,7 +587,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div>
                                 <p class="info-strip-title">Phone & Support</p>
-                                <p class="info-strip-val">+91 92035 09944</p>
+                                <p class="info-strip-val"><?= htmlspecialchars($restaurant_phone) ?></p>
                             </div>
                         </div>
                     </div>
@@ -628,45 +635,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="row g-3">
                     <div class="col-md-6 col-sm-12 wow fadeInUp">
                         <div class="gallery-item-wrap" style="position: relative; height: 350px; overflow: hidden; border-radius: 12px;">
-                            <img src="<?= htmlspecialchars($ambience_1_image) ?>" alt="<?= htmlspecialchars($ambience_1_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-                            <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%); display: flex; align-items: flex-end; padding: 24px; opacity: 0; transition: opacity 0.3s ease;">
-                                <div>
-                                    <h5 style="color: #fff; margin-bottom: 4px;"><?= htmlspecialchars($ambience_1_title) ?></h5>
-                                    <p style="color: var(--bs-neutral-300); font-size: 13px; margin: 0;"><?= htmlspecialchars($ambience_1_desc) ?></p>
+                            <a href="<?= htmlspecialchars($ambience_1_image) ?>" class="restaurant-gallery-popup" title="<?= htmlspecialchars($ambience_1_title) ?>">
+                                <img src="<?= htmlspecialchars($ambience_1_image) ?>" alt="<?= htmlspecialchars($ambience_1_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%); display: flex; align-items: flex-end; padding: 24px; opacity: 0; transition: opacity 0.3s ease;">
+                                    <div>
+                                        <h5 style="color: #fff; margin-bottom: 4px;"><?= htmlspecialchars($ambience_1_title) ?></h5>
+                                        <p style="color: var(--bs-neutral-300); font-size: 13px; margin: 0;"><?= htmlspecialchars($ambience_1_desc) ?></p>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="row g-3">
                             <div class="col-6 wow fadeInUp" data-wow-delay="0.1s">
                                 <div class="gallery-item-wrap" style="position: relative; height: 168px; overflow: hidden; border-radius: 12px;">
-                                    <img src="<?= htmlspecialchars($ambience_2_image) ?>" alt="<?= htmlspecialchars($ambience_2_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-                                    <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
-                                        <div>
-                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_2_title) ?></h6>
+                                    <a href="<?= htmlspecialchars($ambience_2_image) ?>" class="restaurant-gallery-popup" title="<?= htmlspecialchars($ambience_2_title) ?>">
+                                        <img src="<?= htmlspecialchars($ambience_2_image) ?>" alt="<?= htmlspecialchars($ambience_2_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
+                                            <div>
+                                                <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_2_title) ?></h6>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-6 wow fadeInUp" data-wow-delay="0.2s">
                                 <div class="gallery-item-wrap" style="position: relative; height: 168px; overflow: hidden; border-radius: 12px;">
-                                    <img src="<?= htmlspecialchars($ambience_3_image) ?>" alt="<?= htmlspecialchars($ambience_3_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-                                    <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
-                                        <div>
-                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_3_title) ?></h6>
+                                    <a href="<?= htmlspecialchars($ambience_3_image) ?>" class="restaurant-gallery-popup" title="<?= htmlspecialchars($ambience_3_title) ?>">
+                                        <img src="<?= htmlspecialchars($ambience_3_image) ?>" alt="<?= htmlspecialchars($ambience_3_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
+                                            <div>
+                                                <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_3_title) ?></h6>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-12 wow fadeInUp" data-wow-delay="0.3s">
                                 <div class="gallery-item-wrap" style="position: relative; height: 166px; overflow: hidden; border-radius: 12px;">
-                                    <img src="<?= htmlspecialchars($ambience_4_image) ?>" alt="<?= htmlspecialchars($ambience_4_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-                                    <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
-                                        <div>
-                                            <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_4_title) ?></h6>
+                                    <a href="<?= htmlspecialchars($ambience_4_image) ?>" class="restaurant-gallery-popup" title="<?= htmlspecialchars($ambience_4_title) ?>">
+                                        <img src="<?= htmlspecialchars($ambience_4_image) ?>" alt="<?= htmlspecialchars($ambience_4_title) ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%); display: flex; align-items: flex-end; padding: 15px; opacity: 0; transition: opacity 0.3s ease;">
+                                            <div>
+                                                <h6 style="color: #fff; margin-bottom: 2px; font-size: 14px;"><?= htmlspecialchars($ambience_4_title) ?></h6>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -722,7 +737,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             
                             <div style="background: rgba(var(--res-primary-rgb), 0.1); border: 1px solid rgba(var(--res-primary-rgb), 0.25); border-radius: 12px; padding: 18px; margin-top: 20px;">
                                 <h6 style="color: var(--res-accent); font-size: 13px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Direct Inquiries</h6>
-                                <p style="color: #ffffff; font-size: 15px; font-weight: 700; margin: 0 0 4px 0;">+91 92035 09944</p>
+                                <p style="color: #ffffff; font-size: 15px; font-weight: 700; margin: 0 0 4px 0;"><?= htmlspecialchars($restaurant_phone) ?></p>
                                 <p style="color: var(--bs-neutral-400); font-size: 12.5px; margin: 0;">For groups larger than 10, please contact us directly.</p>
                             </div>
                         </div>
@@ -864,6 +879,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="assets/js/plugins/dark.js"></script>
     <!-- Custom template script -->
     <script src="assets/js/maine209.js?v=1.0.0"></script>
+    
+    <script>
+        $(document).ready(function() {
+            $('.restaurant-gallery-popup').magnificPopup({
+                type: 'image',
+                gallery: {
+                    enabled: true,
+                    navigateByImgClick: true,
+                    preload: [0, 1]
+                },
+                image: {
+                    tError: '<a href="%url%">The image</a> could not be loaded.',
+                    titleSrc: function(item) {
+                        return item.el.attr('title') || '';
+                    }
+                },
+                mainClass: 'mfp-fade',
+                removalDelay: 300
+            });
+        });
+    </script>
 
 </body>
 </html>

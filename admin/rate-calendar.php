@@ -9,7 +9,7 @@ $error_msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         $action = trim($_POST['action']);
-        
+
         if ($action === 'add' || $action === 'edit') {
             $room_category_id = intval($_POST['room_category_id']);
             $start_date = trim($_POST['start_date']);
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $price_triple_map = floatval($_POST['price_triple_map']);
             $extra_child_price = floatval($_POST['extra_child_price']);
             $reason = htmlspecialchars(trim($_POST['reason']));
-            
+
             // Basic validations
             if ($room_category_id <= 0) {
                 $error_msg = 'Please select a valid Room Category.';
@@ -184,14 +184,14 @@ if ($next_month > 12) {
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         margin-bottom: 24px;
     }
-    
+
     .nav-tabs-custom {
         display: flex;
         border-bottom: 2px solid #e2e8f0;
         gap: 20px;
-        margin-bottom: 25px;
+        margin-bottom: 10px;
     }
-    
+
     .nav-tab-link {
         padding: 10px 5px;
         font-weight: 700;
@@ -202,12 +202,13 @@ if ($next_month > 12) {
         transition: all 0.2s ease;
         cursor: pointer;
     }
-    
-    .nav-tab-link:hover, .nav-tab-link.active {
+
+    .nav-tab-link:hover,
+    .nav-tab-link.active {
         color: #9c6047;
         border-bottom-color: #9c6047;
     }
-    
+
     /* Calendar styles */
     .calendar-days-header {
         display: grid;
@@ -220,14 +221,14 @@ if ($next_month > 12) {
         color: #475569;
         padding: 10px 0;
     }
-    
+
     .calendar-days-body {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         border-left: 1px solid #e2e8f0;
         border-top: 1px solid #e2e8f0;
     }
-    
+
     .calendar-day-cell {
         border-right: 1px solid #e2e8f0;
         border-bottom: 1px solid #e2e8f0;
@@ -241,36 +242,36 @@ if ($next_month > 12) {
         transition: all 0.2s ease;
         position: relative;
     }
-    
+
     .calendar-day-cell:hover {
         background: #fafaf9;
     }
-    
+
     .calendar-day-cell.blank {
         background: #f8fafc;
         cursor: default;
     }
-    
+
     .calendar-day-cell.has-override {
         background-color: #fffbeb;
         border-left: 3px solid #d97706;
     }
-    
+
     .calendar-day-cell.has-override:hover {
         background-color: #fef3c7;
     }
-    
+
     .day-number {
         font-size: 14px;
         font-weight: 700;
         color: #475569;
         text-align: right;
     }
-    
+
     .calendar-day-cell.has-override .day-number {
         color: #b45309;
     }
-    
+
     .override-prices {
         font-size: 10px;
         font-weight: 600;
@@ -280,17 +281,28 @@ if ($next_month > 12) {
         gap: 2px;
         margin-top: 5px;
     }
-    
+
     .price-badge {
         display: inline-block;
         padding: 1px 4px;
         border-radius: 3px;
     }
-    
-    .badge-ep { background: #f1f5f9; color: #475569; }
-    .badge-cp { background: #dbeafe; color: #1e40af; }
-    .badge-map { background: #dcfce7; color: #166534; }
-    
+
+    .badge-ep {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .badge-cp {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge-map {
+        background: #dcfce7;
+        color: #166534;
+    }
+
     .reason-text {
         font-size: 9.5px;
         font-weight: 700;
@@ -304,7 +316,7 @@ if ($next_month > 12) {
         border-radius: 3px;
         text-align: center;
     }
-    
+
     .filter-bar {
         display: flex;
         flex-wrap: wrap;
@@ -345,13 +357,13 @@ if ($next_month > 12) {
         <div id="tab-calendar" class="nav-tab-link active" onclick="switchTab('calendar')">📅 Rate Calendar View</div>
         <div id="tab-rules" class="nav-tab-link" onclick="switchTab('rules')">📋 Manage Pricing Rules</div>
     </div>
-    
+
     <!-- TAB 1: CALENDAR VIEW -->
     <div id="content-calendar" class="tab-content-pane">
         <form method="GET" action="rate-calendar.php" id="calFilterForm">
             <input type="hidden" name="month" value="<?= $month ?>">
             <input type="hidden" name="year" value="<?= $year ?>">
-            
+
             <div class="filter-bar">
                 <div style="flex-grow: 1; min-width: 250px;">
                     <label class="form-label-custom">Select Category (Calendar View)</label>
@@ -368,7 +380,7 @@ if ($next_month > 12) {
                 </div>
             </div>
         </form>
-        
+
         <?php $first_day_of_week = intval(date('w', $first_day_timestamp)); ?>
         <div class="border rounded-3 overflow-hidden">
             <div class="calendar-days-header">
@@ -385,18 +397,18 @@ if ($next_month > 12) {
                 <?php for ($i = 0; $i < $first_day_of_week; $i++): ?>
                     <div class="calendar-day-cell blank"></div>
                 <?php endfor; ?>
-                
+
                 <!-- Days of current month -->
-                <?php for ($day = 1; $day <= $days_in_month; $day++): 
+                <?php for ($day = 1; $day <= $days_in_month; $day++):
                     $curr_date = sprintf("%04d-%02d-%02d", $year, $month, $day);
                     $override = isset($day_overrides[$day]) ? $day_overrides[$day] : null;
                     $class = $override ? 'has-override' : '';
                 ?>
-                    <div class="calendar-day-cell <?= $class ?>" 
-                         data-date="<?= $curr_date ?>" 
-                         onclick="handleCellClick(this, <?= $override ? htmlspecialchars(json_encode($override)) : 'null' ?>)">
+                    <div class="calendar-day-cell <?= $class ?>"
+                        data-date="<?= $curr_date ?>"
+                        onclick="handleCellClick(this, <?= $override ? htmlspecialchars(json_encode($override)) : 'null' ?>)">
                         <div class="day-number"><?= $day ?></div>
-                        
+
                         <?php if ($override): ?>
                             <div class="override-prices" style="line-height: 1.1;">
                                 <span class="price-badge badge-ep" style="font-size: 8.5px;" title="Single: ₹<?= number_format($override['price_single_ep']) ?> | Double: ₹<?= number_format($override['ep_price']) ?> | Triple: ₹<?= number_format($override['price_triple_ep']) ?>">EP: ₹<?= number_format($override['ep_price']) ?></span>
@@ -417,32 +429,46 @@ if ($next_month > 12) {
             </div>
         </div>
     </div>
-    
+
     <!-- TAB 2: RULES LIST -->
     <div id="content-rules" class="tab-content-pane" style="display:none;">
-        <form method="GET" action="rate-calendar.php" id="listFilterForm">
+        <form method="GET" action="rate-calendar.php" id="listFilterForm" class="row g-3 align-items-end mb-25" style="background-color: #fafaf9; padding: 18px; border-radius: 12px; border: 1px solid #f1f1f0; margin: 0 0 25px 0;">
             <input type="hidden" name="tab" value="rules">
-            <div class="filter-bar">
-                <div style="flex: 1; min-width: 200px;">
-                    <label class="form-label-custom">Filter by Category</label>
-                    <select class="form-control-custom" name="filter_category">
-                        <option value="0">All Room Categories</option>
-                        <?php foreach ($categories as $cat): ?>
-                            <option value="<?= $cat['id'] ?>" <?= $filter_category === $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['title']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div style="flex: 1; min-width: 200px;">
-                    <label class="form-label-custom">Filter by Date</label>
-                    <input type="date" class="form-control-custom" name="filter_date" value="<?= htmlspecialchars($filter_date) ?>">
-                </div>
-                <div class="d-flex gap-10">
-                    <button class="btn btn-dark" type="submit" style="height:42px;">Filter</button>
-                    <a class="btn btn-outline-secondary" href="rate-calendar.php?tab=rules" style="height:42px; line-height:28px;">Reset</a>
-                </div>
+
+            <div class="col-12 col-md-4">
+                <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Filter by Category</label>
+                <select class="form-select" name="filter_category" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
+                    <option value="0">All Room Categories</option>
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?= $cat['id'] ?>" <?= $filter_category === $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['title']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Filter by Date</label>
+                <input type="date" class="form-control" name="filter_date" value="<?= htmlspecialchars($filter_date) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
+            </div>
+
+            <div class="col-6 col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100" style="height: 38px; padding: 0 12px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#9c6047; border:none; transition: all 0.2s ease; white-space:nowrap;" onmouseover="this.style.backgroundColor='#824c36';" onmouseout="this.style.backgroundColor='#9c6047';">
+                    🔍 Filter
+                </button>
+                <a href="rate-calendar.php?tab=rules" class="btn btn-light border d-inline-flex align-items-center justify-content-center w-100" style="height: 38px; padding: 0 10px; border-radius: 8px; font-weight:700; font-size:13px; border-color:#cbd5e1; color:#475569; background-color:#ffffff; text-decoration:none; white-space:nowrap;">
+                    Reset
+                </a>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <a href="export-rate-calendar.php?filter_category=<?= urlencode($filter_category) ?>&filter_date=<?= urlencode($filter_date) ?>" class="btn btn-success w-100 d-inline-flex align-items-center justify-content-center gap-2" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#16a34a; border:none; color:#ffffff; text-decoration:none; transition: all 0.2s ease; white-space:nowrap;" onmouseover="this.style.backgroundColor='#15803d';" onmouseout="this.style.backgroundColor='#16a34a';">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Export
+                </a>
             </div>
         </form>
-        
+
         <div class="table-responsive">
             <table class="table-custom">
                 <thead>
@@ -516,7 +542,7 @@ if ($next_month > 12) {
             <form method="POST" action="rate-calendar.php" id="ruleForm">
                 <input type="hidden" name="action" id="formAction" value="add">
                 <input type="hidden" name="rule_id" id="formRuleId" value="">
-                
+
                 <div class="modal-header bg-dark text-white py-15 px-20">
                     <h5 class="modal-title font-heading" id="ruleModalLabel" style="font-weight:700; font-size:17px;">Add Seasonal Pricing Rule</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter:invert(1) grayscale(1) brightness(2);"></button>
@@ -530,7 +556,7 @@ if ($next_month > 12) {
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    
+
                     <div class="row g-3 mb-15">
                         <div class="col-6">
                             <label class="form-label-custom">Start Date *</label>
@@ -541,7 +567,7 @@ if ($next_month > 12) {
                             <input type="date" class="form-control-custom" name="end_date" id="modalEndDate" required>
                         </div>
                     </div>
-                    
+
                     <!-- Grid-Based compact pricing builder to eliminate scroll -->
                     <div class="table-responsive mb-15">
                         <table class="table table-bordered align-middle text-center mb-0" style="font-size: 13px;">
@@ -615,7 +641,7 @@ if ($next_month > 12) {
     function switchTab(tabName) {
         document.querySelectorAll('.nav-tab-link').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-content-pane').forEach(el => el.style.display = 'none');
-        
+
         document.getElementById('tab-' + tabName).classList.add('active');
         document.getElementById('content-' + tabName).style.display = 'block';
     }
@@ -624,7 +650,7 @@ if ($next_month > 12) {
         document.getElementById('formAction').value = 'add';
         document.getElementById('formRuleId').value = '';
         document.getElementById('ruleModalLabel').innerText = 'Add Seasonal Pricing Rule';
-        
+
         document.getElementById('modalCategory').value = "<?= count($categories) > 0 ? $categories[0]['id'] : '' ?>";
         document.getElementById('modalStartDate').value = '';
         document.getElementById('modalEndDate').value = '';
@@ -639,7 +665,7 @@ if ($next_month > 12) {
         document.getElementById('modalTripleMAP').value = '';
         document.getElementById('modalExtraChild').value = '';
         document.getElementById('modalReason').value = '';
-        
+
         var modal = new bootstrap.Modal(document.getElementById('ruleModal'));
         modal.show();
     }
@@ -648,7 +674,7 @@ if ($next_month > 12) {
         document.getElementById('formAction').value = 'edit';
         document.getElementById('formRuleId').value = rule.id;
         document.getElementById('ruleModalLabel').innerText = 'Edit Seasonal Pricing Rule';
-        
+
         document.getElementById('modalCategory').value = rule.room_category_id;
         document.getElementById('modalStartDate').value = rule.start_date;
         document.getElementById('modalEndDate').value = rule.end_date;
@@ -663,7 +689,7 @@ if ($next_month > 12) {
         document.getElementById('modalTripleMAP').value = rule.price_triple_map || '';
         document.getElementById('modalExtraChild').value = rule.extra_child_price || '';
         document.getElementById('modalReason').value = rule.reason;
-        
+
         var modal = new bootstrap.Modal(document.getElementById('ruleModal'));
         modal.show();
     }
@@ -676,7 +702,7 @@ if ($next_month > 12) {
             // Clicked standard date: open Add modal and auto-fill dates
             const dateVal = cell.getAttribute('data-date');
             openAddModal();
-            
+
             document.getElementById('modalCategory').value = "<?= $selected_category_id ?>";
             document.getElementById('modalStartDate').value = dateVal;
             document.getElementById('modalEndDate').value = dateVal;
@@ -697,13 +723,13 @@ if ($next_month > 12) {
         const ep = parseFloat(document.getElementById('modalEP').value);
         const cp = parseFloat(document.getElementById('modalCP').value);
         const map = parseFloat(document.getElementById('modalMAP').value);
-        
+
         if (end < start) {
             e.preventDefault();
             alert("Validation Error: End Date cannot be earlier than Start Date.");
             return;
         }
-        
+
         if (ep <= 0 || cp <= 0 || map <= 0) {
             e.preventDefault();
             alert("Validation Error: Prices must be greater than zero.");

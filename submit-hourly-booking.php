@@ -88,6 +88,7 @@ try {
         'pending'
     ]);
 
+    $enquiry_id = $pdo->lastInsertId();
     // 2. Dispatch email and WhatsApp notifications to the hotel owner
     send_enquiry_alert(
         'hourly_booking',
@@ -100,7 +101,8 @@ try {
             'Room Type' => $room_category,
             'Check-in Time' => $checkin_time,
             'Package Cost' => '₹' . number_format($total_price, 2)
-        ]
+        ],
+        $enquiry_id
     );
 
     echo json_encode([

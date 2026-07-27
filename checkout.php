@@ -343,24 +343,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                 // Dispatch copy to Hotel Owner/Admin alerts
                 send_mail(OWNER_EMAIL, "NEW OFFLINE BOOKING - " . $booking_id, $body, true);
 
-                // Send WhatsApp notification to the owner
-                $booking_msg = "🏨 *NEW OFFLINE BOOKING (PAY AT HOTEL)* 🏨\n\n";
-                $booking_msg .= "*Booking ID:* " . $booking_id . "\n";
-                $booking_msg .= "*Name:* " . $name . "\n";
-                $booking_msg .= "*Phone:* " . $phone . "\n";
-                $booking_msg .= "*Email:* " . $email . "\n";
-                $booking_msg .= "*Room Type:* " . $room['title'] . "\n";
-                $booking_msg .= "*Check-in:* " . $check_in . "\n";
-                $booking_msg .= "*Check-out:* " . $check_out . "\n";
-                $booking_msg .= "*Nights:* " . $nights . " night(s)\n";
-                $booking_msg .= "*Meal Plan:* " . $meal_plan . "\n";
-                $booking_msg .= "*Guests:* " . $guests . " (Adults: " . $adults . ", Children: " . $children . $child_ages_label . ")\n";
-                $booking_msg .= "*Total Cost:* ₹" . number_format($total_amount, 2) . "\n";
-                if (!empty($special_request)) {
-                    $booking_msg .= "*Special Request:* " . $special_request . "\n";
-                }
-                send_whatsapp_message($booking_msg);
-
                 header("Location: thank-you.php?ref=" . urlencode($booking_id));
                 exit;
             } catch (Exception $e) {

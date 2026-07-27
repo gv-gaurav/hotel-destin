@@ -156,7 +156,7 @@ try {
 <?php endif; ?>
 
 <div class="panel-card">
-    <h3 class="font-heading mb-25" style="font-size:18px;">Master Booking Register</h3>
+    <h3 class="font-heading" style="font-size:18px;">Master Booking Register</h3>
 
     <!-- Search & Filter Bar -->
     <form method="GET" class="row g-3 align-items-end mb-30" style="background-color: #fafaf9; padding: 18px; border-radius: 12px; border: 1px solid #f1f1f0; margin: 0 0 25px 0;">
@@ -177,7 +177,7 @@ try {
                     Reset
                 </a>
             <?php endif; ?>
-            
+
             <a href="export-bookings.php?start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>" class="btn btn-success ms-auto d-inline-flex align-items-center gap-2" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#16a34a; border:none; color:#ffffff; text-decoration:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#15803d';" onmouseout="this.style.backgroundColor='#16a34a';">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -265,7 +265,7 @@ try {
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                         <input type="hidden" name="action" value="update_status">
                                         <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
-                                        
+
                                         <select class="form-select" name="status" onchange="this.form.submit()" style="font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px; background-color: #ffffff; width: 100%; color: #334155;">
                                             <option value="pending" <?= $b['payment_status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
                                             <option value="paid" <?= $b['payment_status'] === 'paid' ? 'selected' : '' ?>>Paid</option>
@@ -282,7 +282,7 @@ try {
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
                                         </a>
-                                        
+
                                         <!-- Print Receipt link -->
                                         <a href="../invoice.php?ref=<?= urlencode($b['booking_id']) ?>&print=true" target="_blank" class="btn btn-sm btn-light border d-inline-flex align-items-center justify-content-center" style="padding: 6px; border-radius: 6px; width: 38px; height: 32px; border-color: #cbd5e1; color: #16a34a;" title="Print Receipt">
                                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

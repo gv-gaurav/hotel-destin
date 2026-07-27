@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         header("Location: settings.php?error=csrf");
         exit;
     } else {
+
         $hotel_name = isset($_POST['hotel_name']) ? trim($_POST['hotel_name']) : '';
         $hotel_phone = isset($_POST['hotel_phone']) ? trim($_POST['hotel_phone']) : '';
         $hotel_email = isset($_POST['hotel_email']) ? trim($_POST['hotel_email']) : '';
@@ -45,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         $banquet_showcase_bg = isset($_POST['banquet_showcase_bg']) ? trim($_POST['banquet_showcase_bg']) : '';
         $banquet_description = isset($_POST['banquet_description']) ? trim($_POST['banquet_description']) : '';
         $banquet_exact_location = isset($_POST['banquet_exact_location']) ? trim($_POST['banquet_exact_location']) : '';
-
         try {
             $stmt = $pdo->prepare("INSERT INTO settings (key_name, val_content) VALUES (?, ?) ON DUPLICATE KEY UPDATE val_content = VALUES(val_content)");
             
@@ -242,7 +242,6 @@ try {
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Submit block -->

@@ -44,6 +44,7 @@ try {
         'pending'
     ]);
 
+    $enquiry_id = $pdo->lastInsertId();
     // 2. Send email notification to owner (info@hoteldestin.in)
     $email_sent = send_enquiry_alert(
         'bulk_booking', 
@@ -55,7 +56,8 @@ try {
         [
             'Check-out Date' => $checkout,
             'Special Requirements' => $requirements
-        ]
+        ],
+        $enquiry_id
     );
 
     echo json_encode(['success' => true, 'message' => 'Your bulk booking request has been submitted successfully! We will get in touch with you shortly.']);

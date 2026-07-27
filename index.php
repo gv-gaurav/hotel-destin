@@ -238,19 +238,19 @@
   $bg_2 = get_setting('hero_bg_image_2', '');
   $bg_3 = get_setting('hero_bg_image_3', '');
   $slider_interval = intval(get_setting('hero_slider_interval', '4')) * 1000;
-  
+
   $bg_slides = [];
   if (!empty($bg_1)) {
-      $bg_slides[] = $bg_1;
+    $bg_slides[] = $bg_1;
   }
   if (!empty($bg_2)) {
-      $bg_slides[] = $bg_2;
+    $bg_slides[] = $bg_2;
   }
   if (!empty($bg_3)) {
-      $bg_slides[] = $bg_3;
+    $bg_slides[] = $bg_3;
   }
   if (empty($bg_slides)) {
-      $bg_slides[] = 'assets/imgs/page/homepage7/banner.png';
+    $bg_slides[] = 'assets/imgs/page/homepage7/banner.png';
   }
   ?>
   <main class="main">
@@ -415,128 +415,128 @@
     $has_search_dates = (!empty($search_checkin) && !empty($search_checkout));
 
     try {
-        $stmt = $pdo->prepare("SELECT * FROM rooms WHERE status = 'active' ORDER BY price ASC");
-        $stmt->execute();
-        $db_rooms = $stmt->fetchAll();
+      $stmt = $pdo->prepare("SELECT * FROM rooms WHERE status = 'active' ORDER BY price ASC");
+      $stmt->execute();
+      $db_rooms = $stmt->fetchAll();
 
-        foreach ($db_rooms as $r) {
-            $total_inventory = (int)$r['inventory'];
+      foreach ($db_rooms as $r) {
+        $total_inventory = (int)$r['inventory'];
 
-            $available_count = $total_inventory;
-            if ($has_search_dates) {
-                $booked_stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE room_id = ? AND check_in < ? AND check_out > ? AND booking_status != 'cancelled'");
-                $booked_stmt->execute([$r['id'], $search_checkout, $search_checkin]);
-                $booked_count = (int)$booked_stmt->fetchColumn();
-                $available_count = max(0, $total_inventory - $booked_count);
-            }
-
-            $f_stmt = $pdo->prepare("SELECT facility_name FROM room_facilities WHERE room_id = ?");
-            $f_stmt->execute([$r['id']]);
-            $facilities = $f_stmt->fetchAll(PDO::FETCH_COLUMN);
-
-            $specs = [];
-            $card_facilities = $facilities;
-            if (count($card_facilities) > 5) {
-                $card_facilities = array_slice($card_facilities, 0, 5);
-            } else {
-                $standard_defaults = ['AC', 'Free Wi-Fi', 'Laundry', 'King Bed', 'Safe Box'];
-                foreach ($standard_defaults as $def) {
-                    if (count($card_facilities) >= 5) break;
-                    if (!in_array($def, $card_facilities)) {
-                        $card_facilities[] = $def;
-                    }
-                }
-            }
-
-            foreach ($card_facilities as $f) {
-                $specs[] = ['icon' => 'check', 'label' => $f];
-            }
-
-            $all_images = [];
-            if (!empty($r['image_path'])) {
-                $all_images[] = $r['image_path'];
-            }
-            $g_stmt = $pdo->prepare("SELECT image_path FROM room_images WHERE room_id = ?");
-            $g_stmt->execute([$r['id']]);
-            $gallery_imgs = $g_stmt->fetchAll(PDO::FETCH_COLUMN);
-            $all_images = array_merge($all_images, $gallery_imgs);
-            $all_images = array_slice($all_images, 0, 3);
-            if (empty($all_images)) {
-                $all_images[] = 'assets/imgs/page/room/banner-room.png';
-            }
-
-            $type_badge = strtoupper($r['type']);
-            $status_badge = $r['status_badge'] ?: 'POPULAR';
-            $rating = $r['rating'] ?: 'G 4.8 ★';
-
-            $tags = [];
-            if (count($facilities) > 0) {
-                $tags[] = ['text' => $facilities[0], 'style' => 'orange'];
-            } else {
-                $tags[] = ['text' => 'Free Wi-Fi', 'style' => 'orange'];
-            }
-            if (count($facilities) > 1) {
-                $tags[] = ['text' => $facilities[1], 'style' => 'orange'];
-            } else {
-                $tags[] = ['text' => 'Mineral Water', 'style' => 'orange'];
-            }
-            $tags[] = ['text' => $r['type'] . ' Space', 'style' => 'blue'];
-            if (count($facilities) > 2) {
-                $more_count = count($facilities) - 2;
-                $tags[] = ['text' => '+' . $more_count . ' more', 'style' => 'green'];
-            }
-
-            // Calculate dynamic base price
-            $price = (float)$r['price'];
-            if ($has_search_dates) {
-                $date1 = new DateTime($search_checkin);
-                $date2 = new DateTime($search_checkout);
-                $nights = $date2->diff($date1)->format("%a");
-                $nights = max(1, (int)$nights);
-                
-                $total_base_price = 0.00;
-                $curr_date_ptr = clone $date1;
-                while ($curr_date_ptr < $date2) {
-                    $date_str = $curr_date_ptr->format('Y-m-d');
-                    $total_base_price += get_resolved_room_price($pdo, $r['id'], $date_str, 'EP', $search_adults, $r);
-                    $curr_date_ptr->modify('+1 day');
-                }
-                $price = round($total_base_price / $nights, 2);
-            }
-
-            $rooms_for_home[] = [
-                'id' => $r['slug'],
-                'db_id' => $r['id'],
-                'name' => $r['title'],
-                'type_badge' => $type_badge,
-                'status_badge' => ($has_search_dates && $available_count <= 0) ? 'SOLD OUT' : $status_badge,
-                'rating' => $rating,
-                'location' => 'Sachin Tendulkar Rd, Gwalior',
-                'tags' => $tags,
-                'specs' => $specs,
-                'struck_price' => $r['struck_price'],
-                'discount' => $r['discount'],
-                'code' => $r['code'],
-                'banner_text' => isset($r['banner_text']) ? $r['banner_text'] : '',
-                'price' => $price,
-                'image' => $r['image_path'],
-                'images' => $all_images,
-                'available_count' => $available_count,
-                'total_active' => $total_inventory
-            ];
+        $available_count = $total_inventory;
+        if ($has_search_dates) {
+          $booked_stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE room_id = ? AND check_in < ? AND check_out > ? AND booking_status != 'cancelled'");
+          $booked_stmt->execute([$r['id'], $search_checkout, $search_checkin]);
+          $booked_count = (int)$booked_stmt->fetchColumn();
+          $available_count = max(0, $total_inventory - $booked_count);
         }
 
-        // Standardize sorting order: Standard, Executive, Premium
-        usort($rooms_for_home, function ($a, $b) {
-            $order = ['standard' => 1, 'executive' => 2, 'premium' => 3];
-            $typeA = strtolower($a['type_badge'] ?? '');
-            $typeB = strtolower($b['type_badge'] ?? '');
-            $valA = isset($order[$typeA]) ? $order[$typeA] : 99;
-            $valB = isset($order[$typeB]) ? $order[$typeB] : 99;
-            return $valA <=> $valB;
-        });
+        $f_stmt = $pdo->prepare("SELECT facility_name FROM room_facilities WHERE room_id = ?");
+        $f_stmt->execute([$r['id']]);
+        $facilities = $f_stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $specs = [];
+        $card_facilities = $facilities;
+        if (count($card_facilities) > 5) {
+          $card_facilities = array_slice($card_facilities, 0, 5);
+        } else {
+          $standard_defaults = ['AC', 'Free Wi-Fi', 'Laundry', 'King Bed', 'Safe Box'];
+          foreach ($standard_defaults as $def) {
+            if (count($card_facilities) >= 5) break;
+            if (!in_array($def, $card_facilities)) {
+              $card_facilities[] = $def;
+            }
+          }
+        }
+
+        foreach ($card_facilities as $f) {
+          $specs[] = ['icon' => 'check', 'label' => $f];
+        }
+
+        $all_images = [];
+        if (!empty($r['image_path'])) {
+          $all_images[] = $r['image_path'];
+        }
+        $g_stmt = $pdo->prepare("SELECT image_path FROM room_images WHERE room_id = ?");
+        $g_stmt->execute([$r['id']]);
+        $gallery_imgs = $g_stmt->fetchAll(PDO::FETCH_COLUMN);
+        $all_images = array_merge($all_images, $gallery_imgs);
+        $all_images = array_slice($all_images, 0, 3);
+        if (empty($all_images)) {
+          $all_images[] = 'assets/imgs/page/room/banner-room.png';
+        }
+
+        $type_badge = strtoupper($r['type']);
+        $status_badge = $r['status_badge'] ?: 'POPULAR';
+        $rating = $r['rating'] ?: 'G 4.8 ★';
+
+        $tags = [];
+        if (count($facilities) > 0) {
+          $tags[] = ['text' => $facilities[0], 'style' => 'orange'];
+        } else {
+          $tags[] = ['text' => 'Free Wi-Fi', 'style' => 'orange'];
+        }
+        if (count($facilities) > 1) {
+          $tags[] = ['text' => $facilities[1], 'style' => 'orange'];
+        } else {
+          $tags[] = ['text' => 'Mineral Water', 'style' => 'orange'];
+        }
+        $tags[] = ['text' => $r['type'] . ' Space', 'style' => 'blue'];
+        if (count($facilities) > 2) {
+          $more_count = count($facilities) - 2;
+          $tags[] = ['text' => '+' . $more_count . ' more', 'style' => 'green'];
+        }
+
+        // Calculate dynamic base price
+        $price = (float)$r['price'];
+        if ($has_search_dates) {
+          $date1 = new DateTime($search_checkin);
+          $date2 = new DateTime($search_checkout);
+          $nights = $date2->diff($date1)->format("%a");
+          $nights = max(1, (int)$nights);
+
+          $total_base_price = 0.00;
+          $curr_date_ptr = clone $date1;
+          while ($curr_date_ptr < $date2) {
+            $date_str = $curr_date_ptr->format('Y-m-d');
+            $total_base_price += get_resolved_room_price($pdo, $r['id'], $date_str, 'EP', $search_adults, $r);
+            $curr_date_ptr->modify('+1 day');
+          }
+          $price = round($total_base_price / $nights, 2);
+        }
+
+        $rooms_for_home[] = [
+          'id' => $r['slug'],
+          'db_id' => $r['id'],
+          'name' => $r['title'],
+          'type_badge' => $type_badge,
+          'status_badge' => ($has_search_dates && $available_count <= 0) ? 'SOLD OUT' : $status_badge,
+          'rating' => $rating,
+          'location' => 'Sachin Tendulkar Rd, Gwalior',
+          'tags' => $tags,
+          'specs' => $specs,
+          'struck_price' => $r['struck_price'],
+          'discount' => $r['discount'],
+          'code' => $r['code'],
+          'banner_text' => isset($r['banner_text']) ? $r['banner_text'] : '',
+          'price' => $price,
+          'image' => $r['image_path'],
+          'images' => $all_images,
+          'available_count' => $available_count,
+          'total_active' => $total_inventory
+        ];
+      }
+
+      // Standardize sorting order: Standard, Executive, Premium
+      usort($rooms_for_home, function ($a, $b) {
+        $order = ['standard' => 1, 'executive' => 2, 'premium' => 3];
+        $typeA = strtolower($a['type_badge'] ?? '');
+        $typeB = strtolower($b['type_badge'] ?? '');
+        $valA = isset($order[$typeA]) ? $order[$typeA] : 99;
+        $valB = isset($order[$typeB]) ? $order[$typeB] : 99;
+        return $valA <=> $valB;
+      });
     } catch (Exception $e) {
-        error_log("Failed to load homepage dynamic rooms: " . $e->getMessage());
+      error_log("Failed to load homepage dynamic rooms: " . $e->getMessage());
     }
     ?>
     <section class="section-box box-top-rated-3 background-body">

@@ -47,6 +47,7 @@ try {
             'pending'
         ]);
 
+        $enquiry_id = $pdo->lastInsertId();
         // Send email alert to owner
         send_enquiry_alert(
             'long_stay', 
@@ -58,7 +59,8 @@ try {
             [
                 'Check-out Date' => $checkout,
                 'Source' => 'Header Enquiry Button'
-            ]
+            ],
+            $enquiry_id
         );
 
     } else if ($enquiry_type === 'banquet') {
@@ -80,6 +82,7 @@ try {
             'pending'
         ]);
 
+        $enquiry_id = $pdo->lastInsertId();
         // Send email alert to owner
         send_enquiry_alert(
             'banquet', 
@@ -90,7 +93,8 @@ try {
             1, 
             [
                 'Source' => 'Header Enquiry Button'
-            ]
+            ],
+            $enquiry_id
         );
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid enquiry type selected.']);
