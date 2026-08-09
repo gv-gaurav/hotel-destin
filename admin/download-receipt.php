@@ -27,7 +27,7 @@ if (!$booking) {
 $hotel_name = get_setting('hotel_name') ?: 'Hotel Destin';
 $hotel_phone = get_setting('hotel_phone') ?: '+91 70000 00000';
 $hotel_email = get_setting('hotel_email') ?: 'info@hoteldestin.in';
-$hotel_address = get_setting('hotel_address') ?: 'Sachin Tendulkar Road, Kailash Nagar, Gwalior, MP, India';
+$hotel_address = get_setting('hotel_address') ?: 'Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior';
 ?>
 <!DOCTYPE html>
 <html lang="en">

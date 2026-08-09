@@ -59,9 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         } else {
             try {
                 if ($status === 'paid') {
-                    $b_stmt = $pdo->prepare("SELECT invoice_no FROM bookings WHERE id = ?");
+                    $b_stmt = $pdo->prepare("SELECT invoice_no, booking_status FROM bookings WHERE id = ?");
                     $b_stmt->execute([$booking_id]);
-                    $current_invoice = $b_stmt->fetchColumn();
+                    $row = $b_stmt->fetch();
+                    $current_invoice = $row['invoice_no'] ?? '';
+                    $current_booking_status = $row['booking_status'] ?? 'pending';
+
+                    // Update booking_status to 'confirmed' only if it was pending or cancelled
+                    $new_booking_status = in_array($current_booking_status, ['pending', 'cancelled']) ? 'confirmed' : $current_booking_status;
 
                     if (empty($current_invoice)) {
                         $date_prefix = 'INV-' . date('Ymd') . '-';
@@ -76,15 +81,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         }
                         $invoice_no = $date_prefix . $next_seq;
 
-                        $stmt = $pdo->prepare("UPDATE bookings SET payment_status = ?, invoice_no = ? WHERE id = ?");
-                        $stmt->execute([$status, $invoice_no, $booking_id]);
+                        $stmt = $pdo->prepare("UPDATE bookings SET payment_status = 'paid', booking_status = ?, invoice_no = ?, cancellation_reason = NULL WHERE id = ?");
+                        $stmt->execute([$new_booking_status, $invoice_no, $booking_id]);
                     } else {
-                        $stmt = $pdo->prepare("UPDATE bookings SET payment_status = ? WHERE id = ?");
-                        $stmt->execute([$status, $booking_id]);
+                        $stmt = $pdo->prepare("UPDATE bookings SET payment_status = 'paid', booking_status = ?, cancellation_reason = NULL WHERE id = ?");
+                        $stmt->execute([$new_booking_status, $booking_id]);
+                    }
+                } else if ($status === 'cancelled') {
+                    $cancellation_reason = isset($_POST['cancellation_reason']) ? trim($_POST['cancellation_reason']) : '';
+
+                    $b_stmt = $pdo->prepare("SELECT payment_status FROM bookings WHERE id = ?");
+                    $b_stmt->execute([$booking_id]);
+                    $current_payment_status = $b_stmt->fetchColumn();
+
+                    if ($current_payment_status === 'paid') {
+                        $stmt = $pdo->prepare("UPDATE bookings SET booking_status = 'cancelled', payment_status = 'refunded', cancellation_reason = ? WHERE id = ?");
+                        $stmt->execute([$cancellation_reason, $booking_id]);
+                    } else {
+                        $stmt = $pdo->prepare("UPDATE bookings SET booking_status = 'cancelled', cancellation_reason = ? WHERE id = ?");
+                        $stmt->execute([$cancellation_reason, $booking_id]);
                     }
                 } else {
-                    $stmt = $pdo->prepare("UPDATE bookings SET payment_status = ? WHERE id = ?");
-                    $stmt->execute([$status, $booking_id]);
+                    // status is 'pending'
+                    $stmt = $pdo->prepare("UPDATE bookings SET payment_status = 'pending', booking_status = 'pending', cancellation_reason = NULL WHERE id = ?");
+                    $stmt->execute([$booking_id]);
                 }
                 header("Location: bookings.php?success=1");
                 exit;
@@ -97,9 +117,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Fetch bookings from database with date filters
+// Fetch bookings from database with filters
 $start_date = isset($_GET['start_date']) ? trim($_GET['start_date']) : '';
 $end_date = isset($_GET['end_date']) ? trim($_GET['end_date']) : '';
+$phone = isset($_GET['phone']) ? trim($_GET['phone']) : '';
 
 $bookings = [];
 try {
@@ -118,6 +139,10 @@ try {
     if ($end_date !== '') {
         $conditions[] = "b.created_at <= :end_date";
         $params['end_date'] = $end_date . " 23:59:59";
+    }
+    if ($phone !== '') {
+        $conditions[] = "b.customer_phone LIKE :phone";
+        $params['phone'] = '%' . $phone . '%';
     }
 
     if (count($conditions) > 0) {
@@ -168,21 +193,25 @@ try {
             <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">To Date</label>
             <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($end_date) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
         </div>
-        <div class="col-12 col-md-6 d-flex gap-2">
-            <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0 20px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#9c6047; border:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#824c36';" onmouseout="this.style.backgroundColor='#9c6047';">
+        <div class="col-12 col-md-3">
+            <label class="form-label mb-5" style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Phone Number</label>
+            <input type="text" name="phone" class="form-control" placeholder="Search phone number..." value="<?= htmlspecialchars($phone) ?>" style="font-size: 13px; height: 38px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 550;">
+        </div>
+        <div class="col-12 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0 15px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#9c6047; border:none; transition: all 0.2s ease; flex-grow: 1;" onmouseover="this.style.backgroundColor='#824c36';" onmouseout="this.style.backgroundColor='#9c6047';">
                 🔍 Filter
             </button>
-            <?php if ($start_date !== '' || $end_date !== ''): ?>
+            <?php if ($start_date !== '' || $end_date !== '' || $phone !== ''): ?>
                 <a href="bookings.php" class="btn btn-light border d-inline-flex align-items-center justify-content-center" style="height: 38px; padding: 0 15px; border-radius: 8px; font-weight:700; font-size:13px; border-color:#cbd5e1; color:#475569; background-color:#ffffff; text-decoration:none;">
                     Reset
                 </a>
             <?php endif; ?>
 
-            <a href="export-bookings.php?start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>" class="btn btn-success ms-auto d-inline-flex align-items-center gap-2" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#16a34a; border:none; color:#ffffff; text-decoration:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#15803d';" onmouseout="this.style.backgroundColor='#16a34a';">
+            <a href="export-bookings.php?start_date=<?= urlencode($start_date) ?>&end_date=<?= urlencode($end_date) ?>&phone=<?= urlencode($phone) ?>" class="btn btn-success ms-auto d-inline-flex align-items-center gap-2" style="height: 38px; padding: 0 12px; border-radius: 8px; font-weight:700; font-size:13px; background-color:#16a34a; border:none; color:#ffffff; text-decoration:none; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#15803d';" onmouseout="this.style.backgroundColor='#16a34a';" title="Export to Excel">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
-                Export to Excel
+                Export
             </a>
         </div>
     </form>
@@ -211,6 +240,11 @@ try {
                                 <strong style="color:#334155;"><?= htmlspecialchars($b['customer_name']) ?></strong><br>
                                 <span style="font-size:12.5px; color:#64748b;"><?= htmlspecialchars($b['customer_email']) ?></span><br>
                                 <span style="font-size:12px; color:#64748b;"><?= htmlspecialchars($b['customer_phone']) ?></span>
+                                <?php if ($b['booking_status'] === 'cancelled' && !empty($b['cancellation_reason'])): ?>
+                                    <div class="mt-5 text-danger" style="font-size:11.5px; line-height: 1.3;">
+                                        <strong>Reason:</strong> <?= htmlspecialchars($b['cancellation_reason']) ?>
+                                    </div>
+                                <?php endif; ?>
                             </td>
                             <td style="vertical-align: middle; padding: 16px 12px;">
                                 <strong style="color:#334155; font-size:13.5px;"><?= htmlspecialchars($b['room_title'] ?: 'Deluxe Room') ?></strong>
@@ -250,12 +284,18 @@ try {
                             </td>
                             <td style="vertical-align: middle; padding: 16px 12px;">
                                 <?php
-                                $status_bg = '#ef4444';
-                                if (strtolower($b['payment_status']) === 'paid') $status_bg = '#10b981';
-                                else if (strtolower($b['payment_status']) === 'pending') $status_bg = '#f59e0b';
+                                $status_bg = '#ef4444'; // Red for cancelled/failed/refunded
+                                $status_text = $b['payment_status'];
+                                if ($b['booking_status'] === 'cancelled') {
+                                    $status_text = 'cancelled';
+                                } else if ($b['payment_status'] === 'paid') {
+                                    $status_bg = '#10b981'; // Green
+                                } else if ($b['payment_status'] === 'pending') {
+                                    $status_bg = '#f59e0b'; // Yellow
+                                }
                                 ?>
                                 <span class="badge" style="background-color: <?= $status_bg ?>; color: #ffffff; font-size: 11px; padding: 5px 10px; border-radius: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <?= htmlspecialchars($b['payment_status']) ?>
+                                    <?= htmlspecialchars($status_text) ?>
                                 </span>
                             </td>
                             <td style="vertical-align: middle; padding: 16px 12px;">
@@ -266,10 +306,10 @@ try {
                                         <input type="hidden" name="action" value="update_status">
                                         <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
 
-                                        <select class="form-select" name="status" onchange="this.form.submit()" style="font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px; background-color: #ffffff; width: 100%; color: #334155;">
-                                            <option value="pending" <?= $b['payment_status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
-                                            <option value="paid" <?= $b['payment_status'] === 'paid' ? 'selected' : '' ?>>Paid</option>
-                                            <option value="cancelled" <?= $b['payment_status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                        <select class="form-select" name="status" onchange="handleStatusChange(this)" style="font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; height: 34px; background-color: #ffffff; width: 100%; color: #334155;">
+                                            <option value="pending" <?= ($b['booking_status'] !== 'cancelled' && $b['payment_status'] === 'pending') ? 'selected' : '' ?>>Pending</option>
+                                            <option value="paid" <?= ($b['booking_status'] !== 'cancelled' && $b['payment_status'] === 'paid') ? 'selected' : '' ?>>Paid</option>
+                                            <option value="cancelled" <?= $b['booking_status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                                         </select>
                                     </form>
 
@@ -315,5 +355,25 @@ try {
         </table>
     </div>
 </div>
+
+<script>
+function handleStatusChange(selectElement) {
+    if (selectElement.value === 'cancelled') {
+        const reason = prompt('Please enter the reason for cancellation (optional):');
+        if (reason === null) {
+            // Restore select element value to default
+            selectElement.value = [...selectElement.options].find(opt => opt.defaultSelected).value;
+            return;
+        }
+        // Append hidden cancellation_reason to the form
+        const reasonInput = document.createElement('input');
+        reasonInput.type = 'hidden';
+        reasonInput.name = 'cancellation_reason';
+        reasonInput.value = reason;
+        selectElement.form.appendChild(reasonInput);
+    }
+    selectElement.form.submit();
+}
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

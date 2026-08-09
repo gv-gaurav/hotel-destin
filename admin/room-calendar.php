@@ -491,7 +491,13 @@ if ($next_month > 12) {
                     activeHtml += '<tbody>';
                     data.bookings.forEach(function(b) {
                         var statusBadge = '<span class="badge bg-warning text-dark" style="font-weight:600;">Pending</span>';
-                        if (b.booking_status === 'confirmed') statusBadge = '<span class="badge bg-success" style="font-weight:600;">Confirmed</span>';
+                        if (b.booking_status === 'confirmed') {
+                            if (b.payment_method === 'Pay at Hotel') {
+                                statusBadge = '<span class="badge bg-info text-dark" style="font-weight:600;">Pay at Hotel</span>';
+                            } else {
+                                statusBadge = '<span class="badge bg-success" style="font-weight:600;">Paid</span>';
+                            }
+                        }
                         if (b.booking_status === 'checked_in') statusBadge = '<span class="badge bg-danger" style="font-weight:600;">Occupied</span>';
                         if (b.booking_status === 'checked_out') statusBadge = '<span class="badge bg-secondary" style="font-weight:600;">Completed</span>';
                         

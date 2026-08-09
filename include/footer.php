@@ -197,7 +197,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
-              <span><?= htmlspecialchars(get_setting('hotel_address') ?: 'Sachin Tendulkar Road, Gwalior, Madhya Pradesh') ?></span>
+              <span><?= htmlspecialchars(get_setting('hotel_address') ?: 'Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior') ?></span>
             </div>
             <div class="footer-contact-item">
               <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -241,11 +241,10 @@
         <h6>Our Hotel</h6>
         <ul class="menu-footer">
           <li><a href="about.php">About Us</a></li>
-          <li><a href="rooms.php">Rooms & Suites</a></li>
+          <li><a href="rooms.php">Comfortable Rooms</a></li>
           <li><a href="restaurant.php">Dining & Restaurant</a></li>
           <li><a href="banquet.php">Banquet & Events</a></li>
           <li><a href="gallery.php">Photo Gallery</a></li>
-          <li><a href="explore-gwalior.php">Explore Gwalior</a></li>
         </ul>
       </div>
       <div class="col-md-2 col-xs-6 footer-3">
@@ -253,8 +252,9 @@
         <ul class="menu-footer">
           <li><a href="airport-transfer.php">Airport Transfer</a></li>
           <li><a href="corporate-booking.php">Corporate Booking</a></li>
-          <li><a href="wedding-banquet.php">Wedding Banquets</a></li>
-          <li><a href="rooms.php">Special Packages</a></li>
+          <li><a href="wedding-banquet.php">Banquet Hall</a></li>
+          <li><a href="explore-gwalior.php">Tourist Attractions</a></li>
+
         </ul>
       </div>
       <div class="col-md-2 col-xs-6 footer-4">
@@ -398,71 +398,96 @@
   }
 </style>
 
-<!-- Floating Share Location Speed-Dial FAB Menu -->
-<div class="floating-share-dial-container" id="shareDialContainer">
-  <!-- Sub Share Buttons -->
-  <div class="share-sub-buttons">
-    <!-- WhatsApp -->
-    <a href="https://api.whatsapp.com/send?text=Check%20out%20Hotel%20Destin%20on%20Google%20Maps%3A%20https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%3Fapi%3D1%26query%3DHotel%2BDESTIN%2BGWALIOR"
-      target="_blank"
-      class="share-sub-btn whatsapp-btn"
-      title="Share on WhatsApp">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 1.62c4.57 0 8.29 3.72 8.29 8.29s-3.72 8.29-8.29 8.29c-1.55 0-3.03-.43-4.31-1.24l-.31-.18-3.09.81.82-3.01-.2-.32a8.23 8.23 0 0 1-1.27-4.35c0-4.57 3.72-8.29 8.29-8.29zm-3.66 4.28c-.18 0-.44.07-.67.33-.23.26-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.7 4.28 3.78.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.48-.6 1.69-1.19.21-.58.21-1.09.15-1.19-.06-.1-.23-.17-.48-.29l-2.52-1.24c-.25-.13-.44-.19-.63.09l-.72.9c-.16.2-.33.22-.58.09-.26-.13-1.09-.4-2.07-1.28-.76-.68-1.27-1.52-1.42-1.78-.15-.26-.02-.4.11-.53l.51-.6c.13-.15.17-.26.26-.43a.47.47 0 0 0-.02-.45c-.06-.13-.59-1.42-.81-1.95-.21-.52-.43-.45-.59-.46l-.5-.01z" />
-      </svg>
-    </a>
-    <!-- Facebook -->
-    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%3Fapi%3D1%26query%3DHotel%2BDESTIN%2BGWALIOR"
-      target="_blank"
-      class="share-sub-btn facebook-btn"
-      title="Share on Facebook">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18.3334 13.4915C18.3334 16.5248 16.5251 18.3332 13.4917 18.3332H12.5001C12.0417 18.3332 11.6667 17.9582 11.6667 17.4998V12.6915C11.6667 12.4665 11.8501 12.2748 12.0751 12.2748L13.5417 12.2498C13.6584 12.2415 13.7584 12.1582 13.7834 12.0415L14.0751 10.4498C14.1001 10.2998 13.9834 10.1582 13.8251 10.1582L12.0501 10.1832C11.8167 10.1832 11.6334 9.99985 11.6251 9.77485L11.5918 7.73317C11.5918 7.59984 11.7001 7.48318 11.8417 7.48318L13.8417 7.44984C13.9834 7.44984 14.0918 7.34152 14.0918 7.19985L14.0584 5.19983C14.0584 5.05816 13.9501 4.94984 13.8084 4.94984L11.5584 4.98318C10.1751 5.00818 9.07509 6.1415 9.10009 7.52484L9.14175 9.8165C9.15008 10.0498 8.96676 10.2332 8.73342 10.2415L7.73341 10.2582C7.59175 10.2582 7.48342 10.3665 7.48342 10.5082L7.50842 12.0915C7.50842 12.2332 7.61675 12.3415 7.75841 12.3415L8.75842 12.3248C8.99176 12.3248 9.17507 12.5082 9.18341 12.7332L9.2584 17.4832C9.26674 17.9498 8.89174 18.3332 8.42507 18.3332H6.50841C3.47508 18.3332 1.66675 16.5248 1.66675 13.4832V6.50817C1.66675 3.47484 3.47508 1.6665 6.50841 1.6665H13.4917C16.5251 1.6665 18.3334 3.47484 18.3334 6.50817V13.4915V13.4915Z" fill="currentColor" />
-      </svg>
-    </a>
-    <!-- Instagram / Copy Link -->
-    <button class="share-sub-btn instagram-btn" onclick="copyMapLocation()" title="Copy Map Link for Instagram">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#ffffff;">
-        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-      </svg>
-    </button>
-  </div>
+<!-- Floating Share Location Button -->
+<button class="floating-share-location-btn" onclick="openShareModal(event)" title="Share Hotel Location">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="color: #ffffff;">
+    <circle cx="18" cy="5" r="3"></circle>
+    <circle cx="6" cy="12" r="3"></circle>
+    <circle cx="18" cy="19" r="3"></circle>
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+  </svg>
+</button>
 
-  <!-- Main Share Button Trigger -->
-  <button class="floating-share-location-btn" onclick="toggleShareDial(event)" title="Share Hotel Location">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="color: #ffffff;">
-      <circle cx="18" cy="5" r="3"></circle>
-      <circle cx="6" cy="12" r="3"></circle>
-      <circle cx="18" cy="19" r="3"></circle>
-      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-    </svg>
-  </button>
+<!-- Share Modal Overlay -->
+<div class="share-modal-overlay" id="shareModalOverlay" style="display: none;">
+  <div class="share-modal-card">
+    <div class="share-modal-header">
+      <h3 class="share-modal-title">Share</h3>
+      <button type="button" class="share-modal-close" onclick="closeShareModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Platform Icons Container -->
+    <div class="share-platforms-row">
+      <!-- WhatsApp -->
+      <a href="https://api.whatsapp.com/send?text=Check%20out%20Hotel%20Destin%20on%20Google%20Maps%3A%20https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%3Fapi%3D1%26query%3DHotel%2BDESTIN%2BGWALIOR" target="_blank" class="share-platform-item">
+        <div class="share-platform-icon whatsapp">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 1.62c4.57 0 8.29 3.72 8.29 8.29s-3.72 8.29-8.29 8.29c-1.55 0-3.03-.43-4.31-1.24l-.31-.18-3.09.81.82-3.01-.2-.32a8.23 8.23 0 0 1-1.27-4.35c0-4.57 3.72-8.29 8.29-8.29zm-3.66 4.28c-.18 0-.44.07-.67.33-.23.26-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.7 4.28 3.78.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.48-.6 1.69-1.19.21-.58.21-1.09.15-1.19-.06-.1-.23-.17-.48-.29l-2.52-1.24c-.25-.13-.44-.19-.63.09l-.72.9c-.16.2-.33.22-.58.09-.26-.13-1.09-.4-2.07-1.28-.76-.68-1.27-1.52-1.42-1.78-.15-.26-.02-.4.11-.53l.51-.6c.13-.15.17-.26.26-.43a.47.47 0 0 0-.02-.45c-.06-.13-.59-1.42-.81-1.95-.21-.52-.43-.45-.59-.46l-.5-.01z" />
+          </svg>
+        </div>
+        <span class="share-platform-label">WhatsApp</span>
+      </a>
+
+      <!-- X (Twitter) -->
+      <a href="https://twitter.com/intent/tweet?text=Check%20out%20Hotel%20Destin%20on%20Google%20Maps%3A%20https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%3Fapi%3D1%26query%3DHotel%2BDESTIN%2BGWALIOR" target="_blank" class="share-platform-item">
+        <div class="share-platform-icon twitter-x">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg>
+        </div>
+        <span class="share-platform-label">X</span>
+      </a>
+
+      <!-- LinkedIn -->
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%3Fapi%3D1%26query%3DHotel%2BDESTIN%2BGWALIOR" target="_blank" class="share-platform-item">
+        <div class="share-platform-icon linkedin">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+          </svg>
+        </div>
+        <span class="share-platform-label">LinkedIn</span>
+      </a>
+
+      <!-- Email -->
+      <a href="mailto:?subject=Hotel%20Destin%20Gwalior&body=Check%20out%20Hotel%20Destin%20Gwalior%20on%20Google%20Maps%3A%20https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%3Fapi%3D1%26query%3DHotel%2BDESTIN%2BGWALIOR" class="share-platform-item">
+        <div class="share-platform-icon email">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+          </svg>
+        </div>
+        <span class="share-platform-label">Email</span>
+      </a>
+    </div>
+
+    <!-- URL Sharing Copy Block -->
+    <div class="share-url-container">
+      <input type="text" class="share-url-input" value="https://www.google.com/maps/search/?api=1&query=Hotel+DESTIN+GWALIOR" readonly id="shareUrlInputField">
+      <button type="button" onclick="window.copyMapLocation()" class="share-url-copy-btn" id="shareUrlCopyBtn">Copy</button>
+    </div>
+  </div>
 </div>
 
 <!-- Copy Success Toast Alert -->
 <div id="shareCopyToast" style="display: none; position: fixed; bottom: 100px; left: 30px; background: #0f172a; color: #ffffff; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100000; animation: callFadeIn 0.2s ease;">
-  Link copied! Share it on Instagram.
+  Link copied to clipboard!
 </div>
 
 <style>
-  /* Floating Share Location Speed-Dial FAB Menu styling */
-  .floating-share-dial-container {
+  /* Floating Share Location Button styling */
+  .floating-share-location-btn {
     position: fixed;
     bottom: 30px;
     left: 30px;
     z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .floating-share-location-btn {
     width: 50px;
     height: 50px;
     background: #a17a42;
-    /* Premium Gold Theme */
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -479,83 +504,195 @@
     background: #8c6734;
   }
 
-  /* Sub buttons stack */
-  .share-sub-buttons {
+  /* Share Modal Overlay styling (High Fidelity YouTube style) */
+  .share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: shareFadeIn 0.25s ease forwards;
+  }
+
+  .share-modal-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 440px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    position: relative;
+    transform: scale(0.95);
+    animation: shareScaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .share-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .share-modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+
+  .share-modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .share-modal-close:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  /* Horizontal platforms row - Centered for 4 items */
+  .share-platforms-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .share-platform-item {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 12px;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(20px) scale(0.8);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+    min-width: 60px;
+    cursor: pointer;
   }
 
-  .floating-share-dial-container.active .share-sub-buttons {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
-  }
-
-  .share-sub-btn {
-    width: 40px;
-    height: 40px;
+  .share-platform-icon {
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    border: 2px solid #ffffff;
-    transition: all 0.25s ease;
-    cursor: pointer;
-    padding: 0;
+    transition: transform 0.2s ease;
   }
 
-  .share-sub-btn:hover {
-    transform: scale(1.1);
+  .share-platform-item:hover .share-platform-icon {
+    transform: scale(1.08);
   }
 
-  /* Platform branding colors */
-  .whatsapp-btn {
+  .share-platform-icon.whatsapp {
     background-color: #25D366;
   }
 
-  .whatsapp-btn:hover {
-    background-color: #20ba59;
+  .share-platform-icon.twitter-x {
+    background-color: #0f172a;
   }
 
-  .facebook-btn {
-    background-color: #1877F2;
+  .share-platform-icon.linkedin {
+    background-color: #0a66c2;
   }
 
-  .facebook-btn:hover {
-    background-color: #1566cf;
+  .share-platform-icon.email {
+    background-color: #64748b;
   }
 
-  .instagram-btn {
-    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  .share-platform-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-align: center;
+    white-space: nowrap;
   }
 
-  .instagram-btn:hover {
-    opacity: 0.9;
+  /* URL container styling */
+  .share-url-container {
+    display: flex;
+    align-items: center;
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px 6px 6px 14px;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .share-url-input {
+    border: none;
+    background: transparent;
+    font-size: 13.5px;
+    color: #334155;
+    flex-grow: 1;
+    outline: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .share-url-copy-btn {
+    background-color: #065fd4;
+    color: #ffffff;
+    border: none;
+    border-radius: 18px;
+    padding: 8px 18px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .share-url-copy-btn:hover {
+    background-color: #054eb0;
+  }
+
+  @keyframes shareFadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes shareScaleUp {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
   @media (max-width: 767px) {
-    .floating-share-dial-container {
-      bottom: 84px;
-      /* Sits cleanly above the sticky mobile navigation bar */
-      left: 20px;
-    }
-
     .floating-share-location-btn {
+      bottom: 84px;
+      left: 20px;
       width: 46px;
       height: 46px;
-    }
-
-    .share-sub-btn {
-      width: 36px;
-      height: 36px;
     }
 
     #shareCopyToast {
@@ -573,14 +710,17 @@
     transition: all 0.25s;
     position: relative;
   }
+
   .hourly-room-card:hover {
     border-color: #cbd5e1;
   }
+
   .hourly-room-card.selected {
     border-color: #a17a42 !important;
     background: rgba(161, 122, 66, 0.03) !important;
     box-shadow: 0 4px 10px rgba(161, 122, 66, 0.1) !important;
   }
+
   .hourly-room-card.selected::before {
     content: '✓';
     position: absolute;
@@ -601,48 +741,57 @@
 <?php
 // Load hourly stay package rates
 $hourly_packages = [
-    'standard' => [3 => 600, 6 => 1000, 9 => 1400, 12 => 1800],
-    'executive' => [3 => 800, 6 => 1300, 9 => 1800, 12 => 2200],
-    'premium' => [3 => 1000, 6 => 1600, 9 => 2200, 12 => 2800]
+  'standard' => [3 => 600, 6 => 1000, 9 => 1400, 12 => 1800],
+  'executive' => [3 => 800, 6 => 1300, 9 => 1800, 12 => 2200],
+  'premium' => [3 => 1000, 6 => 1600, 9 => 2200, 12 => 2800]
 ];
 try {
-    if (isset($pdo)) {
-        $keys = [
-            'hourly_3_standard', 'hourly_6_standard', 'hourly_9_standard', 'hourly_12_standard',
-            'hourly_3_executive', 'hourly_6_executive', 'hourly_9_executive', 'hourly_12_executive',
-            'hourly_3_premium', 'hourly_6_premium', 'hourly_9_premium', 'hourly_12_premium'
-        ];
-        $stmt_h = $pdo->query("SELECT key_name, val_content FROM settings WHERE key_name IN ('" . implode("','", $keys) . "')");
-        while ($row_h = $stmt_h->fetch()) {
-            $parts = explode('_', $row_h['key_name']);
-            if (count($parts) === 3) {
-                $hours = (int)$parts[1];
-                $category = $parts[2];
-                $hourly_packages[$category][$hours] = (float)$row_h['val_content'];
-            }
-        }
+  if (isset($pdo)) {
+    $keys = [
+      'hourly_3_standard',
+      'hourly_6_standard',
+      'hourly_9_standard',
+      'hourly_12_standard',
+      'hourly_3_executive',
+      'hourly_6_executive',
+      'hourly_9_executive',
+      'hourly_12_executive',
+      'hourly_3_premium',
+      'hourly_6_premium',
+      'hourly_9_premium',
+      'hourly_12_premium'
+    ];
+    $stmt_h = $pdo->query("SELECT key_name, val_content FROM settings WHERE key_name IN ('" . implode("','", $keys) . "')");
+    while ($row_h = $stmt_h->fetch()) {
+      $parts = explode('_', $row_h['key_name']);
+      if (count($parts) === 3) {
+        $hours = (int)$parts[1];
+        $category = $parts[2];
+        $hourly_packages[$category][$hours] = (float)$row_h['val_content'];
+      }
     }
+  }
 } catch (Exception $e) {
-    // Fail silently
+  // Fail silently
 }
 
 // Load room categories and main images dynamically
 $hourly_rooms = [];
 try {
-    if (isset($pdo)) {
-        $stmt_r = $pdo->query("SELECT id, title, image_path FROM rooms WHERE id IN (1, 2, 3) ORDER BY id ASC");
-        $hourly_rooms = $stmt_r->fetchAll(PDO::FETCH_ASSOC);
-    }
+  if (isset($pdo)) {
+    $stmt_r = $pdo->query("SELECT id, title, image_path FROM rooms WHERE id IN (1, 2, 3) ORDER BY id ASC");
+    $hourly_rooms = $stmt_r->fetchAll(PDO::FETCH_ASSOC);
+  }
 } catch (Exception $e) {
-    // Fail silently
+  // Fail silently
 }
 // Fallback if empty
 if (count($hourly_rooms) < 3) {
-    $hourly_rooms = [
-        ['id' => 1, 'title' => 'Standard Room - Hotel Destin', 'image_path' => 'assets/imgs/page/room/banner-room.png'],
-        ['id' => 2, 'title' => 'Executive Room - Hotel Destin', 'image_path' => 'assets/imgs/page/room/banner-room2.png'],
-        ['id' => 3, 'title' => 'Premium Room - Hotel Destin', 'image_path' => 'assets/imgs/page/pages/banner.png']
-    ];
+  $hourly_rooms = [
+    ['id' => 1, 'title' => 'Standard Room - Hotel Destin', 'image_path' => 'assets/imgs/page/room/banner-room.png'],
+    ['id' => 2, 'title' => 'Executive Room - Hotel Destin', 'image_path' => 'assets/imgs/page/room/banner-room2.png'],
+    ['id' => 3, 'title' => 'Premium Room - Hotel Destin', 'image_path' => 'assets/imgs/page/pages/banner.png']
+  ];
 }
 ?>
 
@@ -694,22 +843,22 @@ if (count($hourly_rooms) < 3) {
           <div class="form-group mb-15">
             <label class="form-label-custom" style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px; display: block;">Select Room Category *</label>
             <div class="row g-2" id="hourlyRoomContainer">
-              <?php 
+              <?php
               $slugs = ['standard', 'executive', 'premium'];
-              foreach ($hourly_rooms as $index => $hr): 
-                  $slug = $slugs[$index];
-                  $init_price = $hourly_packages[$slug][3];
+              foreach ($hourly_rooms as $index => $hr):
+                $slug = $slugs[$index];
+                $init_price = $hourly_packages[$slug][3];
               ?>
-              <div class="col-4">
-                <div class="hourly-room-card text-center <?= $index === 0 ? 'selected' : '' ?>" data-slug="<?= $slug ?>" onclick="selectHourlyRoom(this)">
-                  <input type="radio" name="room_category" value="<?= htmlspecialchars($hr['title']) ?>" class="d-none" id="roomRadio_<?= $slug ?>" <?= $index === 0 ? 'checked' : '' ?> required>
-                  <img src="<?= htmlspecialchars($hr['image_path']) ?>" alt="<?= htmlspecialchars($hr['title']) ?>" style="height: 60px; width: 100%; object-fit: cover;">
-                  <div style="padding: 6px 4px;">
-                    <h6 style="font-size: 11px; font-weight: 700; margin-bottom: 1px; color: #0f172a; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="<?= htmlspecialchars($hr['title']) ?>"><?= htmlspecialchars($slug === 'standard' ? 'Standard' : ($slug === 'executive' ? 'Executive' : 'Premium')) ?></h6>
-                    <div class="room-total-badge" style="font-size: 10px; font-weight: 700; color: #a17a42; background: #faf5eb; border-radius: 4px; padding: 1px 3px; display: inline-block;">₹<?= number_format($init_price) ?></div>
+                <div class="col-4">
+                  <div class="hourly-room-card text-center <?= $index === 0 ? 'selected' : '' ?>" data-slug="<?= $slug ?>" onclick="selectHourlyRoom(this)">
+                    <input type="radio" name="room_category" value="<?= htmlspecialchars($hr['title']) ?>" class="d-none" id="roomRadio_<?= $slug ?>" <?= $index === 0 ? 'checked' : '' ?> required>
+                    <img src="<?= htmlspecialchars($hr['image_path']) ?>" alt="<?= htmlspecialchars($hr['title']) ?>" style="height: 60px; width: 100%; object-fit: cover;">
+                    <div style="padding: 6px 4px;">
+                      <h6 style="font-size: 11px; font-weight: 700; margin-bottom: 1px; color: #0f172a; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="<?= htmlspecialchars($hr['title']) ?>"><?= htmlspecialchars($slug === 'standard' ? 'Standard' : ($slug === 'executive' ? 'Executive' : 'Premium')) ?></h6>
+                      <div class="room-total-badge" style="font-size: 10px; font-weight: 700; color: #a17a42; background: #faf5eb; border-radius: 4px; padding: 1px 3px; display: inline-block;">₹<?= number_format($init_price) ?></div>
+                    </div>
                   </div>
                 </div>
-              </div>
               <?php endforeach; ?>
             </div>
           </div>
@@ -871,7 +1020,7 @@ if (count($hourly_rooms) < 3) {
       var hours = parseInt(hourlyHoursSelect.value) || 3;
       var cards = document.querySelectorAll('#hourlyRoomContainer .hourly-room-card');
       var selectedCard = document.querySelector('#hourlyRoomContainer .hourly-room-card.selected');
-      
+
       // Update each card badge price display
       cards.forEach(function(card) {
         var slug = card.getAttribute('data-slug');
@@ -980,35 +1129,63 @@ if (count($hourly_rooms) < 3) {
           });
       });
     }
-  });
 
-  function toggleShareDial(e) {
-    e.stopPropagation();
-    var container = document.getElementById('shareDialContainer');
-    container.classList.toggle('active');
-  }
+    window.openShareModal = function(e) {
+      if (e) {
+        e.stopPropagation();
+      }
+      document.getElementById('shareModalOverlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
 
-  function copyMapLocation() {
-    var mapUrl = "https://www.google.com/maps/search/?api=1&query=Hotel+DESTIN+GWALIOR";
-    navigator.clipboard.writeText(mapUrl).then(function() {
-      var toast = document.getElementById('shareCopyToast');
-      toast.style.display = 'block';
-      setTimeout(function() {
-        toast.style.display = 'none';
-      }, 3000);
+    window.closeShareModal = function() {
+      document.getElementById('shareModalOverlay').style.display = 'none';
+      document.body.style.overflow = '';
+    };
 
-      // Close dial menu
-      document.getElementById('shareDialContainer').classList.remove('active');
-    }).catch(function(err) {
-      console.error('Could not copy text: ', err);
-    });
-  }
+    window.copyMapLocation = function() {
+      var inputField = document.getElementById('shareUrlInputField');
+      var copyBtn = document.getElementById('shareUrlCopyBtn');
+      if (!inputField) return;
 
-  // Close share dial menu when clicking outside
-  document.addEventListener('click', function(e) {
-    var container = document.getElementById('shareDialContainer');
-    if (container && !container.contains(e.target)) {
-      container.classList.remove('active');
+      inputField.select();
+      inputField.setSelectionRange(0, 99999);
+
+      navigator.clipboard.writeText(inputField.value).then(function() {
+        if (copyBtn) {
+          var originalText = copyBtn.innerText;
+          copyBtn.innerText = 'Copied!';
+          copyBtn.style.backgroundColor = '#10b981'; // green color feedback
+          setTimeout(function() {
+            copyBtn.innerText = originalText;
+            copyBtn.style.backgroundColor = '';
+          }, 2000);
+        }
+
+        var toast = document.getElementById('shareCopyToast');
+        if (toast) {
+          toast.innerText = 'Link copied to clipboard!';
+          toast.style.display = 'block';
+          setTimeout(function() {
+            toast.style.display = 'none';
+          }, 3000);
+        }
+
+        // Auto-close modal after 1.5 seconds so user can see copied status
+        setTimeout(window.closeShareModal, 1500);
+      }).catch(function(err) {
+        console.error('Could not copy text: ', err);
+      });
+    };
+
+    // Close share modal when clicking outside
+    var overlay = document.getElementById('shareModalOverlay');
+    if (overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          window.closeShareModal();
+        }
+      });
     }
   });
 </script>

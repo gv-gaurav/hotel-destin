@@ -308,6 +308,7 @@
             <form method="GET" action="rooms.php" style="width: 100%;">
               <input type="hidden" name="adults" id="hidden_adults" value="2">
               <input type="hidden" name="children" id="hidden_children" value="0">
+              <input type="hidden" name="child_ages" id="hidden_child_ages" value="">
 
               <div class="box-bottom-search background-card">
                 <div class="item-search">
@@ -365,13 +366,17 @@
                           <div class="d-flex align-items-center justify-content-between">
                             <div>
                               <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Child</span>
-                              <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 10 years)</span>
+                              <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 8 years)</span>
                             </div>
                             <div class="d-flex align-items-center border rounded overflow-hidden">
                               <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
                               <span class="px-3 py-1 child-count" style="font-weight: 600; min-width: 30px; text-align: center;">0</span>
                               <button class="btn btn-sm btn-light py-1 px-3 inc-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">+</button>
                             </div>
+                          </div>
+                          <div class="child-ages-container mt-2" style="display: none;">
+                            <label class="form-label-custom mb-1" style="font-size:11px; font-weight:700; color:#9c6047; display:block; text-align:left;">Specify Child Ages</label>
+                            <div class="child-ages-row row g-2"></div>
                           </div>
                         </div>
                       </div>
@@ -488,6 +493,7 @@
 
         // Calculate dynamic base price
         $price = (float)$r['price'];
+        $struck_price = (float)$r['struck_price'];
         if ($has_search_dates) {
           $date1 = new DateTime($search_checkin);
           $date2 = new DateTime($search_checkout);
@@ -495,13 +501,16 @@
           $nights = max(1, (int)$nights);
 
           $total_base_price = 0.00;
+          $total_struck_price = 0.00;
           $curr_date_ptr = clone $date1;
           while ($curr_date_ptr < $date2) {
             $date_str = $curr_date_ptr->format('Y-m-d');
             $total_base_price += get_resolved_room_price($pdo, $r['id'], $date_str, 'EP', $search_adults, $r);
+            $total_struck_price += get_resolved_room_struck_price($pdo, $r['id'], $date_str, $r);
             $curr_date_ptr->modify('+1 day');
           }
           $price = round($total_base_price / $nights, 2);
+          $struck_price = round($total_struck_price / $nights, 2);
         }
 
         $rooms_for_home[] = [
@@ -511,10 +520,10 @@
           'type_badge' => $type_badge,
           'status_badge' => ($has_search_dates && $available_count <= 0) ? 'SOLD OUT' : $status_badge,
           'rating' => $rating,
-          'location' => 'Sachin Tendulkar Rd, Gwalior',
+          'location' => 'Hotel Destin - Gwalior',
           'tags' => $tags,
           'specs' => $specs,
-          'struck_price' => $r['struck_price'],
+          'struck_price' => $struck_price,
           'discount' => $r['discount'],
           'code' => $r['code'],
           'banner_text' => isset($r['banner_text']) ? $r['banner_text'] : '',
@@ -900,7 +909,7 @@
 
     if ($coupon_banner_status === 'active') {
       try {
-        $stmt = $pdo->query("SELECT * FROM coupons WHERE status = 'active' AND expiry_date >= CURDATE() ORDER BY created_at DESC, id DESC LIMIT 3");
+        $stmt = $pdo->query("SELECT * FROM coupons WHERE status = 'active' AND start_date <= CURDATE() AND expiry_date >= CURDATE() ORDER BY created_at DESC, id DESC LIMIT 3");
         $active_coupons = $stmt->fetchAll();
       } catch (Exception $e) {
         error_log("Failed to load active coupons for homepage: " . $e->getMessage());
@@ -1165,6 +1174,60 @@
                 <div class="attraction-footer">
                   <p class="attraction-distance">3-4 km from Hotel</p>
                   <a class="attraction-btn" href="explore-gwalior.php#sun-temple">
+                    Explore
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Attraction 4: Tansen Tomb -->
+          <div class="col-lg-4 col-md-6 col-12 attraction-col">
+            <div class="attraction-card">
+              <div class="attraction-img-wrapper">
+                <a href="explore-gwalior.php#tansen-tomb">
+                  <img src="assets/imgs/page/tansen_tomb.png" alt="Tansen Tomb near Hotel Destin" loading="lazy">
+                </a>
+              </div>
+              <div class="attraction-info">
+                <div>
+                  <h3 class="attraction-title">Tansen Tomb</h3>
+                  <p class="attraction-type">Mughal Monument | Gwalior</p>
+                </div>
+                <div class="attraction-footer">
+                  <p class="attraction-distance">5-6 km from Hotel</p>
+                  <a class="attraction-btn" href="explore-gwalior.php#tansen-tomb">
+                    Explore
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Attraction 5: Sasbahu Temple -->
+          <div class="col-lg-4 col-md-6 col-12 attraction-col">
+            <div class="attraction-card">
+              <div class="attraction-img-wrapper">
+                <a href="explore-gwalior.php#sasbahu-temple">
+                  <img src="assets/imgs/page/sasbahu_temple.png" alt="Sasbahu Temple near Hotel Destin" loading="lazy">
+                </a>
+              </div>
+              <div class="attraction-info">
+                <div>
+                  <h3 class="attraction-title">Sasbahu Temple</h3>
+                  <p class="attraction-type">Ancient Temple | Gwalior Fort</p>
+                </div>
+                <div class="attraction-footer">
+                  <p class="attraction-distance">7-8 km from Hotel</p>
+                  <a class="attraction-btn" href="explore-gwalior.php#sasbahu-temple">
                     Explore
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12" />
@@ -1979,15 +2042,17 @@
             // Rule 2: If customer chooses 3 adults, child count drops to 0
             if (newAdults === 3) {
               roomBlock.find('.child-count').text(0);
+              updateChildAgesForRoomBlock(roomBlock);
             }
             updateGuestsRoomsSummary();
           }
         } else if (target.hasClass('child-count')) {
           var adults = parseInt(roomBlock.find('.adult-count').text()) || 0;
-          // Rule 3: Child allowed only with adults <= 2
+          // Rule 3: Child allowed only with adults <= 2 (maximum 2 children)
           if (adults < 3) {
-            if (count < 4) {
+            if (count < 2) {
               target.text(count + 1);
+              updateChildAgesForRoomBlock(roomBlock);
               updateGuestsRoomsSummary();
             }
           }
@@ -2003,6 +2068,9 @@
         var minVal = isAdult ? 1 : 0;
         if (count > minVal) {
           target.text(count - 1);
+          if (!isAdult) {
+            updateChildAgesForRoomBlock($(this).closest('.room-block'));
+          }
           updateGuestsRoomsSummary();
         }
       });
@@ -2032,13 +2100,17 @@
                 <div class="d-flex align-items-center justify-content-between">
                   <div>
                     <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Child</span>
-                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 10 years)</span>
+                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 8 years)</span>
                   </div>
                   <div class="d-flex align-items-center border rounded overflow-hidden">
                     <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
                     <span class="px-3 py-1 child-count" style="font-weight: 600; min-width: 30px; text-align: center;">0</span>
                     <button class="btn btn-sm btn-light py-1 px-3 inc-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">+</button>
                   </div>
+                </div>
+                <div class="child-ages-container mt-2" style="display: none;">
+                  <label class="form-label-custom mb-1" style="font-size:11px; font-weight:700; color:#9c6047; display:block; text-align:left;">Specify Child Ages</label>
+                  <div class="child-ages-row row g-2"></div>
                 </div>
               </div>
             `;
@@ -2068,21 +2140,67 @@
         $('#dropdownGuestsBtn').dropdown('hide');
       });
 
+      function updateChildAgesForRoomBlock(roomBlock) {
+        var count = parseInt(roomBlock.find('.child-count').text()) || 0;
+        var container = roomBlock.find('.child-ages-container');
+        var row = roomBlock.find('.child-ages-row');
+
+        if (count > 0) {
+          var currentSelected = [];
+          row.find('.search-child-age-select').each(function() {
+            currentSelected.push($(this).val());
+          });
+
+          row.empty();
+          for (var i = 1; i <= count; i++) {
+            var val = currentSelected[i - 1] || '5';
+            var optionsHtml = '';
+            for (var age = 0; age <= 17; age++) {
+              var label = age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''));
+              optionsHtml += `<option value="${age}" ${age == val ? 'selected' : ''}>${label}</option>`;
+            }
+
+            var colHtml = `
+              <div class="col-6">
+                <label class="form-label-custom mb-1" style="font-size:10px; color:#64748b; text-align:left; display:block;">Child ${i} Age</label>
+                <select class="form-select search-child-age-select" style="height:32px; font-size:11.5px; padding:2px 8px; border-radius:6px; border:1px solid #cbd5e1; color:#334155; font-weight:600; width:100%;">
+                  ${optionsHtml}
+                </select>
+              </div>
+            `;
+            row.append(colHtml);
+          }
+          container.show();
+        } else {
+          row.empty();
+          container.hide();
+        }
+      }
+
+      $(document).on('change', '.search-child-age-select', function() {
+        updateGuestsRoomsSummary();
+      });
+
       function updateGuestsRoomsSummary() {
         var totalRooms = $('#roomsContainer .room-block').length;
         var totalAdults = 0;
         var totalChildren = 0;
+        var childAges = [];
 
         $('#roomsContainer .room-block').each(function() {
           var adults = parseInt($(this).find('.adult-count').text()) || 0;
           var children = parseInt($(this).find('.child-count').text()) || 0;
           totalAdults += adults;
           totalChildren += children;
+          $(this).find('.search-child-age-select').each(function() {
+            childAges.push($(this).val());
+          });
         });
 
         // Update hidden fields
         $('#hidden_adults').val(totalAdults);
         $('#hidden_children').val(totalChildren);
+        $('#hidden_child_ages').val(childAges.join(','));
 
         var totalGuests = totalAdults + totalChildren;
         var roomsText = totalRooms + (totalRooms === 1 ? ' Room' : ' Rooms');

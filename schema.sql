@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   `razorpay_order_id` VARCHAR(100) NULL,
   `razorpay_payment_id` VARCHAR(100) NULL,
   `refund_tx_id` VARCHAR(100) DEFAULT NULL,
+  `cancellation_reason` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`room_id`) REFERENCES `rooms`(`id`) ON DELETE RESTRICT,
   FOREIGN KEY (`physical_room_id`) REFERENCES `physical_rooms`(`id`) ON DELETE RESTRICT
@@ -105,8 +106,10 @@ CREATE TABLE IF NOT EXISTS `coupons` (
   `title` VARCHAR(100) NOT NULL,
   `code` VARCHAR(50) NOT NULL UNIQUE,
   `discount_percent` INT NOT NULL,
+  `start_date` DATE NOT NULL,
   `expiry_date` DATE NOT NULL,
   `status` ENUM('active', 'inactive') DEFAULT 'active',
+  `show_in_checkout` TINYINT(1) DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -178,7 +181,7 @@ INSERT INTO `settings` (`key_name`, `val_content`) VALUES
 ('hotel_name', 'Hotel Destin'),
 ('hotel_phone', '+91 70000 00000'),
 ('hotel_email', 'info@hoteldestin.in'),
-('hotel_address', 'Sachin Tendulkar Road, Kailash Nagar, Gwalior, MP, India'),
+('hotel_address', 'Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior'),
 ('razorpay_key_id', 'rzp_test_YourKeyHere'),
 ('razorpay_key_secret', 'YourSecretHere')
 ON DUPLICATE KEY UPDATE `key_name`=`key_name`;

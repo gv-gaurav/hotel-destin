@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         if ($action === 'confirm_booking') {
             try {
-                $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'confirmed' WHERE id = ?");
+                $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'confirmed', cancellation_reason = NULL WHERE id = ?");
                 $upd->execute([$booking_id]);
                 header("Location: booking-details.php?id=" . $booking_id . "&success=confirm");
                 exit;
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
         } else if ($action === 'check_in') {
             try {
-                $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'checked_in' WHERE id = ?");
+                $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'checked_in', cancellation_reason = NULL WHERE id = ?");
                 $upd->execute([$booking_id]);
                 header("Location: booking-details.php?id=" . $booking_id . "&success=checkin");
                 exit;
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
         } else if ($action === 'check_out') {
             try {
-                $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'checked_out' WHERE id = ?");
+                $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'checked_out', cancellation_reason = NULL WHERE id = ?");
                 $upd->execute([$booking_id]);
                 header("Location: booking-details.php?id=" . $booking_id . "&success=checkout");
                 exit;
@@ -81,9 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
         } else if ($action === 'cancel_refund') {
             $refund_tx_id = isset($_POST['refund_tx_id']) ? htmlspecialchars(trim($_POST['refund_tx_id'])) : 'REFUND-MOCK-' . rand(1000, 9999);
+            $cancellation_reason = isset($_POST['cancellation_reason']) ? trim($_POST['cancellation_reason']) : '';
             try {
-                $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'cancelled', payment_status = 'refunded', refund_tx_id = ? WHERE id = ?");
-                $upd->execute([$refund_tx_id, $booking_id]);
+                $upd = $pdo->prepare("UPDATE bookings SET booking_status = 'cancelled', payment_status = 'refunded', refund_tx_id = ?, cancellation_reason = ? WHERE id = ?");
+                $upd->execute([$refund_tx_id, $cancellation_reason, $booking_id]);
                 header("Location: booking-details.php?id=" . $booking_id . "&success=cancel");
                 exit;
             } catch (Exception $e) {
@@ -242,6 +243,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         <div>
             <h5 class="mb-5 font-heading" style="color: #991b1b; font-weight:800; font-size:16px;">This Booking has been Cancelled and Refunded</h5>
             <span style="font-size:13px; color:#7f1d1d; font-weight:600;">Refund Transaction ID: <strong style="font-family:monospace;"><?= htmlspecialchars($booking['refund_tx_id'] ?: 'N/A') ?></strong></span>
+            <?php if (!empty($booking['cancellation_reason'])): ?>
+                <div class="mt-5" style="font-size:13px; color:#7f1d1d; font-weight:600;">
+                    Cancellation Reason: <strong style="color: #991b1b; font-weight:700;"><?= htmlspecialchars($booking['cancellation_reason']) ?></strong>
+                </div>
+            <?php endif; ?>
         </div>
         <span class="badge" style="font-size:12px; padding:6px 12px; background-color:#ef4444; color:#ffffff; font-weight:700; text-transform:uppercase;">Refunded</span>
     </div>
@@ -440,13 +446,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <div class="mt-15 pt-15" style="border-top:1px solid #f1f5f9;">
                             <button class="btn btn-outline-danger w-100 py-10" onclick="showCancelForm()" style="border-radius:8px; font-weight:700; font-size:13px; border-color:#fecaca;">Cancel & Issue Refund</button>
 
-                            <div id="cancelFormContainer" style="display:none;" class="mt-10 p-15" style="background:#fef2f2; border:1px solid #fee2e2; border-radius:8px;">
+                            <div id="cancelFormContainer" style="display:none; background:#fef2f2; border:1px solid #fee2e2; border-radius:8px;" class="mt-10 p-15">
                                 <form action="booking-details.php?id=<?= $booking_id ?>" method="POST" style="margin:0;">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                     <input type="hidden" name="action" value="cancel_refund">
                                     <div class="form-group mb-10">
                                         <label class="form-label-custom" style="font-size:11px; font-weight:700;">Refund Gateway ID / Memo *</label>
                                         <input class="form-control-custom" type="text" name="refund_tx_id" required placeholder="e.g. RFND_123456" style="height:34px; font-size:12px; padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;">
+                                    </div>
+                                    <div class="form-group mb-12">
+                                        <label class="form-label-custom" style="font-size:11px; font-weight:700;">Cancellation Note / Reason (Optional)</label>
+                                        <textarea class="form-control-custom" name="cancellation_reason" placeholder="e.g. Guest requested cancellation" style="height:60px; font-size:12px; padding:6px 10px; border-radius:6px; border:1px solid #cbd5e1; resize: none; width: 100%; box-sizing: border-box;"></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-danger w-100 py-8 text-white" style="font-size:12px; font-weight:700; border-radius:6px; background:#dc2626; border-color:#dc2626;">Confirm Cancellation</button>
                                 </form>

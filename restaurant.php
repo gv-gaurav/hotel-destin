@@ -720,7 +720,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </div>
                                         <div>
                                             <h6 style="color: #fff; font-size: 13px; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Location</h6>
-                                            <p style="color: var(--bs-neutral-400); font-size: 14px; margin: 0;">Rooftop Level, Sachin Tendulkar Road, Gwalior</p>
+                                            <p style="color: var(--bs-neutral-400); font-size: 14px; margin: 0;">Rooftop Level, Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior</p>
                                         </div>
                                     </li>
                                     <li class="d-flex align-items-start">

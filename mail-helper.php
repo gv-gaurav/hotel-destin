@@ -284,17 +284,139 @@ function trigger_async_notification($action, $data) {
 }
 
 /**
- * Triggers a background notification for a room booking.
+ * Executes a room booking notification synchronously (sends emails and WhatsApp alerts).
  *
  * @param string $booking_id The unique booking ID string
  * @param string $type The booking type ('online' or 'offline')
- * @return bool True if async trigger succeeded
+ * @return bool True if booking was found and notification triggered, false otherwise
+ */
+function execute_booking_notification($booking_id, $type) {
+    global $pdo;
+    
+    // Fetch booking details from DB inside background process to ensure fresh, secure data
+    $stmt = $pdo->prepare("SELECT b.*, r.title AS room_title FROM bookings b JOIN rooms r ON b.room_id = r.id WHERE b.booking_id = ?");
+    $stmt->execute([$booking_id]);
+    $booking = $stmt->fetch();
+
+    if ($booking) {
+        $invoice_no = $booking['invoice_no'];
+        $child_ages_label = !empty($booking['child_ages']) ? " [Ages: " . htmlspecialchars($booking['child_ages']) . "]" : "";
+
+        // Formulate premium HTML Invoice Email Body
+        $subject = "Booking Confirmed - Ref: " . $booking_id;
+        $body = "
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e9ecf2; padding: 20px; border-radius: 8px;'>
+            <h2 style='color: " . ($type === 'online' ? '#3c7a4b' : '#9c6047') . "; text-align: center;'>Hotel Destin - Booking Confirmed</h2>
+            <p style='font-size: 15px;'>Dear " . htmlspecialchars($booking['customer_name']) . ",</p>
+            <p style='font-size: 14px;'>Thank you for choosing Hotel Destin Gwalior. Your " . ($type === 'online' ? 'online' : 'offline') . " transaction was completed successfully, and your stay details are listed below:</p>
+            
+            <table style='width: 100%; border-collapse: collapse; margin-top: 15px;'>
+                <tr style='background: #f7f9fc;'>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Booking ID / Ref</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold; color: #9c6047;'>" . htmlspecialchars($booking_id) . "</td>
+                </tr>
+                <tr>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Invoice Number</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>" . htmlspecialchars($invoice_no) . "</td>
+                </tr>
+                <tr style='background: #f7f9fc;'>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Room Category</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['room_title']) . "</td>
+                </tr>
+                <tr>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Check-In Date</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['check_in']) . "</td>
+                </tr>
+                <tr style='background: #f7f9fc;'>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Check-Out Date</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['check_out']) . "</td>
+                </tr>
+                <tr>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Duration</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['total_nights']) . " night(s)</td>
+                </tr>
+                <tr style='background: #f7f9fc;'>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Meal Plan</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['meal_plan']) . "</td>
+                </tr>
+                <tr>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Guests Count</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['guests']) . " guest(s) (Adults: " . htmlspecialchars($booking['adults']) . ", Children: " . htmlspecialchars($booking['children']) . $child_ages_label . ")</td>
+                </tr>
+                <tr style='background: #f7f9fc;'>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Base Amount</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>₹" . number_format($booking['base_amount'], 2) . "</td>
+                </tr>";
+
+        if ($booking['discount_amount'] > 0) {
+            $body .= "
+                <tr style='background: #f7f9fc;'>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Promo Discount (" . htmlspecialchars($booking['coupon_code'] ?: '') . ")</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; color: #d13232;'>-₹" . number_format($booking['discount_amount'], 2) . "</td>
+                </tr>";
+        }
+
+        $body .= "
+                <tr>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>GST Taxes (5%)</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>₹" . number_format($booking['tax_amount'], 2) . "</td>
+                </tr>
+                <tr style='background: #fdfaf8; font-size: 16px; font-weight: bold; color: " . ($type === 'online' ? '#3c7a4b' : '#9c6047') . ";'>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . ($type === 'online' ? 'Grand Total Paid' : 'Total Cost (Payable at Hotel)') . "</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>₹" . number_format($booking['total_amount'], 2) . "</td>
+                </tr>
+            </table>
+
+            <p><strong>Special Request:</strong> " . (!empty($booking['special_request']) ? htmlspecialchars($booking['special_request']) : 'None') . "</p>
+            <p style='border-top: 1px solid #e9ecf2; padding-top: 15px; text-align: center; color: #777; font-size: 12px;'>
+                Hotel Destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior. For queries call +91 9203509944.
+            </p>
+        </div>";
+
+        // Dispatch email copy to Customer
+        send_mail($booking['customer_email'], $subject, $body, true);
+
+        // Dispatch email copy to Hotel Owner/Admin alerts
+        send_mail(OWNER_EMAIL, "NEW " . strtoupper($type) . " BOOKING - " . $booking_id, $body, true);
+
+        // Dispatch WhatsApp Notification to Owner
+        if (defined('WHATSAPP_NOTIFICATION_ENABLED') && WHATSAPP_NOTIFICATION_ENABLED) {
+            $payment_label = ($type === 'online') ? '(Paid via Razorpay)' : '(Pay at Hotel)';
+            $wa_msg = "🏨 *NEW " . strtoupper($type) . " BOOKING*\n\n"
+                . "• *Booking ID*: " . $booking_id . "\n"
+                . "• *Customer*: " . $booking['customer_name'] . "\n"
+                . "• *Phone*: " . $booking['customer_phone'] . "\n"
+                . "• *Room Type*: " . $booking['room_title'] . "\n"
+                . "• *Check-in*: " . $booking['check_in'] . "\n"
+                . "• *Check-out*: " . $booking['check_out'] . "\n"
+                . "• *Nights*: " . $booking['total_nights'] . "\n"
+                . "• *Meal Plan*: " . $booking['meal_plan'] . "\n"
+                . "• *Total Cost*: ₹" . number_format($booking['total_amount'], 2) . " " . $payment_label . "\n";
+            send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, $wa_msg);
+        }
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Triggers a background notification for a room booking.
+ * Fallbacks to synchronous processing if the asynchronous trigger fails.
+ *
+ * @param string $booking_id The unique booking ID string
+ * @param string $type The booking type ('online' or 'offline')
+ * @return bool True if async or sync trigger succeeded
  */
 function trigger_booking_notification($booking_id, $type) {
     $payload = [
         'booking_id' => $booking_id,
         'type' => $type
     ];
-    return trigger_async_notification('booking', $payload);
+    $async_success = trigger_async_notification('booking', $payload);
+    if (!$async_success) {
+        error_log("Async booking trigger failed. Falling back to synchronous processing.");
+        return execute_booking_notification($booking_id, $type);
+    }
+    return true;
 }
 ?>

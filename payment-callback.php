@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <p><strong>Special Request:</strong> " . (!empty($booking['special_request']) ? htmlspecialchars($booking['special_request']) : 'None') . "</p>
                     <p style='border-top: 1px solid #e9ecf2; padding-top: 15px; text-align: center; color: #777; font-size: 12px;'>
-                        Hotel Destin Gwalior, Sachin Tendulkar Rd. For queries call +91 9203509944.
+                        Hotel Destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior. For queries call +91 9203509944.
                     </p>
                 </div>";
 

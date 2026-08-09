@@ -10,20 +10,29 @@ if (isset($_POST['action']) && $_POST['action'] === 'apply_coupon') {
     $coupon_code = isset($_POST['code']) ? strtoupper(trim($_POST['code'])) : '';
 
     try {
-        $stmt = $pdo->prepare("SELECT * FROM coupons WHERE code = ? AND status = 'active' AND expiry_date >= CURDATE()");
+        $stmt = $pdo->prepare("SELECT * FROM coupons WHERE code = ?");
         $stmt->execute([$coupon_code]);
         $coupon = $stmt->fetch();
-
+        
         if ($coupon) {
-            echo json_encode([
-                'success' => true,
-                'discount_percent' => (int)$coupon['discount_percent'],
-                'message' => 'Coupon applied successfully!'
-            ]);
+            $today = date('Y-m-d');
+            if ($coupon['status'] !== 'active') {
+                echo json_encode(['success' => false, 'message' => 'This coupon code is inactive.']);
+            } else if ($coupon['start_date'] > $today) {
+                echo json_encode(['success' => false, 'message' => 'This coupon code validity has not started yet.']);
+            } else if ($coupon['expiry_date'] < $today) {
+                echo json_encode(['success' => false, 'message' => 'This coupon code has expired.']);
+            } else {
+                echo json_encode([
+                    'success' => true,
+                    'discount_percent' => (int)$coupon['discount_percent'],
+                    'message' => 'Coupon applied successfully!'
+                ]);
+            }
         } else {
             echo json_encode([
                 'success' => false,
-                'message' => 'Invalid or expired coupon code.'
+                'message' => 'Invalid coupon code.'
             ]);
         }
     } catch (Exception $e) {
@@ -113,7 +122,7 @@ $room_slug = isset($_GET['room']) ? trim($_GET['room']) : '';
 $checkin_param = isset($_GET['checkin']) ? trim($_GET['checkin']) : '';
 $checkout_param = isset($_GET['checkout']) ? trim($_GET['checkout']) : '';
 $adults_param = isset($_GET['adults']) ? intval($_GET['adults']) : 2;
-$children_param = isset($_GET['children']) ? intval($_GET['children']) : 0;
+$children_param = isset($_GET['children']) ? min(2, max(0, intval($_GET['children']))) : 0;
 $child_ages_param = isset($_GET['child_ages']) && is_array($_GET['child_ages']) ? $_GET['child_ages'] : (isset($_GET['child_ages']) ? explode(',', $_GET['child_ages']) : []);
 $meal_plan_param = isset($_GET['meal_plan']) ? htmlspecialchars(trim($_GET['meal_plan'])) : 'EP';
 $room = null;
@@ -172,6 +181,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
     // Enforce guest occupancy validation rules
     if ($adults > 3) {
         $booking_error = 'Maximum 3 adults are allowed per room.';
+    } else if ($children > 2) {
+        $booking_error = 'Maximum 2 children are allowed per room.';
     } else if ($adults === 3 && $children > 0) {
         $booking_error = 'Children are not allowed when reserving for 3 adults in a single room.';
     }
@@ -213,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         // Apply Coupon discount if valid
         if (!empty($coupon_code)) {
             try {
-                $c_stmt = $pdo->prepare("SELECT discount_percent FROM coupons WHERE code = ? AND status = 'active' AND expiry_date >= CURDATE()");
+                $c_stmt = $pdo->prepare("SELECT discount_percent FROM coupons WHERE code = ? AND status = 'active' AND start_date <= CURDATE() AND expiry_date >= CURDATE()");
                 $c_stmt->execute([$coupon_code]);
                 $discount_percent = $c_stmt->fetchColumn();
                 if ($discount_percent) {
@@ -333,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
                     <p><strong>Special Request:</strong> " . (!empty($special_request) ? htmlspecialchars($special_request) : 'None') . "</p>
                     <p style='border-top: 1px solid #e9ecf2; padding-top: 15px; text-align: center; color: #777; font-size: 12px;'>
-                        Hotel Destin Gwalior, Sachin Tendulkar Rd. For queries call +91 9203509944.
+                        Hotel Destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior. For queries call +91 9203509944.
                     </p>
                 </div>";
 
@@ -878,7 +889,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                 <?php
                                 $public_coupons = [];
                                 try {
-                                    $stmt = $pdo->prepare("SELECT * FROM coupons WHERE status = 'active' AND show_in_checkout = 1 AND expiry_date >= CURDATE() ORDER BY discount_percent DESC");
+                                    $stmt = $pdo->prepare("SELECT * FROM coupons WHERE status = 'active' AND show_in_checkout = 1 AND start_date <= CURDATE() AND expiry_date >= CURDATE() ORDER BY discount_percent DESC");
                                     $stmt->execute();
                                     $public_coupons = $stmt->fetchAll();
                                 } catch (Exception $e) {

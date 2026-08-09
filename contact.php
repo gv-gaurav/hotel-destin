@@ -367,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 <h3 class="contact-card-title">Our Location</h3>
                                 <p class="contact-card-text">
-                                    <?= htmlspecialchars(get_setting('hotel_address') ?: 'Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, MP 474011') ?>
+                                    <?= htmlspecialchars(get_setting('hotel_address') ?: 'Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior') ?>
                                 </p>
                             </div>
                             <a class="contact-card-link" href="#map">View On Google Maps</a>

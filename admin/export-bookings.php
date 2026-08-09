@@ -10,6 +10,7 @@ if (empty($_SESSION['admin_logged_in'])) {
 // Get active filters
 $start_date = isset($_GET['start_date']) ? trim($_GET['start_date']) : '';
 $end_date = isset($_GET['end_date']) ? trim($_GET['end_date']) : '';
+$phone = isset($_GET['phone']) ? trim($_GET['phone']) : '';
 
 // Build SQL query
 $query = "
@@ -28,6 +29,10 @@ if ($start_date !== '') {
 if ($end_date !== '') {
     $conditions[] = "b.created_at <= :end_date";
     $params['end_date'] = $end_date . " 23:59:59";
+}
+if ($phone !== '') {
+    $conditions[] = "b.customer_phone LIKE :phone";
+    $params['phone'] = '%' . $phone . '%';
 }
 
 if (count($conditions) > 0) {

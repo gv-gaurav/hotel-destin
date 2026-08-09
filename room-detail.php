@@ -6,7 +6,9 @@ $room_slug = isset($_GET['room']) ? trim($_GET['room']) : '';
 $checkin = isset($_GET['checkin']) ? trim($_GET['checkin']) : '';
 $checkout = isset($_GET['checkout']) ? trim($_GET['checkout']) : '';
 $adults = isset($_GET['adults']) ? intval($_GET['adults']) : 2;
-$children = isset($_GET['children']) ? intval($_GET['children']) : 0;
+$children = isset($_GET['children']) ? min(2, max(0, intval($_GET['children']))) : 0;
+$child_ages_param = isset($_GET['child_ages']) ? trim($_GET['child_ages']) : '';
+$child_ages = !empty($child_ages_param) ? explode(',', $child_ages_param) : [];
 
 $room = null;
 try {
@@ -538,7 +540,7 @@ if (empty($images)) {
                             <?= htmlspecialchars($room['title']) ?>
                         </h1>
                         <p class="neutral-500 mb-0" style="font-size: 14px; font-weight: 600; color: #64748b;">
-                            📍 Sachin Tendulkar Road, Kailash Nagar, Gwalior, MP, India
+                            📍 Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior
                         </p>
                     </div>
                     <div class="col-lg-4 col-12 text-lg-end mt-20 mt-lg-0">
@@ -653,7 +655,7 @@ if (empty($images)) {
                                     </div>
                                     <div class="col-6">
                                          <label class="form-label-custom" style="font-size:11.5px; font-weight:700;">Child Guests</label>
-                                         <input id="detailChildren" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children) ?>" min="0" max="4" required style="height:38px; font-size:12.5px;" onchange="updateDetailChildAgesFields()">
+                                         <input id="detailChildren" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children) ?>" min="0" max="2" required style="height:38px; font-size:12.5px;" onchange="updateDetailChildAgesFields()">
                                      </div>
                                  </div>
 
@@ -867,6 +869,10 @@ if (empty($images)) {
             });
         }
 
+        // Initial loaded child ages from URL query parameter
+        var preLoadedAges = <?= json_encode($child_ages) ?>;
+        var initialRun = true;
+
         function updateDetailChildAgesFields() {
             var numChildren = parseInt($('#detailChildren').val()) || 0;
             var wrapper = $('#detailChildAgesWrapper');
@@ -874,9 +880,14 @@ if (empty($images)) {
             
             if (numChildren > 0) {
                 var currentSelected = [];
-                $('.detail-child-age-input').each(function() {
-                    currentSelected.push($(this).val());
-                });
+                if (initialRun && preLoadedAges && preLoadedAges.length > 0) {
+                    currentSelected = preLoadedAges;
+                    initialRun = false;
+                } else {
+                    $('.detail-child-age-input').each(function() {
+                        currentSelected.push($(this).val());
+                    });
+                }
                 
                 fieldsContainer.empty();
                 for (var i = 1; i <= numChildren; i++) {
@@ -914,6 +925,8 @@ if (empty($images)) {
             var errorMsg = '';
             if (adults > 3) {
                 errorMsg = 'Exceeds max room capacity of 3 adults.';
+            } else if (children > 2) {
+                errorMsg = 'A maximum of 2 children is allowed per room.';
             } else if (adults === 3 && children > 0) {
                 errorMsg = 'Children not allowed when reserving for 3 adults.';
             }

@@ -9,6 +9,45 @@ try {
         PDO::ATTR_EMULATE_PREPARES   => false,
     ];
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+    
+    // Ensure cancellation_reason column exists in bookings table
+    try {
+        $col_check = $pdo->query("SHOW COLUMNS FROM `bookings` LIKE 'cancellation_reason'");
+        if ($col_check->rowCount() === 0) {
+            $pdo->exec("ALTER TABLE `bookings` ADD COLUMN `cancellation_reason` TEXT DEFAULT NULL");
+        }
+    } catch (Exception $col_e) {
+        error_log("Migration error (cancellation_reason): " . $col_e->getMessage());
+    }
+
+    // Ensure struck_price column exists in room_rate_calendars table
+    try {
+        $col_check = $pdo->query("SHOW COLUMNS FROM `room_rate_calendars` LIKE 'struck_price'");
+        if ($col_check->rowCount() === 0) {
+            $pdo->exec("ALTER TABLE `room_rate_calendars` ADD COLUMN `struck_price` DECIMAL(10,2) DEFAULT NULL");
+        }
+    } catch (Exception $col_e) {
+        error_log("Migration error (room_rate_calendars struck_price): " . $col_e->getMessage());
+    }
+
+    // Ensure the default settings address value is updated
+    try {
+        $pdo->exec("UPDATE `settings` SET `val_content` = 'Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior' WHERE `key_name` = 'hotel_address'");
+    } catch (Exception $settings_e) {
+        error_log("Migration error (settings hotel_address): " . $settings_e->getMessage());
+    }
+
+    // Ensure start_date column exists in coupons table
+    try {
+        $col_check = $pdo->query("SHOW COLUMNS FROM `coupons` LIKE 'start_date'");
+        if ($col_check->rowCount() === 0) {
+            $pdo->exec("ALTER TABLE `coupons` ADD COLUMN `start_date` DATE DEFAULT NULL");
+            $pdo->exec("UPDATE `coupons` SET `start_date` = IFNULL(DATE(`created_at`), CURDATE()) WHERE `start_date` IS NULL");
+            $pdo->exec("ALTER TABLE `coupons` MODIFY COLUMN `start_date` DATE NOT NULL");
+        }
+    } catch (Exception $col_e) {
+        error_log("Migration error (coupons start_date): " . $col_e->getMessage());
+    }
 } catch (PDOException $e) {
     // Write error logs to file securely (avoid printing details to users)
     error_log("Database connection error: " . $e->getMessage());
@@ -36,6 +75,33 @@ function get_setting($key, $default = '') {
     } catch (Exception $e) {
         return $default;
     }
+}
+
+/**
+ * Resolve room struck price (crossed-out price) for a specific date considering rate calendar overrides.
+ */
+function get_resolved_room_struck_price($pdo, $room_id, $date, $room) {
+    try {
+        $stmt = $pdo->prepare("
+            SELECT struck_price 
+            FROM room_rate_calendars 
+            WHERE room_category_id = ? 
+              AND start_date <= ? 
+              AND end_date >= ? 
+            ORDER BY DATEDIFF(end_date, start_date) ASC, id DESC 
+            LIMIT 1
+        ");
+        $stmt->execute([$room_id, $date, $date]);
+        $rule_struck_price = $stmt->fetchColumn();
+        
+        if ($rule_struck_price !== false && (float)$rule_struck_price > 0) {
+            return (float)$rule_struck_price;
+        }
+    } catch (Exception $e) {
+        error_log("Rate calendar struck price lookup error: " . $e->getMessage());
+    }
+    
+    return isset($room['struck_price']) ? (float)$room['struck_price'] : 0.00;
 }
 
 /**

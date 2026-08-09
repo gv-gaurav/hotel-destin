@@ -52,18 +52,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $title = isset($_POST['title']) ? htmlspecialchars(trim($_POST['title'])) : '';
             $code = isset($_POST['code']) ? strtoupper(trim(htmlspecialchars($_POST['code']))) : '';
             $discount_percent = isset($_POST['discount_percent']) ? intval($_POST['discount_percent']) : 0;
+            $start_date = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
             $expiry_date = isset($_POST['expiry_date']) ? trim($_POST['expiry_date']) : '';
             $status = isset($_POST['status']) && $_POST['status'] === 'inactive' ? 'inactive' : 'active';
             $show_in_checkout = isset($_POST['show_in_checkout']) ? 1 : 0;
 
-            if (empty($title) || empty($code) || $discount_percent <= 0 || empty($expiry_date)) {
+            if (empty($title) || empty($code) || $discount_percent <= 0 || empty($start_date) || empty($expiry_date)) {
                 header("Location: coupons.php?error=req");
                 exit;
             } else {
                 if ($action === 'add') {
                     try {
-                        $stmt = $pdo->prepare("INSERT INTO coupons (title, code, discount_percent, expiry_date, status, show_in_checkout) VALUES (?, ?, ?, ?, ?, ?)");
-                        $stmt->execute([$title, $code, $discount_percent, $expiry_date, $status, $show_in_checkout]);
+                        $stmt = $pdo->prepare("INSERT INTO coupons (title, code, discount_percent, start_date, expiry_date, status, show_in_checkout) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->execute([$title, $code, $discount_percent, $start_date, $expiry_date, $status, $show_in_checkout]);
                         header("Location: coupons.php?success=add");
                         exit;
                     } catch (Exception $e) {
@@ -74,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 } else if ($action === 'edit') {
                     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
                     try {
-                        $stmt = $pdo->prepare("UPDATE coupons SET title = ?, code = ?, discount_percent = ?, expiry_date = ?, status = ?, show_in_checkout = ? WHERE id = ?");
-                        $stmt->execute([$title, $code, $discount_percent, $expiry_date, $status, $show_in_checkout, $id]);
+                        $stmt = $pdo->prepare("UPDATE coupons SET title = ?, code = ?, discount_percent = ?, start_date = ?, expiry_date = ?, status = ?, show_in_checkout = ? WHERE id = ?");
+                        $stmt->execute([$title, $code, $discount_percent, $start_date, $expiry_date, $status, $show_in_checkout, $id]);
                         header("Location: coupons.php?success=edit");
                         exit;
                     } catch (Exception $e) {
@@ -195,6 +196,12 @@ try {
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label class="form-label-custom">Start Date *</label>
+                                <input id="couponStartDate" class="form-control-custom" type="date" name="start_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label class="form-label-custom">Expiry Date *</label>
                                 <input id="couponExpiry" class="form-control-custom" type="date" name="expiry_date" required>
                             </div>
@@ -238,7 +245,7 @@ try {
                     <th>Coupon Title</th>
                     <th>Promo Code</th>
                     <th>Discount Rate</th>
-                    <th>Expiration Limit</th>
+                    <th>Validity Period</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -260,16 +267,24 @@ try {
                             </td>
                             <td>
                                 <?php
-                                $expired = (strtotime($cp['expiry_date']) < strtotime(date('Y-m-d')));
+                                $today = date('Y-m-d');
+                                $expired = (strtotime($cp['expiry_date']) < strtotime($today));
+                                $not_started = (strtotime($cp['start_date']) > strtotime($today));
                                 ?>
-                                <span style="font-weight:600; color: <?= $expired ? '#dc2626' : '#475569' ?>;">
-                                    <?= date('d M Y', strtotime($cp['expiry_date'])) ?>
-                                    <?= $expired ? ' (Expired)' : '' ?>
-                                </span>
+                                <div style="font-size:13px; line-height: 1.4;">
+                                    <span style="display:block; color: #475569; margin-bottom: 2px;">
+                                        <strong>Starts:</strong> <?= date('d M Y', strtotime($cp['start_date'])) ?>
+                                        <?= $not_started ? ' <span class="badge" style="background:#fff8eb; color:#c27803; font-size: 9px; padding: 2px 4px; font-weight:700;">Upcoming</span>' : '' ?>
+                                    </span>
+                                    <span style="display:block; color: <?= $expired ? '#dc2626' : '#475569' ?>;">
+                                        <strong>Expires:</strong> <?= date('d M Y', strtotime($cp['expiry_date'])) ?>
+                                        <?= $expired ? ' (Expired)' : '' ?>
+                                    </span>
+                                </div>
                             </td>
                             <td>
-                                <span class="badge" style="background: <?= ($cp['status'] === 'active' && !$expired) ? '#eef7f0; color:#3c7a4b;' : '#fff0f0; color:#d13232;' ?>; font-size:11px; padding:5px 10px; font-weight:700;">
-                                    <?= $expired ? 'inactive' : htmlspecialchars($cp['status']) ?>
+                                <span class="badge" style="background: <?= ($cp['status'] === 'active' && !$expired && !$not_started) ? '#eef7f0; color:#3c7a4b;' : (($cp['status'] === 'active' && $not_started) ? '#fff8eb; color:#c27803;' : '#fff0f0; color:#d13232;') ?>; font-size:11px; padding:5px 10px; font-weight:700;">
+                                    <?= $expired ? 'inactive' : (($cp['status'] === 'active' && $not_started) ? 'upcoming' : htmlspecialchars($cp['status'])) ?>
                                 </span>
                                 <?php if (isset($cp['show_in_checkout']) && (int)$cp['show_in_checkout'] === 1 && !$expired): ?>
                                     <br><span style="font-size: 10px; color:#475569; font-weight:600; display:inline-block; margin-top:4px;">👁️ Public Checkout</span>
@@ -368,6 +383,7 @@ try {
         document.getElementById('couponTitle').value = '';
         document.getElementById('couponCode').value = '';
         document.getElementById('couponDiscount').value = '';
+        document.getElementById('couponStartDate').value = '';
         document.getElementById('couponExpiry').value = '';
         document.getElementById('couponStatus').value = 'active';
         document.getElementById('couponShowInCheckout').checked = true;
@@ -383,6 +399,7 @@ try {
         document.getElementById('couponTitle').value = cp.title;
         document.getElementById('couponCode').value = cp.code;
         document.getElementById('couponDiscount').value = cp.discount_percent;
+        document.getElementById('couponStartDate').value = cp.start_date;
         document.getElementById('couponExpiry').value = cp.expiry_date;
         document.getElementById('couponStatus').value = cp.status;
         document.getElementById('couponShowInCheckout').checked = (parseInt(cp.show_in_checkout) === 1);

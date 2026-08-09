@@ -8,7 +8,8 @@ $errors = [];
 $search_checkin = isset($_GET['checkin']) ? trim($_GET['checkin']) : '';
 $search_checkout = isset($_GET['checkout']) ? trim($_GET['checkout']) : '';
 $search_adults = isset($_GET['adults']) ? intval($_GET['adults']) : 2;
-$search_children = isset($_GET['children']) ? intval($_GET['children']) : 0;
+$search_children = isset($_GET['children']) ? min(2, max(0, intval($_GET['children']))) : 0;
+$search_child_ages = isset($_GET['child_ages']) ? trim($_GET['child_ages']) : '';
 $has_search_dates = (!empty($search_checkin) && !empty($search_checkout));
 
 
@@ -20,7 +21,7 @@ $static_rooms = [
         'type_badge' => 'STANDARD',
         'status_badge' => 'BEST SELLER',
         'rating' => 'G 4.8 ★',
-        'location' => 'Sachin Tendulkar Rd, Gwalior',
+        'location' => 'Hotel Destin - Gwalior',
         'tags' => [
             ['text' => 'Free Wi-Fi', 'style' => 'orange'],
             ['text' => 'Mineral Water', 'style' => 'orange'],
@@ -46,7 +47,7 @@ $static_rooms = [
         'type_badge' => 'EXECUTIVE',
         'status_badge' => 'POPULAR',
         'rating' => 'G 4.8 ★',
-        'location' => 'Sachin Tendulkar Rd, Gwalior',
+        'location' => 'Hotel Destin - Gwalior',
         'tags' => [
             ['text' => 'Free Wi-Fi', 'style' => 'orange'],
             ['text' => 'Mineral Water', 'style' => 'orange'],
@@ -72,7 +73,7 @@ $static_rooms = [
         'type_badge' => 'PREMIUM',
         'status_badge' => 'LUXURY CHOICE',
         'rating' => 'G 4.9 ★',
-        'location' => 'Sachin Tendulkar Rd, Gwalior',
+        'location' => 'Hotel Destin - Gwalior',
         'tags' => [
             ['text' => 'Free Wi-Fi', 'style' => 'orange'],
             ['text' => 'Mineral Water', 'style' => 'orange'],
@@ -177,6 +178,7 @@ try {
             }
 
             $price = (float)$r['price'];
+            $struck_price = (float)$r['struck_price'];
             if ($has_search_dates) {
                 $date1 = new DateTime($search_checkin);
                 $date2 = new DateTime($search_checkout);
@@ -184,13 +186,16 @@ try {
                 $nights = max(1, (int)$nights);
 
                 $total_base_price = 0.00;
+                $total_struck_price = 0.00;
                 $curr_date_ptr = clone $date1;
                 while ($curr_date_ptr < $date2) {
                     $date_str = $curr_date_ptr->format('Y-m-d');
                     $total_base_price += get_resolved_room_price($pdo, $r['id'], $date_str, 'EP', $search_adults, $r);
+                    $total_struck_price += get_resolved_room_struck_price($pdo, $r['id'], $date_str, $r);
                     $curr_date_ptr->modify('+1 day');
                 }
                 $price = round($total_base_price / $nights, 2);
+                $struck_price = round($total_struck_price / $nights, 2);
             }
 
             $rooms[] = [
@@ -200,10 +205,10 @@ try {
                 'type_badge' => $type_badge,
                 'status_badge' => ($has_search_dates && $available_count <= 0) ? 'SOLD OUT' : $status_badge,
                 'rating' => $rating,
-                'location' => 'Sachin Tendulkar Rd, Gwalior',
+                'location' => 'Hotel Destin - Gwalior',
                 'tags' => $tags,
                 'specs' => $specs,
-                'struck_price' => $r['struck_price'],
+                'struck_price' => $struck_price,
                 'discount' => $r['discount'],
                 'code' => $r['code'],
                 'banner_text' => isset($r['banner_text']) ? $r['banner_text'] : '',
@@ -968,6 +973,7 @@ usort($rooms, function ($a, $b) {
                                 <!-- Hidden counter inputs -->
                                 <input type="hidden" name="adults" id="hidden_adults" value="<?= htmlspecialchars($search_adults) ?>">
                                 <input type="hidden" name="children" id="hidden_children" value="<?= htmlspecialchars($search_children) ?>">
+                                <input type="hidden" name="child_ages" id="hidden_child_ages" value="<?= htmlspecialchars($search_child_ages) ?>">
 
                                 <div class="box-bottom-search background-card">
                                     <div class="item-search">
@@ -1027,13 +1033,17 @@ usort($rooms, function ($a, $b) {
                                                         <div class="d-flex align-items-center justify-content-between">
                                                             <div>
                                                                 <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Child</span>
-                                                                <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 10 years)</span>
+                                                                <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 8 years)</span>
                                                             </div>
                                                             <div class="d-flex align-items-center border rounded overflow-hidden">
                                                                 <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
                                                                 <span class="px-3 py-1 child-count" style="font-weight: 600; min-width: 30px; text-align: center;"><?= htmlspecialchars($search_children) ?></span>
                                                                 <button class="btn btn-sm btn-light py-1 px-3 inc-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">+</button>
                                                             </div>
+                                                        </div>
+                                                        <div class="child-ages-container mt-2" style="display: none;">
+                                                            <label class="form-label-custom mb-1" style="font-size:11px; font-weight:700; color:#9c6047; display:block; text-align:left;">Specify Child Ages</label>
+                                                            <div class="child-ages-row row g-2"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1089,7 +1099,7 @@ usort($rooms, function ($a, $b) {
                                     <?php endif; ?>
 
                                     <!-- Sliding images wrapper -->
-                                    <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>" class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: 100%;">
+                                    <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>&child_ages=<?= urlencode($search_child_ages) ?>" class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: 100%;">
                                         <?php foreach ($room['images'] as $img_path): ?>
                                             <img src="<?= htmlspecialchars($img_path) ?>" alt="<?= htmlspecialchars($room['name']) ?>" style="flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; transition: none;">
                                         <?php endforeach; ?>
@@ -1097,7 +1107,7 @@ usort($rooms, function ($a, $b) {
                                 </div>
                                 <div class="content-box">
                                     <div class="title-row">
-                                        <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>"><?= htmlspecialchars($room['name']) ?></a>
+                                        <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>&child_ages=<?= urlencode($search_child_ages) ?>"><?= htmlspecialchars($room['name']) ?></a>
                                     </div>
 
                                     <div class="meta-row">
@@ -1146,7 +1156,7 @@ usort($rooms, function ($a, $b) {
                                         <?php if (isset($room['available_count']) && $room['available_count'] <= 0): ?>
                                             <button class="book-btn" disabled style="background-color: #cbd5e1 !important; color: #64748b !important; border: none; cursor: not-allowed; padding: 10px 20px !important;">Sold Out</button>
                                         <?php else: ?>
-                                            <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>" class="book-btn">Book Room</a>
+                                            <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>&child_ages=<?= urlencode($search_child_ages) ?>" class="book-btn">Book Room</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -1479,15 +1489,17 @@ usort($rooms, function ($a, $b) {
                         // Rule 2: If customer chooses 3 adults, child count drops to 0
                         if (newAdults === 3) {
                             roomBlock.find('.child-count').text(0);
+                            updateChildAgesForRoomBlock(roomBlock);
                         }
                         updateGuestsRoomsSummary();
                     }
                 } else if (target.hasClass('child-count')) {
                     var adults = parseInt(roomBlock.find('.adult-count').text()) || 0;
-                    // Rule 3: Child allowed only with adults <= 2
+                    // Rule 3: Child allowed only with adults <= 2 (maximum 2 children)
                     if (adults < 3) {
-                        if (count < 4) {
+                        if (count < 2) {
                             target.text(count + 1);
+                            updateChildAgesForRoomBlock(roomBlock);
                             updateGuestsRoomsSummary();
                         }
                     }
@@ -1503,6 +1515,9 @@ usort($rooms, function ($a, $b) {
                 var minVal = isAdult ? 1 : 0;
                 if (count > minVal) {
                     target.text(count - 1);
+                    if (!isAdult) {
+                        updateChildAgesForRoomBlock($(this).closest('.room-block'));
+                    }
                     updateGuestsRoomsSummary();
                 }
             });
@@ -1532,13 +1547,17 @@ usort($rooms, function ($a, $b) {
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <span style="font-weight: 600; font-size: 13px; color: #333; display: block; text-align: left;">Child</span>
-                                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 10 years)</span>
+                                    <span class="text-muted" style="font-size: 11px; display: block; text-align: left;">(Under 8 years)</span>
                                 </div>
                                 <div class="d-flex align-items-center border rounded overflow-hidden">
                                     <button class="btn btn-sm btn-light py-1 px-3 dec-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">−</button>
                                     <span class="px-3 py-1 child-count" style="font-weight: 600; min-width: 30px; text-align: center;">0</span>
                                     <button class="btn btn-sm btn-light py-1 px-3 inc-btn" type="button" style="border: none; font-weight: bold; background: #f8fafc; font-size: 14px;">+</button>
                                 </div>
+                            </div>
+                            <div class="child-ages-container mt-2" style="display: none;">
+                                <label class="form-label-custom mb-1" style="font-size:11px; font-weight:700; color:#9c6047; display:block; text-align:left;">Specify Child Ages</label>
+                                <div class="child-ages-row row g-2"></div>
                             </div>
                         </div>
                     `;
@@ -1568,21 +1587,67 @@ usort($rooms, function ($a, $b) {
                 $('#dropdownGuestsBtn').dropdown('hide');
             });
 
+            function updateChildAgesForRoomBlock(roomBlock) {
+                var count = parseInt(roomBlock.find('.child-count').text()) || 0;
+                var container = roomBlock.find('.child-ages-container');
+                var row = roomBlock.find('.child-ages-row');
+
+                if (count > 0) {
+                    var currentSelected = [];
+                    row.find('.search-child-age-select').each(function() {
+                        currentSelected.push($(this).val());
+                    });
+
+                    row.empty();
+                    for (var i = 1; i <= count; i++) {
+                        var val = currentSelected[i - 1] || '5';
+                        var optionsHtml = '';
+                        for (var age = 0; age <= 17; age++) {
+                            var label = age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''));
+                            optionsHtml += `<option value="${age}" ${age == val ? 'selected' : ''}>${label}</option>`;
+                        }
+
+                        var colHtml = `
+                            <div class="col-6">
+                                <label class="form-label-custom mb-1" style="font-size:10px; color:#64748b; text-align:left; display:block;">Child ${i} Age</label>
+                                <select class="form-select search-child-age-select" style="height:32px; font-size:11.5px; padding:2px 8px; border-radius:6px; border:1px solid #cbd5e1; color:#334155; font-weight:600; width:100%;">
+                                    ${optionsHtml}
+                                </select>
+                            </div>
+                        `;
+                        row.append(colHtml);
+                    }
+                    container.show();
+                } else {
+                    row.empty();
+                    container.hide();
+                }
+            }
+
+            $(document).on('change', '.search-child-age-select', function() {
+                updateGuestsRoomsSummary();
+            });
+
             function updateGuestsRoomsSummary() {
                 var totalRooms = $('#roomsContainer .room-block').length;
                 var totalAdults = 0;
                 var totalChildren = 0;
+                var childAges = [];
 
                 $('#roomsContainer .room-block').each(function() {
                     var adults = parseInt($(this).find('.adult-count').text()) || 0;
                     var children = parseInt($(this).find('.child-count').text()) || 0;
                     totalAdults += adults;
                     totalChildren += children;
+                    $(this).find('.search-child-age-select').each(function() {
+                        childAges.push($(this).val());
+                    });
                 });
 
                 // Update hidden inputs
                 $('#hidden_adults').val(totalAdults);
                 $('#hidden_children').val(totalChildren);
+                $('#hidden_child_ages').val(childAges.join(','));
 
                 var totalGuests = totalAdults + totalChildren;
                 var roomsText = totalRooms + (totalRooms === 1 ? ' Room' : ' Rooms');
@@ -1590,6 +1655,32 @@ usort($rooms, function ($a, $b) {
 
                 $('#dropdownGuestsBtn .guests-summary-text').text(roomsText + ', ' + guestsText);
             }
+
+            // Initial child ages setup for Room 1 on page load
+            <?php if ($search_children > 0): ?>
+                const initialAges = <?= json_encode(explode(',', $search_child_ages)) ?>;
+                const container = $('#roomsContainer .room-block[data-room-id="1"] .child-ages-container');
+                const row = $('#roomsContainer .room-block[data-room-id="1"] .child-ages-row');
+                row.empty();
+                for (let i = 1; i <= <?= $search_children ?>; i++) {
+                    const val = initialAges[i - 1] || '5';
+                    let optionsHtml = '';
+                    for (let age = 0; age <= 17; age++) {
+                        const label = age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''));
+                        optionsHtml += `<option value="${age}" ${age == val ? 'selected' : ''}>${label}</option>`;
+                    }
+                    const colHtml = `
+                        <div class="col-6">
+                            <label class="form-label-custom mb-1" style="font-size:10px; color:#64748b; text-align:left; display:block;">Child ${i} Age</label>
+                            <select class="form-select search-child-age-select" style="height:32px; font-size:11.5px; padding:2px 8px; border-radius:6px; border:1px solid #cbd5e1; color:#334155; font-weight:600; width:100%;">
+                                ${optionsHtml}
+                            </select>
+                        </div>
+                    `;
+                    row.append(colHtml);
+                }
+                container.show();
+            <?php endif; ?>
             // =========================================================
             // MOBILE FIX: Guests Dropdown — DOM Teleport Pattern
             // overflow:hidden on parent containers traps position:fixed on mobile.

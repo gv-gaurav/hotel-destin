@@ -7,8 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
     <meta name="template-color" content="#0E0E0E">
-    <meta name="description" content="Discover Gwalior's iconic tourist destinations near Hotel Destin Gwalior. Explore Gwalior Fort, Jai Vilas Palace, and the Sun Temple with custom local guidance.">
-    <meta name="keywords" content="Explore Gwalior, Gwalior Fort, Jai Vilas Palace, Sun Temple Gwalior, Hotel Destin local attractions, Gwalior sightseeing">
+    <meta name="description" content="Discover Gwalior's iconic tourist destinations near Hotel Destin Gwalior. Explore Gwalior Fort, Jai Vilas Palace, Sun Temple, Tansen Tomb, and Sasbahu Temple with custom local guidance.">
+    <meta name="keywords" content="Explore Gwalior, Gwalior Fort, Jai Vilas Palace, Sun Temple Gwalior, Tansen Tomb Gwalior, Sasbahu Temple Gwalior, Hotel Destin local attractions, Gwalior sightseeing">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
     <title>Explore Gwalior Local Attractions - Hotel Destin Gwalior</title>
@@ -172,17 +172,24 @@
             margin-bottom: 0;
         }
 
-        /* Desktop constraints to control image and card heights */
+         /* Desktop constraints to control image and card heights */
         @media (min-width: 992px) {
             .destination-card {
-                height: 400px;
+                min-height: 400px;
+                height: auto;
             }
-            .destination-card > .row,
+            .destination-card > .row {
+                min-height: 400px;
+                display: flex;
+            }
             .destination-card > .row > div {
-                height: 100%;
+                height: auto;
+                display: flex;
+                flex-direction: column;
             }
             .destination-img-wrapper {
                 height: 100%;
+                min-height: 400px;
             }
         }
 
@@ -261,7 +268,7 @@
       "@context": "https://schema.org",
       "@type": "TouristAttractionList",
       "name": "Top Local Attractions near Hotel Destin Gwalior",
-      "description": "Sightseeing guide of Gwalior Fort, Jai Vilas Palace, and Sun Temple located close to Hotel Destin Gwalior.",
+      "description": "Sightseeing guide of Gwalior Fort, Jai Vilas Palace, Sun Temple, Tansen Tomb, and Sasbahu Temple located close to Hotel Destin Gwalior.",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -291,6 +298,26 @@
             "name": "Sun Temple Gwalior",
             "description": "Sandstone chariot-shaped temple dedicated to the Sun God.",
             "distance": "3.5 km from Hotel Destin"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "TouristAttraction",
+            "name": "Tansen Tomb",
+            "description": "Final resting place of the legendary musician Tansen, built in beautiful Mughal style.",
+            "distance": "5.5 km from Hotel Destin"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "item": {
+            "@type": "TouristAttraction",
+            "name": "Sasbahu Temple",
+            "description": "11th-century ancient sandstone temple complex with intricate stone carvings inside Gwalior Fort.",
+            "distance": "7.5 km from Hotel Destin"
           }
         }
       ]
@@ -400,13 +427,65 @@
                     </div>
                 </div>
 
+                <!-- Destination 4: Tansen Tomb (Text Left, Image Right on Desktop, Image Top on Mobile) -->
+                <div class="destination-card" id="tansen-tomb">
+                    <div class="row g-0">
+                        <div class="col-lg-6 col-12 order-lg-1 order-2">
+                            <div class="destination-info">
+                                <span class="distance-tag">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    5-6 KM FROM DESTIN
+                                </span>
+                                <h2 class="destination-heading">Tansen Tomb</h2>
+                                <p class="destination-desc">
+                                    Tansen Tomb is the final resting place of legendary singer Tansen, one of the nine gems of Emperor Akbar's court. Built in elegant Mughal style with beautiful stone screens (jaali work), the tomb lies in a quiet garden next to the tomb of his Sufi mentor, Mohammad Ghaus. Every winter, it hosts the national Tansen Music Festival, drawing classical artists from across India. It is a calm, historic spot to experience Mughal heritage and Gwalior’s musical roots.
+                                </p>
+                                <div>
+                                    <a class="btn btn-black-lg" href="rooms.php" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-12 order-lg-2 order-1">
+                            <div class="destination-img-wrapper">
+                                <img src="assets/imgs/page/tansen_tomb.png" alt="Tansen Tomb near Hotel Destin" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destination 5: Sasbahu Temple (Image Left, Text Right) -->
+                <div class="destination-card" id="sasbahu-temple">
+                    <div class="row g-0">
+                        <div class="col-lg-6 col-12">
+                            <div class="destination-img-wrapper">
+                                <img src="assets/imgs/page/sasbahu_temple.png" alt="Sasbahu Temple near Hotel Destin" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-12">
+                            <div class="destination-info">
+                                <span class="distance-tag">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    7-8 KM FROM DESTIN
+                                </span>
+                                <h2 class="destination-heading">Sasbahu Temple</h2>
+                                <p class="destination-desc">
+                                    Sasbahu Temple, built in the 11th century inside Gwalior Fort, is a masterpiece of ancient architecture. Originally named Sahastrabahu (Lord Vishnu of a thousand arms), the temple complex features two structures carved entirely of red sandstone. It is famous for its highly detailed pillars, figures, and unique multi-layered roof structures that have stood for nearly a thousand years. It offers a wonderful view of the Gwalior valley below.
+                                </p>
+                                <div>
+                                    <a class="btn btn-black-lg" href="rooms.php" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Guidance & Local Commute Assistance Block -->
                 <div class="guidance-box wow fadeInUp">
                     <div class="row align-items-center">
                         <div class="col-lg-6 col-12">
                             <h3 class="guidance-title">Stay at DESTIN, Stay Close to It All</h3>
                             <p class="guidance-desc">
-                                At Hotel DESTIN, convenience meets comfort. All three of Gwalior's top attractions are just a short ride away meaning less time traveling and more time experiencing the city.
+                                At Hotel DESTIN, convenience meets comfort. All of Gwalior's top attractions are just a short ride away meaning less time traveling and more time experiencing the city.
                             </p>
                         </div>
                         <div class="col-lg-6 col-12">
