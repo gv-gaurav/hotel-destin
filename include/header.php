@@ -650,14 +650,14 @@
           $hotel_phone = get_setting('hotel_phone') ?: '09203509944';
           $phones = array_map('trim', explode(',', $hotel_phone));
           $labels = ['Front Desk & Reservations', 'Direct Support Helpline', 'Alternative Inquiry Contact'];
-          foreach ($phones as $idx => $phone):
-            $clean_phone = preg_replace('/[^0-9+]/', '', $phone);
+          foreach ($phones as $idx => $modal_phone):
+            $clean_phone = preg_replace('/[^0-9+]/', '', $modal_phone);
             $label = isset($labels[$idx]) ? $labels[$idx] : 'Inquiry Support';
           ?>
             <div class="call-modal-row">
               <div class="call-modal-info">
                 <span class="call-modal-label"><?= htmlspecialchars($label) ?></span>
-                <a href="tel:<?= htmlspecialchars($clean_phone) ?>" class="call-modal-number"><?= htmlspecialchars($phone) ?></a>
+                <a href="tel:<?= htmlspecialchars($clean_phone) ?>" class="call-modal-number"><?= htmlspecialchars($modal_phone) ?></a>
               </div>
               <a href="tel:<?= htmlspecialchars($clean_phone) ?>" class="call-modal-icon-btn" aria-label="Call Now">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -665,7 +665,9 @@
                 </svg>
               </a>
             </div>
-          <?php endforeach; ?>
+          <?php endforeach; 
+          unset($modal_phone);
+          ?>
         </div>
       </div>
     </div>

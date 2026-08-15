@@ -248,6 +248,17 @@ $check_out_formatted = date('D, d M Y', strtotime($booking['check_out']));
             transform: translateY(-1px);
         }
 
+        .brand-logo-wrapper {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .confirmation-logo {
+            max-height: 80px;
+            width: auto;
+            display: inline-block;
+        }
+
         @media (max-width: 575px) {
             .details-grid {
                 grid-template-columns: 1fr;
@@ -269,6 +280,35 @@ $check_out_formatted = date('D, d M Y', strtotime($booking['check_out']));
                 justify-content: center;
             }
         }
+
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            header, footer, .header, .footer, .mobile-bottom-nav, .buttons-row, .floating-share-location-btn, #shareCopyToast {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                background: #ffffff !important;
+            }
+            .thank-you-container {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .confirmation-card {
+                border: none !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+                padding: 10px 0 !important;
+                margin: 0 auto !important;
+            }
+            .success-checkmark-badge {
+                background-color: #16a34a !important;
+                border: 2px solid #16a34a !important;
+            }
+        }
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
@@ -281,6 +321,11 @@ $check_out_formatted = date('D, d M Y', strtotime($booking['check_out']));
         <section class="thank-you-container">
             <div class="container">
                 <div class="confirmation-card wow fadeInUp">
+                    <!-- Brand Logo -->
+                    <div class="brand-logo-wrapper">
+                        <img src="assets/imgs/template/logo-destin.png" alt="Hotel Destin" class="confirmation-logo">
+                    </div>
+
                     <!-- Checkmark Badge -->
                     <div class="success-checkmark-badge">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -350,14 +395,24 @@ $check_out_formatted = date('D, d M Y', strtotime($booking['check_out']));
                     <div class="buttons-row">
                         <a href="index.php" class="btn-gold-grad">Return Home</a>
 
-                        <a href="invoice.php?ref=<?= urlencode($booking['booking_id']) ?>&print=true" target="_blank" class="btn-outlined-custom">
-                            <!-- Simple PDF icon -->
-                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="color:#ef4444;">
-                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
-                                <path d="M4.603 14.087a.81.81 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a.768.768 0 0 1-.248-1.006c.079-.164.212-.3.394-.39a.784.784 0 0 1 .43-.1c.143.01.272.06.381.144a.798.798 0 0 1 .302.546c.371-.15.756-.3 1.113-.4a.578.578 0 0 1-.03-.26c-.007-.2-.027-.386-.062-.53A1.85 1.85 0 0 0 7 9.2c-.1-.17-.186-.334-.252-.488C6.54 8.243 6.45 7.747 6.48 7.3c.026-.395.203-.7.525-.79a.6.6 0 0 1 .436.06c.176.1.32.25.438.423a2.3 2.3 0 0 1 .288.756c.074.341.1.728.082 1.127.354.183.743.35 1.11.47a.71.71 0 0 1 .403-.047c.18.04.322.146.43.3.118.17.182.383.185.602.006.385-.23.665-.583.79a.75.75 0 0 1-.602-.036c-.4-.22-.733-.553-1.007-.94a15.7 15.7 0 0 1-1.636.5c-.328.618-.636 1.16-.92 1.63-.299.497-.6.915-.9 1.25a.8.8 0 0 1-.587.324zm.447-1.424c-.114.162-.164.33-.146.48.01.07.03.11.05.13a.13.13 0 0 0 .08.02.58.58 0 0 0 .302-.13c.183-.162.373-.42.56-.73a15.7 15.7 0 0 0-.846.26zM7.227 8.3c.05.14.113.29.176.438.084-.33.115-.65.11-.947a.99.99 0 0 0-.053-.25.13.13 0 0 0-.05-.045.08.08 0 0 0-.053-.01.3.3 0 0 0-.158.12.78.78 0 0 0-.12.3c.01.127.027.26.048.4zM8.32 10.66a9 9 0 0 0-.898.37 12.8 12.8 0 0 0 1.21.6c.144-.3.268-.61.372-.92-.224-.03-.45-.05-.684-.05zm.968-.53c.144.2.327.38.536.53.076-.05.118-.11.123-.18a.18.18 0 0 0-.036-.08.43.43 0 0 0-.168-.13c-.156-.05-.3-.09-.455-.14z" />
-                            </svg>
-                            Download Receipt
-                        </a>
+                        <?php if ($booking['payment_method'] === 'Pay at Hotel'): ?>
+                            <a href="javascript:void(0);" onclick="window.print();" class="btn-outlined-custom">
+                                <!-- Printer/Download icon -->
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="color:#e0b85d;">
+                                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v3a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-3h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM5 10v4h6v-4H5z"/>
+                                </svg>
+                                Print Confirmation
+                            </a>
+                        <?php else: ?>
+                            <a href="invoice.php?ref=<?= urlencode($booking['booking_id']) ?>&print=true" target="_blank" class="btn-outlined-custom">
+                                <!-- Simple PDF icon -->
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="color:#ef4444;">
+                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                    <path d="M4.603 14.087a.81.81 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a.768.768 0 0 1-.248-1.006c.079-.164.212-.3.394-.39a.784.784 0 0 1 .43-.1c.143.01.272.06.381.144a.798.798 0 0 1 .302.546c.371-.15.756-.3 1.113-.4a.578.578 0 0 1-.03-.26c-.007-.2-.027-.386-.062-.53A1.85 1.85 0 0 0 7 9.2c-.1-.17-.186-.334-.252-.488C6.54 8.243 6.45 7.747 6.48 7.3c.026-.395.203-.7.525-.79a.6.6 0 0 1 .436.06c.176.1.32.25.438.423a2.3 2.3 0 0 1 .288.756c.074.341.1.728.082 1.127.354.183.743.35 1.11.47a.71.71 0 0 1 .403-.047c.18.04.322.146.43.3.118.17.182.383.185.602.006.385-.23.665-.583.79a.75.75 0 0 1-.602-.036c-.4-.22-.733-.553-1.007-.94a15.7 15.7 0 0 1-1.636.5c-.328.618-.636 1.16-.92 1.63-.299.497-.6.915-.9 1.25a.8.8 0 0 1-.587.324zm.447-1.424c-.114.162-.164.33-.146.48.01.07.03.11.05.13a.13.13 0 0 0 .08.02.58.58 0 0 0 .302-.13c.183-.162.373-.42.56-.73a15.7 15.7 0 0 0-.846.26zM7.227 8.3c.05.14.113.29.176.438.084-.33.115-.65.11-.947a.99.99 0 0 0-.053-.25.13.13 0 0 0-.05-.045.08.08 0 0 0-.053-.01.3.3 0 0 0-.158.12.78.78 0 0 0-.12.3c.01.127.027.26.048.4zM8.32 10.66a9 9 0 0 0-.898.37 12.8 12.8 0 0 0 1.21.6c.144-.3.268-.61.372-.92-.224-.03-.45-.05-.684-.05zm.968-.53c.144.2.327.38.536.53.076-.05.118-.11.123-.18a.18.18 0 0 0-.036-.08.43.43 0 0 0-.168-.13c-.156-.05-.3-.09-.455-.14z" />
+                                </svg>
+                                Download Receipt
+                            </a>
+                        <?php endif; ?>
 
                         <a href="contact.php" class="btn-outlined-custom">Contact Guest Desk</a>
                     </div>

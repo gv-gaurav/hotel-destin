@@ -777,7 +777,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </div>
                                         <div class="col-md-6 col-12 form-group-custom">
                                             <label class="form-label-custom" for="res_phone">Phone Number *</label>
-                                            <input type="tel" class="form-control-custom" id="res_phone" name="phone" value="<?= isset($phone) ? $phone : '' ?>" placeholder="e.g. +91 92035 09944" required>
+                                            <input type="tel" class="form-control-custom" id="res_phone" name="phone" value="<?= !empty($phone) ? htmlspecialchars($phone) : '' ?>" placeholder="e.g. +91 98765 43210" required>
                                             <?php if (isset($errors['phone'])): ?>
                                                 <div class="form-error"><?= $errors['phone'] ?></div>
                                             <?php endif; ?>

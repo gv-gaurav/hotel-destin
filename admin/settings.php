@@ -60,6 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
             $stmt->execute(['razorpay_key_id', $razorpay_key_id]);
             $stmt->execute(['razorpay_key_secret', $razorpay_key_secret]);
 
+            // Save Online Payment Gateway Master Toggle (Developer only)
+            if (is_developer()) {
+                $online_payment_enabled = isset($_POST['online_payment_enabled']) && $_POST['online_payment_enabled'] === '1' ? '1' : '0';
+                $stmt->execute(['online_payment_enabled', $online_payment_enabled]);
+            }
+
             // Save banquet settings
             $stmt->execute(['banquet_hall_name', $banquet_hall_name]);
             $stmt->execute(['banquet_hall_capacity', $banquet_hall_capacity]);
@@ -93,6 +99,7 @@ $settings = [
     'google_analytics' => '',
     'razorpay_key_id' => '',
     'razorpay_key_secret' => '',
+    'online_payment_enabled' => '0',
     'banquet_hall_name' => '',
     'banquet_hall_capacity' => '',
     'banquet_hall_size' => '',
@@ -226,6 +233,26 @@ try {
                 <h3 class="font-heading mb-10" style="font-size:18px;">Razorpay Gateway API Integration</h3>
                 <p class="text-sm text-neutral-500 mb-25">Configure API credentials to authorize test and live transaction calls securely.</p>
                 
+                <?php if (is_developer()): ?>
+                    <!-- Developer Only Payment Toggle Switch -->
+                    <div class="p-3 mb-25" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <span class="badge" style="background-color: #16a34a; color:#fff; font-size:10px; font-weight:700; letter-spacing:0.5px; padding:4px 8px; border-radius:4px;">DEVELOPER MASTER CONTROL</span>
+                                <h4 style="font-size: 15px; font-weight: 750; color: #166534; margin: 6px 0 3px 0;">Online Payment Gateway (Razorpay) Status</h4>
+                                <p style="font-size: 12.5px; color: #15803d; margin: 0;">
+                                    When turned <strong style="color:#166534;">ON</strong>, the "Pay Online" option is active and clickable on the checkout page.<br>
+                                    When turned <strong style="color:#b91c1c;">OFF</strong>, the "Pay Online" button is disabled on checkout, and bookings use "Pay at Hotel".
+                                </p>
+                            </div>
+                            <div class="form-check form-switch ms-3" style="padding-left: 3.5em;">
+                                <input type="hidden" name="online_payment_enabled" value="0">
+                                <input class="form-check-input" type="checkbox" role="switch" name="online_payment_enabled" id="online_payment_toggle" value="1" <?= ($settings['online_payment_enabled'] ?? '0') === '1' ? 'checked' : '' ?> style="cursor: pointer; width: 46px; height: 24px;">
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="form-group">

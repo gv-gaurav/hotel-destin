@@ -7,6 +7,21 @@ if (empty($_SESSION['admin_logged_in'])) {
     exit;
 }
 
+// Developer Access Check Helper
+if (!function_exists('is_developer')) {
+    function is_developer() {
+        // Allowed developer roles
+        $developer_roles = ['developer', 'superadmin'];
+        // You can also list any specific developer usernames here
+        $developer_usernames = ['developer', 'gaurav', 'admin_dev'];
+
+        $role = strtolower(trim($_SESSION['admin_role'] ?? 'admin'));
+        $username = strtolower(trim($_SESSION['admin_username'] ?? ''));
+
+        return in_array($role, $developer_roles) || in_array($username, $developer_usernames);
+    }
+}
+
 // Get current active file basename for menu highlights
 $active_page = basename($_SERVER['PHP_SELF']);
 ?>

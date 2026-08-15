@@ -706,15 +706,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="row">
                             <div class="col-md-6 col-12 form-group-custom">
                                 <label class="form-label-custom" for="enq_name">Your Name *</label>
-                                <input class="form-control-custom" type="text" id="enq_name" name="name" value="<?= isset($name) ? $name : '' ?>" placeholder="e.g. Alice Roses" required>
+                                <input class="form-control-custom" type="text" id="enq_name" name="name" value="<?= !empty($name) ? htmlspecialchars($name) : '' ?>" placeholder="e.g. Alice Roses" required>
                             </div>
                             <div class="col-md-6 col-12 form-group-custom">
                                 <label class="form-label-custom" for="enq_email">Email Address (Optional)</label>
-                                <input class="form-control-custom" type="email" id="enq_email" name="email" value="<?= isset($email) && $email !== 'no-email@hoteldestin.in' ? $email : '' ?>" placeholder="e.g. alice@example.com">
+                                <input class="form-control-custom" type="email" id="enq_email" name="email" value="<?= (!empty($email) && $email !== 'no-email@hoteldestin.in') ? htmlspecialchars($email) : '' ?>" placeholder="e.g. alice@example.com">
                             </div>
                             <div class="col-md-6 col-12 form-group-custom">
                                 <label class="form-label-custom" for="enq_phone">Phone Number *</label>
-                                <input class="form-control-custom" type="tel" id="enq_phone" name="phone" value="<?= isset($phone) ? $phone : '' ?>" placeholder="e.g. +91 99119 11645" required>
+                                <input class="form-control-custom" type="tel" id="enq_phone" name="phone" value="<?= !empty($phone) ? htmlspecialchars($phone) : '' ?>" placeholder="e.g. +91 99119 11645" required>
                             </div>
                             <div class="col-md-6 col-12 form-group-custom">
                                 <label class="form-label-custom" for="enq_event">Event Type (Optional)</label>

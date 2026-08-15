@@ -266,8 +266,8 @@
             </div>
             <div class="container upper-space">
               <p class="upper-top-bar">Welcome to Hotel Destin</p>
-              <h1 class="mt-10 color-white"><?= htmlspecialchars(get_setting('hero_title', 'Experience Luxury & Comfort')) ?></h1>
-              <h5 class="heading-sub mt-1"><?= htmlspecialchars(get_setting('hero_subtitle', 'in the heart of Gwalior')) ?></h5>
+              <h1 class="mt-10 color-white" style="text-transform: uppercase;"><?= htmlspecialchars(get_setting('hero_title', 'Experience Luxury & Comfort')) ?></h1>
+              <h5 class="heading-sub mt-2 pt-2"><?= htmlspecialchars(get_setting('hero_subtitle', 'in the heart of Gwalior')) ?></h5>
               <ul class="list-ticks-green">
                 <li>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -909,7 +909,7 @@
 
     if ($coupon_banner_status === 'active') {
       try {
-        $stmt = $pdo->query("SELECT * FROM coupons WHERE status = 'active' AND start_date <= CURDATE() AND expiry_date >= CURDATE() ORDER BY created_at DESC, id DESC LIMIT 3");
+        $stmt = $pdo->query("SELECT * FROM coupons WHERE status = 'active' AND expiry_date >= CURDATE() ORDER BY created_at DESC, id DESC LIMIT 3");
         $active_coupons = $stmt->fetchAll();
       } catch (Exception $e) {
         error_log("Failed to load active coupons for homepage: " . $e->getMessage());

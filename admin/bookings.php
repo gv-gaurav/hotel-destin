@@ -18,8 +18,13 @@ if (isset($_GET['error'])) {
     else if ($_GET['error'] === 'delete') $error_message = 'Failed to delete reservation record.';
 }
 
-// Handle booking deletion
+// Handle booking deletion (Developer only)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_booking') {
+    if (!is_developer()) {
+        header("Location: bookings.php?error=unauthorized");
+        exit;
+    }
+
     $csrf_token = isset($_POST['csrf_token']) ? trim($_POST['csrf_token']) : '';
     if (!verify_csrf_token($csrf_token)) {
         header("Location: bookings.php?error=csrf");
@@ -330,17 +335,19 @@ try {
                                             </svg>
                                         </a>
 
-                                        <!-- Delete Reservation Form -->
-                                        <form action="bookings.php" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this booking?');" style="margin: 0; display: inline;">
-                                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                            <input type="hidden" name="action" value="delete_booking">
-                                            <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
-                                            <button type="submit" class="btn btn-sm btn-light border d-inline-flex align-items-center justify-content-center text-danger" style="padding: 6px; border-radius: 6px; width: 38px; height: 32px; border-color: #cbd5e1;" title="Delete Record">
-                                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
-                                        </form>
+                                        <!-- Delete Reservation Form (Developer Only) -->
+                                        <?php if (is_developer()): ?>
+                                            <form action="bookings.php" method="POST" onsubmit="return confirm('DEVELOPER ACTION: Are you sure you want to permanently delete this booking?');" style="margin: 0; display: inline;">
+                                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                                <input type="hidden" name="action" value="delete_booking">
+                                                <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
+                                                <button type="submit" class="btn btn-sm btn-light border d-inline-flex align-items-center justify-content-center text-danger" style="padding: 6px; border-radius: 6px; width: 38px; height: 32px; border-color: #cbd5e1;" title="Developer only: Delete Record">
+                                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </td>

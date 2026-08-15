@@ -562,7 +562,7 @@ h6,
 
 h1,
 .heading-1 {
-  font-size: 50px;
+  font-size: 65px;
   line-height: 60px;
 }
 
@@ -1461,7 +1461,7 @@ h6,
 
 .color-white {
   color: var(--bs-color-white) !important;
-      text-shadow: 0 0 6px rgba(224, 184, 93, .45), 0 0 12px rgba(224, 184, 93, .30), 0 0 24px rgba(224, 184, 93, .18);
+  /* text-shadow: 0 0 6px rgba(224, 184, 93, .45), 0 0 12px rgba(224, 184, 93, .30), 0 0 24px rgba(224, 184, 93, .18); */
 }
 
 .neutral-0 {
@@ -11363,7 +11363,7 @@ a.icon-socials:hover svg {
 }
 
 .item-banner-slide {
-  min-height: 530px;
+  min-height: 630px;
   position: relative;
   background-position: top center;
   background-repeat: no-repeat;
@@ -11385,7 +11385,7 @@ a.icon-socials:hover svg {
 
 @media screen and (max-width: 480px) {
 .container-search-advance .box-search-advance {
-  top: -90px;
+  top: -50px;
 };
 
 .box-search-advance{
@@ -11405,7 +11405,7 @@ a.icon-socials:hover svg {
   width: 100%;
   height: 100%;
   z-index: 1;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(../imgs/page/homepage7/bg-trans.png);
+  /* background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(../imgs/page/homepage7/bg-trans.png); */
 }
 
 .box-banner-home7 .item-banner-slide .container {
@@ -18104,8 +18104,8 @@ h2 span {
 
   /* Typography compacting */
   h1, .heading-1 {
-    font-size: 28px !important;
-    line-height: 34px !important;
+    font-size: 30px !important;
+    line-height: 40px !important;
   }
   h2, .heading-2 {
     font-size: 22px !important;
@@ -18129,7 +18129,7 @@ h2 span {
   }
 
   p, .text-lg, .text-lg-medium, .text-lg-bold {
-    font-size: 13px !important;
+    font-size: 16px !important;
     line-height: 18px !important;
   }
   .text-md, .text-md-medium, .text-md-bold {
@@ -18147,7 +18147,7 @@ h2 span {
 
   /* Button sizes */
   .btn, .btn-black, .btn-brand-1, .btn-green-linear, .btn-white {
-    padding: 8px 0px !important;
+    padding: 8px 10px !important;
     font-size: 12px !important;
     border-radius: 6px !important;
   }
@@ -18455,23 +18455,17 @@ h2 span {
 .upper-top-bar{
 color: #E0B85D;
 /* margin-top: 20px; */
-font-size: 18px;
+font-size: 25px;
 font-family: revert;
 font-weight: 600;
+margin-bottom: 20px;
 
-text-shadow:
-    0 0 6px rgba(224,184,93,.45),
-    0 0 12px rgba(224,184,93,.30),
-    0 0 24px rgba(224,184,93,.18);
 }
 .heading-sub{
-  color: #E0B85D;
-  text-shadow:
-    0 0 6px rgba(224,184,93,.45),
-    0 0 12px rgba(224,184,93,.30),
-    0 0 24px rgba(224,184,93,.18);
+  color: #ffffff;
+
 }
 
 .upper-space{
-  margin-top: 70px;
+  margin-top: 100px;
 }

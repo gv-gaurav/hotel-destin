@@ -90,8 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// 3. Handle deletion
+// 3. Handle deletion (Developer only)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_enquiry') {
+    if (!is_developer()) {
+        header("Location: hourly-settings.php?tab=enquiries&error=unauthorized");
+        exit;
+    }
+
     $csrf_token = isset($_POST['csrf_token']) ? trim($_POST['csrf_token']) : '';
     if (!verify_csrf_token($csrf_token)) {
         header("Location: hourly-settings.php?tab=enquiries&error=csrf");
@@ -367,15 +372,17 @@ try {
                                             </select>
                                         </form>
 
-                                        <!-- Delete Enquiry Form -->
-                                        <form action="hourly-settings.php" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this enquiry?');" style="margin: 0; display: inline;">
-                                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                            <input type="hidden" name="action" value="delete_enquiry">
-                                            <input type="hidden" name="enquiry_id" value="<?= $e['id'] ?>">
-                                            <button type="submit" class="btn btn-sm btn-light border text-danger text-center w-100" style="padding: 4px 0; font-size: 12px; font-weight:600; border-radius:6px; height:32px; border-color:#cbd5e1; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#ef4444'; this.style.color='#ffffff';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#ef4444';">
-                                                Delete Record
-                                            </button>
-                                        </form>
+                                        <!-- Delete Enquiry Form (Developer Only) -->
+                                        <?php if (is_developer()): ?>
+                                            <form action="hourly-settings.php" method="POST" onsubmit="return confirm('DEVELOPER ACTION: Are you sure you want to permanently delete this enquiry?');" style="margin: 0; display: inline;">
+                                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                                <input type="hidden" name="action" value="delete_enquiry">
+                                                <input type="hidden" name="enquiry_id" value="<?= $e['id'] ?>">
+                                                <button type="submit" class="btn btn-sm btn-light border text-danger text-center w-100" style="padding: 4px 0; font-size: 12px; font-weight:600; border-radius:6px; height:32px; border-color:#cbd5e1; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#ef4444'; this.style.color='#ffffff';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#ef4444';" title="Developer only: Delete Record">
+                                                    Delete Record
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
