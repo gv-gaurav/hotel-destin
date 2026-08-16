@@ -73,6 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $subject = "Booking Confirmed - Ref: " . $booking_id;
                 $child_ages_label = !empty($booking['child_ages']) ? " [Ages: " . htmlspecialchars($booking['child_ages']) . "]" : "";
 
+                $mp = $booking['meal_plan'] ?: 'CP';
+                $meal_plan_display_name = 'Stay with Breakfast';
+                if ($mp === 'EP') {
+                    $meal_plan_display_name = 'Stay Only';
+                } elseif ($mp === 'MAP') {
+                    $meal_plan_display_name = 'Stay with Breakfast, Lunch or Dinner';
+                }
+
                 $body = "
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e9ecf2; padding: 20px; border-radius: 8px;'>
                     <h2 style='color: #3c7a4b; text-align: center;'>Hotel Destin - Booking Confirmed</h2>
@@ -106,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </tr>
                         <tr style='background: #f7f9fc;'>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Meal Plan</td>
-                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>" . htmlspecialchars($booking['meal_plan']) . "</td>
+                            <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>" . htmlspecialchars($meal_plan_display_name) . "</td>
                         </tr>
                         <tr style='background: #f7f9fc;'>
                             <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Guests Count</td>

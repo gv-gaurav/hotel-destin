@@ -302,6 +302,14 @@ function execute_booking_notification($booking_id, $type) {
         $invoice_no = $booking['invoice_no'];
         $child_ages_label = !empty($booking['child_ages']) ? " [Ages: " . htmlspecialchars($booking['child_ages']) . "]" : "";
 
+        $mp = $booking['meal_plan'] ?: 'CP';
+        $meal_plan_display_name = 'Stay with Breakfast';
+        if ($mp === 'EP') {
+            $meal_plan_display_name = 'Stay Only';
+        } elseif ($mp === 'MAP') {
+            $meal_plan_display_name = 'Stay with Breakfast, Lunch or Dinner';
+        }
+
         // Formulate premium HTML Invoice Email Body
         $subject = "Booking Confirmed - Ref: " . $booking_id;
         $body = "
@@ -337,7 +345,7 @@ function execute_booking_notification($booking_id, $type) {
                 </tr>
                 <tr style='background: #f7f9fc;'>
                     <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Meal Plan</td>
-                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($booking['meal_plan']) . "</td>
+                    <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($meal_plan_display_name) . "</td>
                 </tr>
                 <tr>
                     <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Guests Count</td>
@@ -390,7 +398,7 @@ function execute_booking_notification($booking_id, $type) {
                 . "• *Check-in*: " . $booking['check_in'] . "\n"
                 . "• *Check-out*: " . $booking['check_out'] . "\n"
                 . "• *Nights*: " . $booking['total_nights'] . "\n"
-                . "• *Meal Plan*: " . $booking['meal_plan'] . "\n"
+                . "• *Meal Plan*: " . $meal_plan_display_name . "\n"
                 . "• *Total Cost*: ₹" . number_format($booking['total_amount'], 2) . " " . $payment_label . "\n";
             send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, $wa_msg);
         }

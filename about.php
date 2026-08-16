@@ -534,16 +534,16 @@
                         <div class="service-box-card wow fadeInUp">
                             <div>
                                 <div class="service-card-icon">
-                                    <!-- Cocktail / Rooftop Bar Icon -->
+                                    <!-- Coffee / Rooftop Cafe Icon -->
                                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M18 22H6M12 15v7M12 15l7-10H5l7 10zM12 9l-2-2h4l-2 2z" />
+                                        <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3" />
                                     </svg>
                                 </div>
-                                <span class="service-tag">Rooftop Dining & Bar</span>
-                                <h3 class="service-heading">The Heights Rooftop & Club Bar</h3>
-                                <p class="service-subtitle">Elevated Gastronomy & Celestial Libations</p>
+                                <span class="service-tag">Rooftop Dining & Cafe</span>
+                                <h3 class="service-heading">Cafe By Soul, Rooftop Cafe</h3>
+                                <p class="service-subtitle">Elevated Gastronomy & Refreshing Brews</p>
                                 <p class="service-desc">
-                                    Indulge in an elevated dining experience under the stars. The Heights offers a sophisticated open-air atmosphere featuring a full-service club bar, signature cocktails, and a gourmet menu with both pure vegetarian and non-vegetarian specialties. Perfect for family dining, romantic dates, or evening get-togethers with stunning skyline views.
+                                    Indulge in an elevated dining experience under the stars. Cafe By Soul offers a sophisticated open-air atmosphere featuring a delightful rooftop cafe, signature coffees and mocktails, and a gourmet menu with both pure vegetarian and non-vegetarian specialties. Perfect for family dining, romantic dates, or evening get-togethers with stunning skyline views.
                                 </p>
                                 <ul class="service-bullet-list">
                                     <li class="service-bullet-item">
@@ -566,7 +566,7 @@
                                             <circle cx="12" cy="12" r="10" />
                                             <path d="M8 12h8M12 8v8" />
                                         </svg>
-                                        Modern sky lounge vibes with professional service
+                                        Modern sky cafe vibes with professional service
                                     </li>
                                 </ul>
                             </div>
@@ -752,7 +752,7 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                                     </svg>
-                                    ac centralized
+                                    Air Conditioned rooms
                                 </li>
                                 <li class="amenity-item">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

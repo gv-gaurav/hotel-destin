@@ -363,7 +363,16 @@ $hotel_address = get_setting('hotel_address') ?: 'Hotel destin Gwalior Sachin Te
                     <tr>
                         <td style="padding: 12px 12px; border-bottom: 1px solid #f1f5f9; font-size: 12.5px; line-height: 1.5;">
                             <strong style="color: #1e293b;">Room Stay Charge</strong> (<?= htmlspecialchars($booking['room_title'] ?: 'Standard Room - Hotel Destin') ?>)<br>
-                            <span style="font-size:11px; color:#64748b; font-weight: 500;">Rate Option: <?= htmlspecialchars($booking['meal_plan'] ?: 'CP') ?> Meal Plan</span>
+                            <?php
+                            $mp = $booking['meal_plan'] ?: 'CP';
+                            $meal_plan_name = 'Stay with Breakfast';
+                            if ($mp === 'EP') {
+                                $meal_plan_name = 'Stay Only';
+                            } elseif ($mp === 'MAP') {
+                                $meal_plan_name = 'Stay with Breakfast, Lunch or Dinner';
+                            }
+                            ?>
+                            <span style="font-size:11px; color:#64748b; font-weight: 500;">Rate Option: <?= htmlspecialchars($meal_plan_name) ?></span>
                         </td>
                         <td style="padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; font-size: 12.5px; color: #334155;"><?= htmlspecialchars($booking['total_nights']) ?></td>
                         <td style="padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; font-size: 12.5px; color: #334155;"><?= htmlspecialchars($booking['guests']) ?> (<?= htmlspecialchars($booking['adults']) ?>A, <?= htmlspecialchars($booking['children']) ?>C)</td>

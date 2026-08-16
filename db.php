@@ -37,6 +37,25 @@ try {
         error_log("Migration error (settings hotel_address): " . $settings_e->getMessage());
     }
 
+    // Ensure restaurant and cafe settings are updated from Bar to Cafe By Soul
+    try {
+        $updates = [
+            'restaurant_hero_title' => 'Cafe By Soul, Rooftop Cafe',
+            'restaurant_hero_tagline' => 'Elevated Gastronomy & Refreshing Brews',
+            'restaurant_food_types' => 'We have both veg and non-veg food available at our rooftop cafe',
+            'restaurant_facility_1_title' => 'Rooftop Cafe',
+            'restaurant_facility_1_desc' => 'Unwind under the stars with our premium coffees, mocktails, and ambient tunes at Gwalior\'s premier rooftop cafe.',
+            'restaurant_ambience_desc' => 'Take a visual tour through our celestial rooftop cafe and warm indoor dining halls.',
+            'restaurant_ambience_2_title' => 'Rooftop Cafe Lounge'
+        ];
+        $stmt = $pdo->prepare("UPDATE `settings` SET `val_content` = ? WHERE `key_name` = ?");
+        foreach ($updates as $key => $val) {
+            $stmt->execute([$val, $key]);
+        }
+    } catch (Exception $settings_e) {
+        error_log("Migration error (restaurant settings to cafe): " . $settings_e->getMessage());
+    }
+
     // Ensure start_date column exists in coupons table
     try {
         $col_check = $pdo->query("SHOW COLUMNS FROM `coupons` LIKE 'start_date'");

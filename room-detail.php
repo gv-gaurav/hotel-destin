@@ -671,7 +671,7 @@ if (empty($images)) {
                                 <!-- EP Card -->
                                 <div class="tariff-option-card selected" onclick="selectTariffPlan(this, 'EP')">
                                     <div class="tariff-content">
-                                        <div class="tariff-title">EP (European Plan)</div>
+                                        <div class="tariff-title">Stay Only</div>
                                         <div class="tariff-desc">Room only inclusion. Access to hotel Wi-Fi and common properties.</div>
                                         <div class="tariff-price">₹<span id="rateEP">0.00</span> <span style="font-size:11px; font-weight:normal; color:#64748b;">/ night</span></div>
                                     </div>
@@ -682,7 +682,7 @@ if (empty($images)) {
                                 <!-- CP Card -->
                                 <div class="tariff-option-card" onclick="selectTariffPlan(this, 'CP')">
                                     <div class="tariff-content">
-                                        <div class="tariff-title">CP (Continental Plan)</div>
+                                        <div class="tariff-title">Stay with Breakfast</div>
                                         <div class="tariff-desc">Stay includes standard room and delicious daily Morning Breakfast buffet.</div>
                                         <div class="tariff-price">₹<span id="rateCP">0.00</span> <span style="font-size:11px; font-weight:normal; color:#64748b;">/ night</span></div>
                                     </div>
@@ -693,7 +693,7 @@ if (empty($images)) {
                                 <!-- MAP Card -->
                                 <div class="tariff-option-card" onclick="selectTariffPlan(this, 'MAP')">
                                     <div class="tariff-content">
-                                        <div class="tariff-title">MAP (Modified American Plan)</div>
+                                        <div class="tariff-title">Stay with Breakfast, Lunch or Dinner</div>
                                         <div class="tariff-desc">Stay includes Morning Breakfast and either Lunch or Dinner buffet plan.</div>
                                         <div class="tariff-price">₹<span id="rateMAP">0.00</span> <span style="font-size:11px; font-weight:normal; color:#64748b;">/ night</span></div>
                                     </div>

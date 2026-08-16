@@ -44,7 +44,7 @@ if (!$post) {
             'date' => '02 Jul 2026',
             'read_time' => '5 min read',
             'excerpt' => 'A curated list of local Gwalior specialties, fine dining, and cafe favorites located just steps from Hotel Destin.',
-            'content' => 'Sachin Tendulkar Road is Gwalior\'s premier lifestyle and dining hub. When staying at Hotel Destin, you are surrounded by excellent choices. Here are our top 5 recommendations: 1) The Heights Rooftop Club (located inside Hotel Destin) for high-end dining, 2) local street food stalls for spicy Gwalior Bedai, 3) Indian accent fine dining restaurants, 4) modern espresso cafes, and 5) premium ice cream parlors.',
+            'content' => 'Sachin Tendulkar Road is Gwalior\'s premier lifestyle and dining hub. When staying at Hotel Destin, you are surrounded by excellent choices. Here are our top 5 recommendations: 1) Cafe By Soul, Rooftop Cafe (located inside Hotel Destin) for high-end dining, 2) local street food stalls for spicy Gwalior Bedai, 3) Indian accent fine dining restaurants, 4) modern espresso cafes, and 5) premium ice cream parlors.',
             'meta_title' => 'Top Restaurants & Cafes on Sachin Tendulkar Road - Hotel Destin',
             'meta_description' => 'Explore the best restaurants, local breakfast spots, and cafe lounges on Gwalior\'s Sachin Tendulkar Road, located right next to Hotel Destin.'
         ]

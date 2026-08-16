@@ -3,11 +3,11 @@
 require_once __DIR__ . '/db.php';
 
 $restaurant_hero_bg = get_setting('restaurant_hero_bg', 'assets/imgs/page/restaurant/hero.png');
-$restaurant_name = get_setting('restaurant_hero_title', 'The Heights Rooftop & Club Bar');
-$restaurant_tagline = get_setting('restaurant_hero_tagline', 'Elevated Gastronomy & Celestial Libations');
+$restaurant_name = get_setting('restaurant_hero_title', 'Cafe By Soul, Rooftop Cafe');
+$restaurant_tagline = get_setting('restaurant_hero_tagline', 'Elevated Gastronomy & Refreshing Brews');
 $restaurant_hours = get_setting('restaurant_hero_hours', '07:00 AM to 11:30 PM');
 $restaurant_phone = get_setting('restaurant_phone', '+91 92035 09944');
-$food_types_text = get_setting('restaurant_food_types', 'We have both veg and non-veg food available with club bar facility at rooftop');
+$food_types_text = get_setting('restaurant_food_types', 'We have both veg and non-veg food available at our rooftop cafe');
 $room_service_text = get_setting('restaurant_room_service_text', 'Room Service & Restaurant Facilities Available');
 
 // Facilities Section heading
@@ -17,11 +17,11 @@ $restaurant_facilities_desc = get_setting('restaurant_facilities_desc', 'Indulge
 // Amenities showcase
 $amenities = [
     [
-        'title' => get_setting('restaurant_facility_1_title', 'Rooftop Club & Bar'),
-        'description' => get_setting('restaurant_facility_1_desc', 'Unwind under the stars with our signature cocktails, handpicked spirits, and deep house beats at Gwalior\'s premier rooftop club facility.'),
+        'title' => get_setting('restaurant_facility_1_title', 'Rooftop Cafe'),
+        'description' => get_setting('restaurant_facility_1_desc', 'Unwind under the stars with our premium coffees, mocktails, and ambient tunes at Gwalior\'s premier rooftop cafe.'),
         'image' => get_setting('restaurant_facility_1_image', 'assets/imgs/page/restaurant/rooftop_bar.png'),
         'badge' => get_setting('restaurant_facility_1_badge', 'Open Daily'),
-        'icon' => get_setting('restaurant_facility_1_icon', '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 22H6M12 15v7M12 15l7-10H5l7 10zM12 9l-2-2h4l-2 2z"/></svg>')
+        'icon' => get_setting('restaurant_facility_1_icon', '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>')
     ],
     [
         'title' => get_setting('restaurant_facility_2_title', 'Fine Dining Restaurant'),
@@ -41,7 +41,7 @@ $amenities = [
 
 // Ambience Section heading
 $restaurant_ambience_title = get_setting('restaurant_ambience_title', 'Ambience & Moments');
-$restaurant_ambience_desc = get_setting('restaurant_ambience_desc', 'Take a visual tour through our celestial rooftop club and warm indoor dining halls.');
+$restaurant_ambience_desc = get_setting('restaurant_ambience_desc', 'Take a visual tour through our celestial rooftop cafe and warm indoor dining halls.');
 
 // Ambience Items
 $ambience_1_image = get_setting('restaurant_ambience_1_image', 'assets/imgs/page/restaurant/hero.png');
@@ -49,7 +49,7 @@ $ambience_1_title = get_setting('restaurant_ambience_1_title', 'Rooftop Skyline 
 $ambience_1_desc = get_setting('restaurant_ambience_1_desc', 'Unparalleled city views at dusk');
 
 $ambience_2_image = get_setting('restaurant_ambience_2_image', 'assets/imgs/page/restaurant/rooftop_bar.png');
-$ambience_2_title = get_setting('restaurant_ambience_2_title', 'Signature Bar Lounge');
+$ambience_2_title = get_setting('restaurant_ambience_2_title', 'Rooftop Cafe Lounge');
 
 $ambience_3_image = get_setting('restaurant_ambience_3_image', 'assets/imgs/page/restaurant/fine_dining.png');
 $ambience_3_title = get_setting('restaurant_ambience_3_title', 'Gourmet Masterpieces');
@@ -156,11 +156,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
     <meta name="template-color" content="#0E0E0E">
-    <meta name="description" content="Experience fine rooftop dining at its best. Open from 07:00 AM to 11:30 PM offering exquisite veg, non-veg, and premium club bar facilities in Gwalior.">
-    <meta name="keywords" content="Rooftop bar Gwalior, best restaurant Gwalior, fine dining, veg non veg food, hotel destin restaurant">
+    <meta name="description" content="Experience fine rooftop dining at its best. Open from 07:00 AM to 11:30 PM offering exquisite veg, non-veg, and premium rooftop cafe facilities in Gwalior.">
+    <meta name="keywords" content="Rooftop cafe Gwalior, best restaurant Gwalior, fine dining, veg non veg food, hotel destin restaurant">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Rooftop Restaurant & Club Bar - Hotel Destin Gwalior</title>
+    <title>Cafe By Soul, Rooftop Cafe & Restaurant - Hotel Destin Gwalior</title>
 
     <style>
         /* Premium Restaurant Theme CSS Rules */
@@ -701,7 +701,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <span class="res-hero-badge" style="font-size: 11px; margin-bottom: 15px; border-color: rgba(255,255,255,0.35);">Hotel Destin Gwalior</span>
                                 <h3 class="booking-title" style="color: #ffffff; margin-bottom: 20px; font-size: 26px;">Table Reservation</h3>
                                 <p style="font-size: 14.5px; color: var(--bs-neutral-400); line-height: 1.6; margin-bottom: 30px;">
-                                    Secure your premium dining slot at Gwalior's highest rated rooftop destination. Enjoy our rooftop club bar vibes or indoor fine dining.
+                                    Secure your premium dining slot at Gwalior's highest rated rooftop destination. Enjoy our rooftop cafe vibes or indoor fine dining.
                                 </p>
                                 
                                 <ul style="list-style: none; padding: 0; margin: 0 0 30px 0;">
@@ -729,7 +729,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </div>
                                         <div>
                                             <h6 style="color: #fff; font-size: 13px; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Features Available</h6>
-                                            <p style="color: var(--bs-neutral-400); font-size: 14px; margin: 0;">Veg & Non-Veg, Rooftop Club Bar, Room Service</p>
+                                            <p style="color: var(--bs-neutral-400); font-size: 14px; margin: 0;">Veg & Non-Veg, Rooftop Cafe, Room Service</p>
                                         </div>
                                     </li>
                                 </ul>
@@ -835,7 +835,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="col-md-6 col-12 form-group-custom">
                                             <label class="form-label-custom" for="res_seating">Seating Preference</label>
                                             <select class="form-control-custom" id="res_seating" name="seating">
-                                                <option value="Rooftop Lounge">Rooftop Lounge & Club Bar</option>
+                                                <option value="Rooftop Lounge">Cafe By Soul, Rooftop Cafe</option>
                                                 <option value="Indoor Main Dining" selected>Indoor Fine Dining Room</option>
                                                 <option value="Private Dining Area">Private Suite Dining</option>
                                             </select>

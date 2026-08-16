@@ -863,9 +863,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                         <div class="form-group">
                                             <label class="form-label-custom">Meal Plan *</label>
                                             <select id="mealPlanSelect" class="form-control-custom" name="meal_plan" style="height:42px; background-position: right 15px center;" required>
-                                                <option value="EP" <?= $meal_plan_param === 'EP' ? 'selected' : '' ?>>EP (Room Only)</option>
-                                                <option value="CP" <?= $meal_plan_param === 'CP' ? 'selected' : '' ?>>CP (Room + Breakfast)</option>
-                                                <option value="MAP" <?= $meal_plan_param === 'MAP' ? 'selected' : '' ?>>MAP (Room + Breakfast + One Meal)</option>
+                                                <option value="EP" <?= $meal_plan_param === 'EP' ? 'selected' : '' ?>>Stay Only</option>
+                                                <option value="CP" <?= $meal_plan_param === 'CP' ? 'selected' : '' ?>>Stay with Breakfast</option>
+                                                <option value="MAP" <?= $meal_plan_param === 'MAP' ? 'selected' : '' ?>>Stay with Breakfast, Lunch or Dinner</option>
                                             </select>
                                         </div>
                                     </div>

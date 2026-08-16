@@ -308,7 +308,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 <div class="col-md-6" style="border-left:1px solid #f1f5f9;">
                     <div class="meta-row">
                         <span class="meta-label">Meal Plan Selection:</span>
-                        <span class="meta-value" style="background:#fafafa; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;"><?= htmlspecialchars($booking['meal_plan'] ?: 'EP') ?></span>
+                        <?php
+                        $mp = $booking['meal_plan'] ?: 'EP';
+                        $meal_plan_label = $mp;
+                        if ($mp === 'EP') {
+                            $meal_plan_label .= ' (Stay Only)';
+                        } elseif ($mp === 'CP') {
+                            $meal_plan_label .= ' (Stay with Breakfast)';
+                        } elseif ($mp === 'MAP') {
+                            $meal_plan_label .= ' (Stay with Breakfast, Lunch or Dinner)';
+                        }
+                        ?>
+                        <span class="meta-value" style="background:#fafafa; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;"><?= htmlspecialchars($meal_plan_label) ?></span>
                     </div>
                     <div class="meta-row">
                         <span class="meta-label">Total Guests:</span>

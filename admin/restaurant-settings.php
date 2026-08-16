@@ -30,11 +30,11 @@ if (isset($_GET['error'])) {
 // Default Configuration values fallback
 $default_configs = [
     'restaurant_hero_bg' => 'assets/imgs/page/restaurant/hero.png',
-    'restaurant_hero_title' => 'The Heights Rooftop & Club Bar',
-    'restaurant_hero_tagline' => 'Elevated Gastronomy & Celestial Libations',
+    'restaurant_hero_title' => 'Cafe By Soul, Rooftop Cafe',
+    'restaurant_hero_tagline' => 'Elevated Gastronomy & Refreshing Brews',
     'restaurant_hero_hours' => '07:00 AM to 11:30 PM',
     'restaurant_phone' => '+91 92035 09944',
-    'restaurant_food_types' => 'We have both veg and non-veg food available with club bar facility at rooftop',
+    'restaurant_food_types' => 'We have both veg and non-veg food available at our rooftop cafe',
     'restaurant_room_service_text' => 'Room Service & Restaurant Facilities Available',
 
     'restaurant_facilities_title' => 'Restaurant Facilities',
@@ -42,9 +42,9 @@ $default_configs = [
 
     'restaurant_facility_1_badge' => 'Open Daily',
     'restaurant_facility_1_image' => 'assets/imgs/page/restaurant/rooftop_bar.png',
-    'restaurant_facility_1_title' => 'Rooftop Club & Bar',
-    'restaurant_facility_1_desc' => 'Unwind under the stars with our signature cocktails, handpicked spirits, and deep house beats at Gwalior\'s premier rooftop club facility.',
-    'restaurant_facility_1_icon' => '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 22H6M12 15v7M12 15l7-10H5l7 10zM12 9l-2-2h4l-2 2z"/></svg>',
+    'restaurant_facility_1_title' => 'Rooftop Cafe',
+    'restaurant_facility_1_desc' => 'Unwind under the stars with our premium coffees, mocktails, and ambient tunes at Gwalior\'s premier rooftop cafe.',
+    'restaurant_facility_1_icon' => '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>',
 
     'restaurant_facility_2_badge' => 'Family Friendly',
     'restaurant_facility_2_image' => 'assets/imgs/page/restaurant/fine_dining.png',
@@ -59,14 +59,14 @@ $default_configs = [
     'restaurant_facility_3_icon' => '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 2v2M7 8h10M12 12h.01M3 20h18"/></svg>',
 
     'restaurant_ambience_title' => 'Ambience & Moments',
-    'restaurant_ambience_desc' => 'Take a visual tour through our celestial rooftop club and warm indoor dining halls.',
+    'restaurant_ambience_desc' => 'Take a visual tour through our celestial rooftop cafe and warm indoor dining halls.',
 
     'restaurant_ambience_1_image' => 'assets/imgs/page/restaurant/hero.png',
     'restaurant_ambience_1_title' => 'Rooftop Skyline Dining',
     'restaurant_ambience_1_desc' => 'Unparalleled city views at dusk',
 
     'restaurant_ambience_2_image' => 'assets/imgs/page/restaurant/rooftop_bar.png',
-    'restaurant_ambience_2_title' => 'Signature Bar Lounge',
+    'restaurant_ambience_2_title' => 'Rooftop Cafe Lounge',
 
     'restaurant_ambience_3_image' => 'assets/imgs/page/restaurant/fine_dining.png',
     'restaurant_ambience_3_title' => 'Gourmet Masterpieces',
@@ -335,7 +335,7 @@ foreach ($default_configs as $key => $default_val) {
 
             <!-- Card 1 editor -->
             <div class="facility-editor-card">
-                <h4 style="font-size: 16px; font-weight: 700; color: #0f172a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 15px;">Card 1: Rooftop Club & Bar</h4>
+                <h4 style="font-size: 16px; font-weight: 700; color: #0f172a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 15px;">Card 1: Rooftop Cafe</h4>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label-custom">Facility Image Preview</label>
