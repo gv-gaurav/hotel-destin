@@ -90,7 +90,7 @@ function get_setting($key, $default = '') {
         $stmt = $pdo->prepare("SELECT val_content FROM settings WHERE key_name = ?");
         $stmt->execute([$key]);
         $val = $stmt->fetchColumn();
-        return $val !== false ? $val : $default;
+        return ($val !== false && $val !== '') ? $val : $default;
     } catch (Exception $e) {
         return $default;
     }
