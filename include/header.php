@@ -708,13 +708,13 @@
               <div class="col-6">
                 <div class="form-group mb-15">
                   <label class="enquiry-label-custom">Check-in Date *</label>
-                  <input class="enquiry-control-custom" type="date" name="checkin" id="enq_checkin">
+                  <input class="enquiry-control-custom" type="date" name="checkin" id="enq_checkin" min="<?= date('Y-m-d') ?>">
                 </div>
               </div>
               <div class="col-6">
                 <div class="form-group mb-15">
                   <label class="enquiry-label-custom">Check-out Date *</label>
-                  <input class="enquiry-control-custom" type="date" name="checkout" id="enq_checkout">
+                  <input class="enquiry-control-custom" type="date" name="checkout" id="enq_checkout" min="<?= date('Y-m-d') ?>">
                 </div>
               </div>
             </div>
@@ -724,7 +724,7 @@
           <div id="banquetEnquiryFields" style="display: none;">
             <div class="form-group mb-15">
               <label class="enquiry-label-custom">Event Date *</label>
-              <input class="enquiry-control-custom" type="date" name="event_date" id="enq_event_date">
+              <input class="enquiry-control-custom" type="date" name="event_date" id="enq_event_date" min="<?= date('Y-m-d') ?>">
             </div>
           </div>
 
@@ -790,6 +790,71 @@
         var form = document.getElementById('headerEnquiryForm');
         var alertBox = document.getElementById('enquiryAlertBox');
         var submitBtn = document.getElementById('enquirySubmitBtn');
+
+        // Client-side date validation to block past date selections
+        var type = document.getElementById('enquiryTypeSelect').value;
+        var today = new Date();
+        today.setHours(0,0,0,0);
+        var yyyy = today.getFullYear();
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var dd = String(today.getDate()).padStart(2, '0');
+        var todayStr = yyyy + '-' + mm + '-' + dd;
+
+        if (type === 'rooms') {
+          var checkinVal = document.getElementById('enq_checkin').value;
+          var checkoutVal = document.getElementById('enq_checkout').value;
+
+          if (!checkinVal || !checkoutVal) {
+            alertBox.style.display = 'block';
+            alertBox.className = 'alert alert-danger';
+            alertBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            alertBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+            alertBox.style.color = '#b91c1c';
+            alertBox.innerText = 'Please select both Check-in and Check-out dates.';
+            return;
+          }
+
+          if (checkinVal < todayStr) {
+            alertBox.style.display = 'block';
+            alertBox.className = 'alert alert-danger';
+            alertBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            alertBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+            alertBox.style.color = '#b91c1c';
+            alertBox.innerText = 'Check-in date cannot be in the past.';
+            return;
+          }
+
+          if (checkoutVal < checkinVal) {
+            alertBox.style.display = 'block';
+            alertBox.className = 'alert alert-danger';
+            alertBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            alertBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+            alertBox.style.color = '#b91c1c';
+            alertBox.innerText = 'Check-out date cannot be before Check-in date.';
+            return;
+          }
+        } else if (type === 'banquet') {
+          var eventDateVal = document.getElementById('enq_event_date').value;
+          if (!eventDateVal) {
+            alertBox.style.display = 'block';
+            alertBox.className = 'alert alert-danger';
+            alertBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            alertBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+            alertBox.style.color = '#b91c1c';
+            alertBox.innerText = 'Please select the Event Date.';
+            return;
+          }
+
+          if (eventDateVal < todayStr) {
+            alertBox.style.display = 'block';
+            alertBox.className = 'alert alert-danger';
+            alertBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            alertBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+            alertBox.style.color = '#b91c1c';
+            alertBox.innerText = 'Event date cannot be in the past.';
+            return;
+          }
+        }
 
         submitBtn.disabled = true;
         submitBtn.innerText = 'Submitting...';
@@ -866,6 +931,43 @@
           enqOverlay.addEventListener('click', function(e) {
             if (e.target === enqOverlay) {
               closeEnquiryModal();
+            }
+          });
+        }
+
+        // Dynamic min date updates & check-in / check-out synchronizer
+        var today = new Date();
+        var yyyy = today.getFullYear();
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var dd = String(today.getDate()).padStart(2, '0');
+        var todayStr = yyyy + '-' + mm + '-' + dd;
+
+        var enqCheckin = document.getElementById('enq_checkin');
+        var enqCheckout = document.getElementById('enq_checkout');
+        var enqEventDate = document.getElementById('enq_event_date');
+
+        if (enqCheckin) enqCheckin.min = todayStr;
+        if (enqCheckout) enqCheckout.min = todayStr;
+        if (enqEventDate) enqEventDate.min = todayStr;
+
+        if (enqCheckin && enqCheckout) {
+          enqCheckin.addEventListener('change', function() {
+            if (enqCheckin.value) {
+              var parts = enqCheckin.value.split('-');
+              var checkInDate = new Date(parts[0], parts[1] - 1, parts[2]);
+              checkInDate.setDate(checkInDate.getDate() + 1);
+              
+              var yyyy = checkInDate.getFullYear();
+              var mm = String(checkInDate.getMonth() + 1).padStart(2, '0');
+              var dd = String(checkInDate.getDate()).padStart(2, '0');
+              var minCheckoutDate = yyyy + '-' + mm + '-' + dd;
+              
+              enqCheckout.min = minCheckoutDate;
+              if (!enqCheckout.value || enqCheckout.value <= enqCheckin.value) {
+                enqCheckout.value = minCheckoutDate;
+              }
+            } else {
+              enqCheckout.min = todayStr;
             }
           });
         }

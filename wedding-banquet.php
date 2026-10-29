@@ -61,10 +61,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Luxury Wedding Venue & Banquet Hall in Gwalior | Hotel Destin</title>
+    <meta name="description" content="Plan your dream wedding, sangeet, reception & engagement at Hotel Destin Gwalior. AC banquet hall, lavish catering, bridal room & guest accommodation. Inquire today.">
+    <meta name="keywords" content="wedding venue Gwalior, wedding banquet hall Gwalior, destination wedding Gwalior, marriage hall Sachin Tendulkar road, engagement party venue Gwalior, hotel destin weddings">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/wedding-banquet">
+    <meta property="og:title" content="Luxury Wedding Venue & Banquet Hall in Gwalior | Hotel Destin">
+    <meta property="og:description" content="Plan your dream wedding, sangeet, reception & engagement at Hotel Destin Gwalior. AC banquet hall, lavish catering, bridal room & guest accommodation.">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Luxury Wedding Venue & Banquet Hall in Gwalior | Hotel Destin">
+    <meta name="twitter:description" content="Plan your dream wedding, sangeet, reception & engagement at Hotel Destin Gwalior. AC banquet hall, lavish catering, bridal room & guest accommodation.">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Dream Weddings & Celebrations - Hotel Destin Gwalior</title>
     
     <style>
         .wedding-hero {

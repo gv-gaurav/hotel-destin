@@ -20,7 +20,8 @@ use PHPMailer\PHPMailer\Exception;
  * @param bool $isHtml Whether the body should be treated as HTML (default: true)
  * @return bool True on success, false on failure
  */
-function send_mail($to, $subject, $body, $isHtml = true) {
+function send_mail($to, $subject, $body, $isHtml = true)
+{
     $mail = new PHPMailer(true);
 
     try {
@@ -69,7 +70,38 @@ function send_mail($to, $subject, $body, $isHtml = true) {
  * @param array $additional_details Key-value pairs of other details
  * @return bool True on success, false on failure
  */
-function send_enquiry_alert($category, $name, $email, $phone, $date = null, $guests = null, $additional_details = [], $enquiry_id = null) {
+function send_enquiry_alert($category, $name, $email, $phone, $date = null, $guests = null, $additional_details = [], $enquiry_id = null)
+{
+    // 1. Instantly send Meta WhatsApp Notification to Owner (using Utility template for guaranteed instant delivery)
+    if (defined('WHATSAPP_NOTIFICATION_ENABLED') && WHATSAPP_NOTIFICATION_ENABLED) {
+        $extra_details = [];
+        foreach ($additional_details as $lbl => $val) {
+            if (!empty($val) || $val === 0 || $val === '0') {
+                $extra_details[] = $lbl . ": " . clean_whatsapp_text($val);
+            }
+        }
+        $additional_str = !empty($extra_details) ? implode("  •  ", $extra_details) : "-";
+
+        $enq_ref = 'ENQ-' . ($enquiry_id ?: rand(1000, 9999));
+        $service_name = strtoupper(str_replace('_', ' ', $category)) . ' ENQUIRY';
+        $date_str = !empty($date) ? (string)$date : 'N/A';
+        $guest_str = !empty($guests) ? $guests . " Guest(s)" : "N/A";
+
+        $booking_params = [
+            $enq_ref,
+            $name,
+            $phone,
+            $service_name,
+            $date_str,
+            "N/A",
+            $guest_str,
+            "New Website Lead",
+            $additional_str !== '-' ? $additional_str : "NEW ENQUIRY"
+        ];
+
+        send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, "hotel_booking_alert", $booking_params, 'en_US');
+    }
+
     $payload = [
         'category' => $category,
         'name' => $name,
@@ -80,9 +112,9 @@ function send_enquiry_alert($category, $name, $email, $phone, $date = null, $gue
         'additional_details' => $additional_details,
         'enquiry_id' => $enquiry_id
     ];
-    
+
     $async_success = trigger_async_notification('enquiry', $payload);
-    
+
     // Fallback to synchronous execution if async trigger failed (e.g. sockets disabled)
     if (!$async_success) {
         $subject = "New Enquiry Received [" . strtoupper($category) . "] - " . $name;
@@ -102,7 +134,7 @@ function send_enquiry_alert($category, $name, $email, $phone, $date = null, $gue
                     <td style='padding: 10px; border: 1px solid #e9ecf2; font-weight: bold;'>Phone</td>
                     <td style='padding: 10px; border: 1px solid #e9ecf2;'><a href='tel:" . htmlspecialchars($phone) . "'>" . htmlspecialchars($phone) . "</a></td>
                 </tr>";
-                
+
         if (!empty($date)) {
             $body .= "
                 <tr>
@@ -110,7 +142,7 @@ function send_enquiry_alert($category, $name, $email, $phone, $date = null, $gue
                     <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($date) . "</td>
                 </tr>";
         }
-        
+
         if (!empty($guests)) {
             $body .= "
                 <tr style='background: #f7f9fc;'>
@@ -118,7 +150,7 @@ function send_enquiry_alert($category, $name, $email, $phone, $date = null, $gue
                     <td style='padding: 10px; border: 1px solid #e9ecf2;'>" . htmlspecialchars($guests) . "</td>
                 </tr>";
         }
-        
+
         foreach ($additional_details as $label => $value) {
             if (!empty($value) || $value === 0 || $value === '0') {
                 $body .= "
@@ -128,35 +160,44 @@ function send_enquiry_alert($category, $name, $email, $phone, $date = null, $gue
                 </tr>";
             }
         }
-        
+
         $body .= "
             </table>
             <p style='border-top: 1px solid #e9ecf2; padding-top: 15px; text-align: center; color: #777; font-size: 12px;'>
                 Hotel Destin Gwalior System Alert
             </p>
         </div>";
-        
+
         $mail_success = send_mail(OWNER_EMAIL, $subject, $body, true);
 
         if (defined('WHATSAPP_NOTIFICATION_ENABLED') && WHATSAPP_NOTIFICATION_ENABLED) {
-            $wa_msg = "🔔 *NEW ENQUIRY RECEIVED*\n\n"
-                    . "• *Category*: " . strtoupper(str_replace('_', ' ', $category)) . "\n"
-                    . "• *Name*: " . $name . "\n"
-                    . "• *Phone*: " . $phone . "\n";
-            
-            if (!empty($date)) {
-                $wa_msg .= "• *Date*: " . $date . "\n";
-            }
-            if (!empty($guests)) {
-                $wa_msg .= "• *Guests*: " . $guests . "\n";
-            }
-            
+            $extra_details = [];
             foreach ($additional_details as $lbl => $val) {
                 if (!empty($val) || $val === 0 || $val === '0') {
-                    $wa_msg .= "• *" . $lbl . "*: " . str_replace('<br>', "\n", str_replace('<br/>', "\n", $val)) . "\n";
+                    $extra_details[] = $lbl . ": " . clean_whatsapp_text($val);
                 }
             }
-            send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, $wa_msg);
+            $additional_str = !empty($extra_details) ? implode("  •  ", $extra_details) : "-";
+
+            // Format as Utility notification using hotel_booking_alert for guaranteed instant WhatsApp popup delivery
+            $enq_ref = 'ENQ-' . ($enquiry_id ?: rand(1000, 9999));
+            $service_name = strtoupper(str_replace('_', ' ', $category)) . ' ENQUIRY';
+            $date_str = !empty($date) ? (string)$date : 'N/A';
+            $guest_str = !empty($guests) ? $guests . " Guest(s)" : "N/A";
+
+            $booking_params = [
+                $enq_ref,
+                $name,
+                $phone,
+                $service_name,
+                $date_str,
+                "N/A",
+                $guest_str,
+                "New Website Lead",
+                $additional_str !== '-' ? $additional_str : "NEW ENQUIRY"
+            ];
+
+            send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, "hotel_booking_alert", $booking_params, 'en_US');
         }
         return $mail_success;
     }
@@ -164,13 +205,33 @@ function send_enquiry_alert($category, $name, $email, $phone, $date = null, $gue
 }
 
 /**
- * Sends a WhatsApp text notification via Meta Cloud API.
+ * Cleans a string to conform with Meta WhatsApp API parameter rules:
+ * - No newlines or carriage returns
+ * - No tab characters
+ * - No more than 4 consecutive spaces
+ */
+function clean_whatsapp_text($text)
+{
+    if (empty($text)) {
+        return '';
+    }
+    // Replace newlines, carriage returns, tabs, and br tags with a space
+    $text = str_replace(["\r", "\n", "\t", '<br>', '<br/>', '<br />'], ' ', $text);
+    // Replace multiple spaces with a single space
+    $text = preg_replace('/\s+/', ' ', $text);
+    return trim($text);
+}
+
+/**
+ * Sends a WhatsApp template notification via Meta Cloud API.
  *
  * @param string $to Recipient phone number (e.g., 919873272462)
- * @param string $message Text message content
+ * @param string $template_name The template name approved in WhatsApp Manager
+ * @param array $parameters Dynamic text variables for the template body
  * @return bool True on API success, false otherwise
  */
-function send_whatsapp_notification($to, $message) {
+function send_whatsapp_notification($to, $template_name, $parameters)
+{
     if (!defined('META_WA_ACCESS_TOKEN') || !defined('META_WA_PHONE_NUMBER_ID')) {
         error_log("Meta WhatsApp credentials not defined.");
         return false;
@@ -186,14 +247,30 @@ function send_whatsapp_notification($to, $message) {
 
     $url = "https://graph.facebook.com/v18.0/" . $phone_id . "/messages";
 
+    $formatted_params = [];
+    foreach ($parameters as $param) {
+        $formatted_params[] = [
+            'type' => 'text',
+            'text' => clean_whatsapp_text($param)
+        ];
+    }
+
     $data = [
         'messaging_product' => 'whatsapp',
         'recipient_type'    => 'individual',
         'to'                => $to,
-        'type'              => 'text',
-        'text'              => [
-            'preview_url' => false,
-            'body'        => $message
+        'type'              => 'template',
+        'template'          => [
+            'name'     => $template_name,
+            'language' => [
+                'code' => 'en_US'
+            ],
+            'components' => [
+                [
+                    'type'       => 'body',
+                    'parameters' => $formatted_params
+                ]
+            ]
         ]
     ];
 
@@ -236,24 +313,25 @@ function send_whatsapp_notification($to, $message) {
  * @param array $data Data payload to pass to the handler
  * @return bool True if socket connection succeeded, false otherwise
  */
-function trigger_async_notification($action, $data) {
+function trigger_async_notification($action, $data)
+{
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $port = ($_SERVER['SERVER_PORT'] ?? 80) == 443 ? 443 : 80;
-    
+
     if (strpos($host, ':') !== false) {
         $parts = explode(':', $host);
         $host = $parts[0];
         $port = (int)$parts[1];
     }
-    
+
     $ssl = ($port === 443) ? 'ssl://' : '';
-    
+
     $fp = @fsockopen($ssl . $host, $port, $errno, $errstr, 2);
     if (!$fp) {
         error_log("fsockopen failed: $errstr ($errno). Falling back to synchronous processing.");
         return false;
     }
-    
+
     $path = '/async-notification-handler.php';
     if (isset($_SERVER['SCRIPT_NAME'])) {
         $dir = dirname($_SERVER['SCRIPT_NAME']);
@@ -270,14 +348,14 @@ function trigger_async_notification($action, $data) {
         'data'   => $data_json,
         'token'  => $token
     ]);
-    
+
     $out = "POST " . $path . " HTTP/1.1\r\n";
     $out .= "Host: " . $host . ($port !== 80 && $port !== 443 ? ':' . $port : '') . "\r\n";
     $out .= "Content-Type: application/x-www-form-urlencoded\r\n";
     $out .= "Content-Length: " . strlen($post_data) . "\r\n";
     $out .= "Connection: Close\r\n\r\n";
     $out .= $post_data;
-    
+
     fwrite($fp, $out);
     fclose($fp);
     return true;
@@ -290,9 +368,10 @@ function trigger_async_notification($action, $data) {
  * @param string $type The booking type ('online' or 'offline')
  * @return bool True if booking was found and notification triggered, false otherwise
  */
-function execute_booking_notification($booking_id, $type) {
+function execute_booking_notification($booking_id, $type)
+{
     global $pdo;
-    
+
     // Fetch booking details from DB inside background process to ensure fresh, secure data
     $stmt = $pdo->prepare("SELECT b.*, r.title AS room_title FROM bookings b JOIN rooms r ON b.room_id = r.id WHERE b.booking_id = ?");
     $stmt->execute([$booking_id]);
@@ -390,17 +469,18 @@ function execute_booking_notification($booking_id, $type) {
         // Dispatch WhatsApp Notification to Owner
         if (defined('WHATSAPP_NOTIFICATION_ENABLED') && WHATSAPP_NOTIFICATION_ENABLED) {
             $payment_label = ($type === 'online') ? '(Paid via Razorpay)' : '(Pay at Hotel)';
-            $wa_msg = "🏨 *NEW " . strtoupper($type) . " BOOKING*\n\n"
-                . "• *Booking ID*: " . $booking_id . "\n"
-                . "• *Customer*: " . $booking['customer_name'] . "\n"
-                . "• *Phone*: " . $booking['customer_phone'] . "\n"
-                . "• *Room Type*: " . $booking['room_title'] . "\n"
-                . "• *Check-in*: " . $booking['check_in'] . "\n"
-                . "• *Check-out*: " . $booking['check_out'] . "\n"
-                . "• *Nights*: " . $booking['total_nights'] . "\n"
-                . "• *Meal Plan*: " . $meal_plan_display_name . "\n"
-                . "• *Total Cost*: ₹" . number_format($booking['total_amount'], 2) . " " . $payment_label . "\n";
-            send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, $wa_msg);
+            $parameters = [
+                $booking_id,
+                $booking['customer_name'],
+                $booking['customer_phone'],
+                $booking['room_title'],
+                $booking['check_in'],
+                $booking['check_out'],
+                $booking['total_nights'] . " night(s)",
+                $meal_plan_display_name,
+                "₹" . number_format($booking['total_amount'], 2) . " " . $payment_label
+            ];
+            send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, "hotel_booking_alert", $parameters);
         }
         return true;
     }
@@ -415,7 +495,8 @@ function execute_booking_notification($booking_id, $type) {
  * @param string $type The booking type ('online' or 'offline')
  * @return bool True if async or sync trigger succeeded
  */
-function trigger_booking_notification($booking_id, $type) {
+function trigger_booking_notification($booking_id, $type)
+{
     $payload = [
         'booking_id' => $booking_id,
         'type' => $type
@@ -427,4 +508,3 @@ function trigger_booking_notification($booking_id, $type) {
     }
     return true;
 }
-?>

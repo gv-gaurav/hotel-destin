@@ -1,2 +1,7 @@
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /admin/
+Disallow: /include/
+Disallow: /vendor/
+
+Sitemap: https://hoteldestin.in/sitemap.xml

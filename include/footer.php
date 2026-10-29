@@ -136,10 +136,18 @@
     flex-shrink: 0;
   }
 
-  .footer-contact-item span {
+  .footer-contact-item span,
+  .footer-contact-item a {
     font-size: 14px;
     color: #b0b0b0;
     line-height: 1.6;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .footer-contact-item a:hover {
+    color: #a17a42 !important;
+    text-decoration: underline;
   }
 
   .menu-bottom-footer {
@@ -197,7 +205,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
-              <span><?= htmlspecialchars(get_setting('hotel_address') ?: 'Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior') ?></span>
+              <a href="https://maps.google.com/?cid=16081290616905586481" target="_blank" rel="noopener noreferrer" title="View Hotel Destin Gwalior on Google Maps"><?= htmlspecialchars(get_setting('hotel_address') ?: 'Hotel Destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior') ?></a>
             </div>
             <div class="footer-contact-item">
               <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -214,7 +222,7 @@
               <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
               </svg>
-              <span><?= htmlspecialchars($first_email) ?></span>
+              <a href="mailto:<?= htmlspecialchars($first_email) ?>" title="Send Email to Hotel Destin"><?= htmlspecialchars($first_email) ?></a>
             </div>
           </div>
           <p class="text-md-bold title-follow neutral-0" style="font-weight:700; margin-top:25px; color:#ffffff;">Follow us</p>
@@ -270,9 +278,9 @@
         <h6>Legal & Policies</h6>
         <ul class="menu-footer">
           <li><a href="terms.php">Terms of Service</a></li>
-          <li><a href="terms.php">Privacy Policy</a></li>
-          <li><a href="terms.php">Cookies Policy</a></li>
-          <li><a href="terms.php">Refund Policy</a></li>
+          <li><a href="privacy-policy.php">Privacy Policy</a></li>
+          <li><a href="cookies-policy.php">Cookies Policy</a></li>
+          <li><a href="refund-policy.php">Refund Policy</a></li>
         </ul>
       </div>
     </div>
@@ -284,8 +292,9 @@
         <div class="col-md-6 text-md-end text-center mb-20">
           <ul class="menu-bottom-footer">
             <li><a href="terms.php">Terms</a></li>
-            <li><a href="terms.php">Privacy Policy</a></li>
-            <li><a href="terms.php">Legal Notice</a></li>
+            <li><a href="privacy-policy.php">Privacy Policy</a></li>
+            <li><a href="refund-policy.php">Refund Policy</a></li>
+            <li><a href="cookies-policy.php">Cookies Policy</a></li>
           </ul>
         </div>
       </div>
@@ -946,7 +955,23 @@ if (count($hourly_rooms) < 3) {
     if (checkinInput && checkoutInput) {
       checkinInput.setAttribute('min', today);
       checkinInput.addEventListener('change', function() {
-        checkoutInput.setAttribute('min', this.value);
+        if (this.value) {
+          var parts = this.value.split('-');
+          var checkInDate = new Date(parts[0], parts[1] - 1, parts[2]);
+          checkInDate.setDate(checkInDate.getDate() + 1);
+          
+          var yyyy = checkInDate.getFullYear();
+          var mm = String(checkInDate.getMonth() + 1).padStart(2, '0');
+          var dd = String(checkInDate.getDate()).padStart(2, '0');
+          var minCheckoutDate = yyyy + '-' + mm + '-' + dd;
+          
+          checkoutInput.setAttribute('min', minCheckoutDate);
+          if (!checkoutInput.value || checkoutInput.value <= this.value) {
+            checkoutInput.value = minCheckoutDate;
+          }
+        } else {
+          checkoutInput.setAttribute('min', today);
+        }
       });
     }
 

@@ -9,7 +9,18 @@ require_once __DIR__ . '/db.php';
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Terms & Conditions - Hotel Destin Gwalior</title>
+    <title>Terms of Service & Guest Policies | Hotel Destin Gwalior</title>
+    <meta name="description" content="Review the terms and conditions for booking and staying at Hotel Destin Gwalior. Information on check-in/out, payment, occupancy rules, and hotel policies.">
+    <meta name="keywords" content="Hotel Destin terms, terms and conditions Hotel Destin, hotel booking rules Gwalior">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/terms">
+    <meta property="og:title" content="Terms of Service & Guest Policies | Hotel Destin Gwalior">
+    <meta property="og:description" content="Review the terms and conditions for booking and staying at Hotel Destin Gwalior. Information on check-in/out, payment, occupancy rules, and hotel policies.">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Terms of Service & Guest Policies | Hotel Destin Gwalior">
+    <meta name="twitter:description" content="Review the terms and conditions for booking and staying at Hotel Destin Gwalior. Information on check-in/out, payment, occupancy rules, and hotel policies.">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     
     <style>
         .terms-hero {

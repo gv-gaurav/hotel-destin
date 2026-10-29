@@ -1,0 +1,36 @@
+# ==============================================================================
+# HOTEL DESTIN - HTACCESS CONFIGURATION (CLEAN URLS, HTTPS & SECURITY)
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Force HTTPS Redirection
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # 2. Redirect index.php or /index to clean root /
+    RewriteCond %{THE_REQUEST} \s/+(.*?/)?index(\.php)?[\s?] [NC]
+    RewriteRule ^ /%1 [R=301,L]
+
+    # 3. Redirect /page.php to /page (Hides .php extension in the browser)
+    # Exclude POST requests so forms, AJAX, and payment callbacks are preserved
+    RewriteCond %{REQUEST_METHOD} !POST
+    RewriteCond %{THE_REQUEST} \s/+(.*?)\.php[\s?] [NC]
+    RewriteRule ^ /%1 [R=301,L]
+
+    # 4. Internally load the corresponding .php file behind the scenes
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.php -f
+    RewriteRule ^(.*)$ $1.php [QSA,L]
+</IfModule>
+
+# Security: Prevent Access to Sensitive Files (.sql, .git, .env, etc.)
+<FilesMatch "(\.sql|\.log|\.env|\.git)$">
+    Require all denied
+</FilesMatch>
+
+# Enable Gzip / Brotli Compression for Fast Page Loads
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript
+</IfModule>

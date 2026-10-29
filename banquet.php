@@ -97,12 +97,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
-    <meta name="template-color" content="#0E0E0E">
-    <meta name="description" content="Host weddings, corporate conferences, and social events at Gwalior's Banquet Oh Saathi Re. 3,800 sqft hall with a capacity of 300 guests.">
-    <meta name="keywords" content="banquet hall Gwalior, wedding hall, conference room, social events venue, banquet oh saathi re, hotel destin banquet">
+    <title>Best Banquet Hall in Gwalior | Banquet Oh Saathi Re - Hotel Destin</title>
+    <meta name="description" content="Book Banquet Oh Saathi Re at Hotel Destin Gwalior. 3,800 sq.ft luxury air-conditioned venue for weddings, ring ceremonies, birthdays & corporate events (up to 300 guests). Inquire today.">
+    <meta name="keywords" content="banquet hall in Gwalior, best banquet hall Gwalior, wedding venue Gwalior, marriage hall Govindpuri, party hall Gwalior, banquet oh saathi re, hotel destin banquet">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/banquet">
+    <meta property="og:title" content="Best Banquet Hall in Gwalior | Banquet Oh Saathi Re - Hotel Destin">
+    <meta property="og:description" content="Book Banquet Oh Saathi Re at Hotel Destin Gwalior. 3,800 sq.ft luxury air-conditioned venue for weddings, ring ceremonies, birthdays & corporate events (up to 300 guests).">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Best Banquet Hall in Gwalior | Banquet Oh Saathi Re - Hotel Destin">
+    <meta name="twitter:description" content="Book Banquet Oh Saathi Re at Hotel Destin Gwalior. 3,800 sq.ft luxury air-conditioned venue for weddings, ring ceremonies, birthdays & corporate events (up to 300 guests).">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Banquet Oh Saathi Re - Hotel Destin Gwalior</title>
 
     <style>
         /* Success Popup & Blur Overlay Styles */

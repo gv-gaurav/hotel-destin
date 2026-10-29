@@ -99,6 +99,15 @@ if (count($trending_posts) === 0) {
 // Calculate canonical link tag dynamically
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
 $canonical_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'], '?') . (!empty($post['slug']) ? '?slug=' . urlencode($post['slug']) : '?id=' . $post['id']);
+
+$b_title = !empty($post['meta_title']) ? $post['meta_title'] : $post['title'];
+if (stripos($b_title, 'Hotel Destin') === false) {
+    $b_title .= ' | Hotel Destin Gwalior';
+}
+$b_desc = !empty($post['meta_description']) 
+    ? $post['meta_description'] 
+    : (!empty($post['excerpt']) ? $post['excerpt'] : substr(strip_tags($post['content']), 0, 155));
+$b_img = !empty($post['image_path']) ? (strpos($post['image_path'], 'http') === 0 ? $post['image_path'] : 'https://hoteldestin.in/' . ltrim($post['image_path'], '/')) : 'https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
@@ -106,11 +115,20 @@ $canonical_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . strtok($_SERVER['RE
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><?= htmlspecialchars($b_title) ?></title>
+    <meta name="description" content="<?= htmlspecialchars($b_desc) ?>">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="<?= htmlspecialchars($canonical_url) ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($b_title) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($b_desc) ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($b_img) ?>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= htmlspecialchars($b_title) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($b_desc) ?>">
+    <meta name="twitter:image" content="<?= htmlspecialchars($b_img) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars($canonical_url) ?>">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title><?= htmlspecialchars(!empty($post['meta_title']) ? $post['meta_title'] : $post['title']) ?></title>
-    <meta name="description" content="<?= htmlspecialchars(!empty($post['meta_description']) ? $post['meta_description'] : $post['excerpt']) ?>">
-    <link rel="canonical" href="<?= htmlspecialchars($canonical_url) ?>">
     
     <style>
         .blog-detail-container {

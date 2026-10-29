@@ -146,12 +146,20 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
-    <meta name="template-color" content="#0E0E0E">
-    <meta name="description" content="Explore Gwalior travel guides, local attraction tips, dining spots, and hotel services from Hotel Destin Blog.">
-    <meta name="keywords" content="Hotel Destin blog, Gwalior travel guides, hotels in Gwalior, Gwalior attractions">
+    <title>Gwalior Travel & Hospitality Blog | Guides & Stories - Hotel Destin</title>
+    <meta name="description" content="Read insider Gwalior travel guides, historic sightseeing tips, wedding planning advice, and dining highlights on the official Hotel Destin Gwalior blog.">
+    <meta name="keywords" content="Gwalior travel blog, things to do in Gwalior, Gwalior tourist guide, Hotel Destin stories, Gwalior food and culture">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/blog">
+    <meta property="og:title" content="Gwalior Travel & Hospitality Blog | Guides & Stories - Hotel Destin">
+    <meta property="og:description" content="Read insider Gwalior travel guides, historic sightseeing tips, wedding planning advice, and dining highlights on the official Hotel Destin Gwalior blog.">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gwalior Travel & Hospitality Blog | Guides & Stories - Hotel Destin">
+    <meta name="twitter:description" content="Read insider Gwalior travel guides, historic sightseeing tips, wedding planning advice, and dining highlights on the official Hotel Destin Gwalior blog.">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Blog - Hotel Destin Gwalior</title>
 
     <style>
         /* Custom Premium Blog Styles */

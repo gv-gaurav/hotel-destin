@@ -66,6 +66,14 @@ try {
 if (empty($images)) {
     $images = [$room['image_path']];
 }
+$page_canonical = 'https://hoteldestin.in/room-detail?room=' . urlencode(!empty($room['slug']) ? $room['slug'] : $room_slug);
+
+$room_seo_title = htmlspecialchars($room['title']) . " Booking in Gwalior | Hotel Destin Tariff & Amenities";
+$room_seo_desc = !empty($room['meta_description']) 
+    ? htmlspecialchars($room['meta_description']) 
+    : 'Book ' . htmlspecialchars($room['title']) . ' at Hotel Destin Gwalior. Features luxury king bed, AC, high-speed Wi-Fi, 24/7 room service & modern bath. Best direct price guaranteed.';
+$room_seo_keywords = htmlspecialchars($room['title']) . " Gwalior, " . htmlspecialchars($room['title']) . " booking, Hotel Destin room tariff, luxury stay Gwalior, hotel rooms in Gwalior";
+$room_seo_img = !empty($images[0]) ? (strpos($images[0], 'http') === 0 ? $images[0] : 'https://hoteldestin.in/' . ltrim($images[0], '/')) : 'https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
@@ -73,10 +81,20 @@ if (empty($images)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="<?= htmlspecialchars($room['meta_description'] ?: $room['description']) ?>">
+    <title><?= $room_seo_title ?></title>
+    <meta name="description" content="<?= $room_seo_desc ?>">
+    <meta name="keywords" content="<?= $room_seo_keywords ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= htmlspecialchars($page_canonical) ?>">
+    <meta property="og:title" content="<?= $room_seo_title ?>">
+    <meta property="og:description" content="<?= $room_seo_desc ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($room_seo_img) ?>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= $room_seo_title ?>">
+    <meta name="twitter:description" content="<?= $room_seo_desc ?>">
+    <meta name="twitter:image" content="<?= htmlspecialchars($room_seo_img) ?>">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title><?= htmlspecialchars($room['title']) ?> - Hotel Destin Gwalior</title>
 
     <style>
         :root {
@@ -540,7 +558,7 @@ if (empty($images)) {
                             <?= htmlspecialchars($room['title']) ?>
                         </h1>
                         <p class="neutral-500 mb-0" style="font-size: 14px; font-weight: 600; color: #64748b;">
-                            📍 Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior
+                            📍 Hotel destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior
                         </p>
                     </div>
                     <div class="col-lg-4 col-12 text-lg-end mt-20 mt-lg-0">
@@ -654,17 +672,17 @@ if (empty($images)) {
                                         <input id="detailAdults" class="form-control-custom" type="number" name="adults" value="<?= htmlspecialchars($adults) ?>" min="1" max="5" required style="height:38px; font-size:12.5px;">
                                     </div>
                                     <div class="col-6">
-                                         <label class="form-label-custom" style="font-size:11.5px; font-weight:700;">Child Guests</label>
-                                         <input id="detailChildren" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children) ?>" min="0" max="2" required style="height:38px; font-size:12.5px;" onchange="updateDetailChildAgesFields()">
-                                     </div>
-                                 </div>
+                                        <label class="form-label-custom" style="font-size:11.5px; font-weight:700;">Child Guests</label>
+                                        <input id="detailChildren" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children) ?>" min="0" max="2" required style="height:38px; font-size:12.5px;" onchange="updateDetailChildAgesFields()">
+                                    </div>
+                                </div>
 
-                                 <div class="col-12" id="detailChildAgesWrapper" style="display: none; margin-bottom: 15px; margin-top: 10px;">
-                                     <label class="form-label-custom" style="font-size: 11.5px; font-weight: 700; color: #9c6047;">Specify Child Ages *</label>
-                                     <div id="detailChildAgesFields" class="row g-2"></div>
-                                     <div id="detailOccupancyWarning" class="text-danger mt-2" style="display: none; font-size: 11.5px; font-weight: 700; background: #fff5f5; border: 1px solid #ffe3e3; padding: 6px 10px; border-radius: 4px;"></div>
-                                     <span style="font-size: 10.5px; color: #64748b; display: block; margin-top: 4px;">* Child Policy: Children under 8 years stay free. Children 8 years and above pay child rates.</span>
-                                 </div>
+                                <div class="col-12" id="detailChildAgesWrapper" style="display: none; margin-bottom: 15px; margin-top: 10px;">
+                                    <label class="form-label-custom" style="font-size: 11.5px; font-weight: 700; color: #9c6047;">Specify Child Ages *</label>
+                                    <div id="detailChildAgesFields" class="row g-2"></div>
+                                    <div id="detailOccupancyWarning" class="text-danger mt-2" style="display: none; font-size: 11.5px; font-weight: 700; background: #fff5f5; border: 1px solid #ffe3e3; padding: 6px 10px; border-radius: 4px;"></div>
+                                    <span style="font-size: 10.5px; color: #64748b; display: block; margin-top: 4px;">* Child Policy: Children under 8 years stay free. Children 8 years and above pay child rates.</span>
+                                </div>
 
                                 <label class="form-label-custom mb-10" style="display:block; font-weight:700;">Select Tariff Meal Plan *</label>
 
@@ -722,10 +740,10 @@ if (empty($images)) {
                                 </div>
 
                                 <button class="btn-book-online" type="submit">
+                                    Next
                                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
                                     </svg>
-                                    Book Room Online
                                 </button>
                             </form>
                         </div>
@@ -873,11 +891,48 @@ if (empty($images)) {
         var preLoadedAges = <?= json_encode($child_ages) ?>;
         var initialRun = true;
 
+        function enforceDetailOccupancy() {
+            var adults = parseInt($('#detailAdults').val()) || 2;
+            if (adults >= 3) {
+                if (adults > 3) {
+                    $('#detailAdults').val(3);
+                }
+                $('#detailChildren').val(0).attr('max', 0);
+            } else {
+                $('#detailChildren').attr('max', 2);
+            }
+        }
+
+        function updateCheckoutMinDate() {
+            var checkInVal = $('#detailCheckIn').val();
+            var updated = false;
+            if (checkInVal) {
+                var parts = checkInVal.split('-');
+                var checkInDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                checkInDate.setDate(checkInDate.getDate() + 1);
+
+                var yyyy = checkInDate.getFullYear();
+                var mm = String(checkInDate.getMonth() + 1).padStart(2, '0');
+                var dd = String(checkInDate.getDate()).padStart(2, '0');
+                var minCheckoutDate = yyyy + '-' + mm + '-' + dd;
+
+                $('#detailCheckOut').attr('min', minCheckoutDate);
+
+                var checkOutVal = $('#detailCheckOut').val();
+                if (!checkOutVal || checkOutVal <= checkInVal) {
+                    $('#detailCheckOut').val(minCheckoutDate);
+                    updated = true;
+                }
+            }
+            return updated;
+        }
+
         function updateDetailChildAgesFields() {
+            enforceDetailOccupancy();
             var numChildren = parseInt($('#detailChildren').val()) || 0;
             var wrapper = $('#detailChildAgesWrapper');
             var fieldsContainer = $('#detailChildAgesFields');
-            
+
             if (numChildren > 0) {
                 var currentSelected = [];
                 if (initialRun && preLoadedAges && preLoadedAges.length > 0) {
@@ -888,18 +943,21 @@ if (empty($images)) {
                         currentSelected.push($(this).val());
                     });
                 }
-                
+
                 fieldsContainer.empty();
                 for (var i = 1; i <= numChildren; i++) {
                     var val = currentSelected[i - 1] || '5'; // default to 5 (free)
+                    var optionsHtml = '';
+                    for (var age = 0; age <= 17; age++) {
+                        var label = age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''));
+                        optionsHtml += `<option value="${age}" ${age == val ? 'selected' : ''}>${label}</option>`;
+                    }
                     var fieldHtml = `
                         <div class="col-6">
                             <div class="form-group mb-2">
                                 <label class="form-label-custom" style="font-size:11px;">Child ${i} Age</label>
-                                <select class="form-control-custom detail-child-age-input" name="child_ages[]" style="height:36px; padding: 0 10px; font-size:12px;">
-                                    ${Array.from({length: 18}, (_, k) => k).map(age => `
-                                        <option value="${age}" ${age == val ? 'selected' : ''}>${age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''))}</option>
-                                    `).join('')}
+                                <select class="form-control-custom detail-child-age-input" name="child_ages[]" style="height:38px; width:100%; padding: 0 10px; font-size:12.5px;">
+                                    ${optionsHtml}
                                 </select>
                             </div>
                         </div>
@@ -921,7 +979,7 @@ if (empty($images)) {
         function checkDetailEffectiveOccupancy() {
             var adults = parseInt($('#detailAdults').val()) || 2;
             var children = parseInt($('#detailChildren').val()) || 0;
-            
+
             var errorMsg = '';
             if (adults > 3) {
                 errorMsg = 'Exceeds max room capacity of 3 adults.';
@@ -930,7 +988,7 @@ if (empty($images)) {
             } else if (adults === 3 && children > 0) {
                 errorMsg = 'Children not allowed when reserving for 3 adults.';
             }
-            
+
             if (errorMsg) {
                 $('#detailOccupancyWarning').text(errorMsg).show();
                 $('.btn-book-online').prop('disabled', true);
@@ -946,8 +1004,27 @@ if (empty($images)) {
         }
 
         $(document).ready(function() {
-            // Recalculate cost when dates or guest counts change
-            $('#detailCheckIn, #detailCheckOut, #detailAdults, #detailChildren').change(function() {
+            // Set min date on page load
+            updateCheckoutMinDate();
+
+            // Date validation sync
+            $('#detailCheckIn').change(function() {
+                var wasUpdated = updateCheckoutMinDate();
+                if (wasUpdated) {
+                    $('#detailCheckOut').trigger('change');
+                } else {
+                    updateDetailChildAgesFields();
+                    recalculateStayTotals();
+                }
+            });
+
+            $('#detailCheckOut').change(function() {
+                updateDetailChildAgesFields();
+                recalculateStayTotals();
+            });
+
+            // Recalculate cost and enforce occupancy when guest counts change
+            $('#detailAdults, #detailChildren').on('change input', function() {
                 updateDetailChildAgesFields();
                 recalculateStayTotals();
             });

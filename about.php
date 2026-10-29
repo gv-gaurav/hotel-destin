@@ -7,12 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
-    <meta name="template-color" content="#0E0E0E">
-    <meta name="description" content="Discover Hotel Destin, a welcoming Gwalior luxury hotel on Sachin Tendulkar Road offering comfort, hygiene, and excellent location.">
-    <meta name="keywords" content="Hotel Destin Gwalior, hotels in Gwalior, luxury hotels Gwalior, Gwalior stay, booking partner">
+    <title>About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road</title>
+    <meta name="description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Govindpuri. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
+    <meta name="keywords" content="about Hotel Destin Gwalior, boutique hotel in Gwalior, luxury stay Govindpuri Gwalior, hotels near Sachin Tendulkar road, Hotel Destin story">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/about">
+    <meta property="og:title" content="About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road">
+    <meta property="og:description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Govindpuri. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road">
+    <meta name="twitter:description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Govindpuri. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>About Us - Hotel Destin Gwalior</title>
 
     <style>
         /* Custom Premium About Page Styles */

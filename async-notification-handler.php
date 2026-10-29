@@ -96,29 +96,26 @@ if ($action === 'enquiry') {
 
     // 2. Send Meta WhatsApp Alert to Owner
     if (defined('WHATSAPP_NOTIFICATION_ENABLED') && WHATSAPP_NOTIFICATION_ENABLED) {
-        $wa_msg = "🔔 *NEW ENQUIRY RECEIVED*\n\n"
-            . "• *Category*: " . strtoupper(str_replace('_', ' ', $category)) . "\n"
-            . "• *Name*: " . $name . "\n"
-            . "• *Phone*: " . $phone . "\n";
-
-        if (!empty($date)) {
-            $wa_msg .= "• *Date*: " . $date . "\n";
-        }
-        if (!empty($guests)) {
-            $wa_msg .= "• *Guests*: " . $guests . "\n";
-        }
-
+        $extra_details = [];
         foreach ($additional_details as $lbl => $val) {
             if (!empty($val) || $val === 0 || $val === '0') {
-                $wa_msg .= "• *" . $lbl . "*: " . str_replace('<br>', "\n", str_replace('<br/>', "\n", $val)) . "\n";
+                $extra_details[] = $lbl . ": " . clean_whatsapp_text($val);
             }
         }
+        $additional_str = !empty($extra_details) ? implode("  •  ", $extra_details) : "-";
 
-        send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, $wa_msg);
+        $parameters = [
+            strtoupper(str_replace('_', ' ', $category)),
+            $name,
+            $phone,
+            !empty($date) ? $date : "-",
+            !empty($guests) ? $guests : "-",
+            $additional_str
+        ];
+        send_whatsapp_notification(WHATSAPP_RECEIVER_NUMBER, "hotel_enquiry_alert", $parameters);
     }
 } elseif ($action === 'booking') {
     $booking_id = $data['booking_id'] ?? '';
     $type = $data['type'] ?? '';
     execute_booking_notification($booking_id, $type);
 }
-?>

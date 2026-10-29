@@ -5,6 +5,9 @@ require_once __DIR__ . '/mail-helper.php';
 
 header('Content-Type: application/json');
 
+// Force default timezone to match user base and prevent timezone mismatch issues
+date_default_timezone_set('Asia/Kolkata');
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
     exit;
@@ -32,6 +35,17 @@ try {
         $checkout = isset($_POST['checkout']) ? trim($_POST['checkout']) : '';
         if (empty($checkin) || empty($checkout)) {
             echo json_encode(['success' => false, 'message' => 'Please select both Check-in and Check-out dates.']);
+            exit;
+        }
+
+        // Validate that check-in date is not in the past and check-out date is not before check-in date
+        $today = date('Y-m-d');
+        if ($checkin < $today) {
+            echo json_encode(['success' => false, 'message' => 'Check-in date cannot be in the past.']);
+            exit;
+        }
+        if ($checkout < $checkin) {
+            echo json_encode(['success' => false, 'message' => 'Check-out date cannot be before Check-in date.']);
             exit;
         }
 
@@ -67,6 +81,13 @@ try {
         $event_date = isset($_POST['event_date']) ? trim($_POST['event_date']) : '';
         if (empty($event_date)) {
             echo json_encode(['success' => false, 'message' => 'Please select the Event Date.']);
+            exit;
+        }
+
+        // Validate that event date is not in the past
+        $today = date('Y-m-d');
+        if ($event_date < $today) {
+            echo json_encode(['success' => false, 'message' => 'Event date cannot be in the past.']);
             exit;
         }
 

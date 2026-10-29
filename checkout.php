@@ -15,11 +15,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'apply_coupon') {
         $stmt = $pdo->prepare("SELECT * FROM coupons WHERE code = ?");
         $stmt->execute([$coupon_code]);
         $coupon = $stmt->fetch();
-        
+
         if ($coupon) {
             $today = date('Y-m-d');
             $stay_date = !empty($check_in) ? $check_in : $today;
-            
+
             if ($coupon['status'] !== 'active') {
                 echo json_encode(['success' => false, 'message' => 'This coupon code is inactive.']);
             } else if ($stay_date < $coupon['start_date']) {
@@ -57,7 +57,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'get_pricing') {
     $children = isset($_POST['children']) ? intval($_POST['children']) : 0;
     $child_ages = isset($_POST['child_ages']) && is_array($_POST['child_ages']) ? $_POST['child_ages'] : [];
     $room_id = isset($_POST['room_id']) ? intval($_POST['room_id']) : 0;
-    
+
     $chargeable_children = 0;
     foreach ($child_ages as $age) {
         if (intval($age) >= 8) {
@@ -179,14 +179,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
     $children = isset($_POST['children']) ? intval($_POST['children']) : 0;
     $child_ages = isset($_POST['child_ages']) && is_array($_POST['child_ages']) ? $_POST['child_ages'] : [];
     $child_ages_str = !empty($child_ages) ? implode(',', $child_ages) : '';
-    
+
     $chargeable_children = 0;
     foreach ($child_ages as $age) {
         if (intval($age) >= 8) {
             $chargeable_children++;
         }
     }
-    
+
     $meal_plan = isset($_POST['meal_plan']) ? htmlspecialchars(trim($_POST['meal_plan'])) : 'EP';
     $coupon_code = isset($_POST['coupon_code']) ? strtoupper(trim($_POST['coupon_code'])) : '';
     $special_request = isset($_POST['special_request']) ? htmlspecialchars(trim($_POST['special_request'])) : '';
@@ -200,6 +200,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
         $booking_error = 'Maximum 2 children are allowed per room.';
     } else if ($adults === 3 && $children > 0) {
         $booking_error = 'Children are not allowed when reserving for 3 adults in a single room.';
+    }
+
+    if ($check_out <= $check_in) {
+        $booking_error = 'Check-out date must be after Check-in date.';
     }
 
     // Calculate nights
@@ -523,9 +527,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Secure Room Reservation Checkout | Hotel Destin Gwalior</title>
+    <meta name="description" content="Complete your room reservation at Hotel Destin Gwalior. Instant confirmation, secure payment gateway, and best direct tariff guarantee.">
+    <meta name="keywords" content="Hotel Destin checkout, book hotel room Gwalior, pay hotel room Gwalior">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/checkout">
+    <meta property="og:title" content="Secure Room Reservation Checkout | Hotel Destin Gwalior">
+    <meta property="og:description" content="Complete your room reservation at Hotel Destin Gwalior. Instant confirmation, secure payment gateway, and best direct tariff guarantee.">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Secure Room Reservation Checkout | Hotel Destin Gwalior">
+    <meta name="twitter:description" content="Complete your room reservation at Hotel Destin Gwalior. Instant confirmation, secure payment gateway, and best direct tariff guarantee.">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Room Checkout - Hotel Destin Gwalior</title>
 
     <style>
         .checkout-container {
@@ -751,7 +766,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             align-items: center !important;
             gap: 6px !important;
             transition: all 0.2s ease !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
             margin: 0 !important;
             line-height: 1 !important;
         }
@@ -776,7 +791,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             border-left: 1px solid rgba(156, 96, 71, 0.25);
             padding-left: 6px;
         }
-        
+
         .available-coupon-tag:hover .coupon-tag-percent {
             border-left-color: rgba(255, 255, 255, 0.35);
         }
@@ -848,10 +863,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                     <div class="col-md-3 col-6">
                                         <div class="form-group">
                                             <label class="form-label-custom">Children</label>
-                                            <input id="childrenInput" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children_param) ?>" min="0" max="4" required>
+                                            <input id="childrenInput" class="form-control-custom" type="number" name="children" value="<?= htmlspecialchars($children_param > 2 ? 2 : $children_param) ?>" min="0" max="2" required>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-12" id="childAgesWrapper" style="display: none; margin-bottom: 15px;">
                                         <label class="form-label-custom" style="font-weight: 700; color: #9c6047;">Specify Child Ages *</label>
                                         <div id="childAgesFields" class="row g-2"></div>
@@ -921,7 +936,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                                     <div class="available-coupons-wrapper mb-15">
                                         <span class="d-block mb-5" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px; text-align: left;">Available Promo Code(s)</span>
                                         <div class="d-flex flex-wrap gap-2">
-                                            <?php foreach ($public_coupons as $pub_cp): 
+                                            <?php foreach ($public_coupons as $pub_cp):
                                                 $valid_info = 'Valid: ' . date('d M', strtotime($pub_cp['start_date'])) . ' - ' . date('d M Y', strtotime($pub_cp['expiry_date']));
                                             ?>
                                                 <button type="button" class="available-coupon-tag" onclick="selectCouponCode('<?= htmlspecialchars($pub_cp['code']) ?>')" title="<?= htmlspecialchars($pub_cp['title']) ?> (<?= $valid_info ?>)">
@@ -1200,205 +1215,236 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
     <script>
         $(document).ready(function() {
-            var roomPrice = <?= (float)$room['price'] ?>;
-            var discountPercent = 0;
+                    var roomPrice = <?= (float)$room['price'] ?>;
+                    var discountPercent = 0;
 
-            // Set Check-out date min attribute dynamically based on check-in date choice
-            $('#checkInDate').change(function() {
-                var checkInVal = $(this).val();
-                if (checkInVal) {
-                    $('#checkOutDate').attr('min', checkInVal);
-                    if ($('#hiddenCouponCode').val() || $('#couponInput').val().trim()) {
-                        $('#btnApplyCoupon').click();
-                    } else {
-                        recalculatePrices();
-                    }
-                }
-            });
+                    function updateCheckoutMinDate() {
+                        var checkInVal = $('#checkInDate').val();
+                        var updated = false;
+                        if (checkInVal) {
+                            var parts = checkInVal.split('-');
+                            var checkInDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                            checkInDate.setDate(checkInDate.getDate() + 1);
 
-            $('#checkOutDate').change(function() {
-                if ($('#hiddenCouponCode').val() || $('#couponInput').val().trim()) {
-                    $('#btnApplyCoupon').click();
-                } else {
-                    recalculatePrices();
-                }
-            });
+                            var yyyy = checkInDate.getFullYear();
+                            var mm = String(checkInDate.getMonth() + 1).padStart(2, '0');
+                            var dd = String(checkInDate.getDate()).padStart(2, '0');
+                            var minCheckoutDate = yyyy + '-' + mm + '-' + dd;
 
-            // Handle coupon apply button clicks via AJAX
-            $('#btnApplyCoupon').click(function() {
-                var code = $('#couponInput').val().trim();
-                if (!code) {
-                    $('#couponStatus').removeClass().addClass('text-danger').text('Please enter a coupon code.').show();
-                    return;
-                }
+                            $('#checkOutDate').attr('min', minCheckoutDate);
 
-                $.ajax({
-                    url: 'checkout.php',
-                    method: 'POST',
-                    data: {
-                        action: 'apply_coupon',
-                        code: code,
-                        check_in: $('#checkInDate').val(),
-                        check_out: $('#checkOutDate').val()
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            discountPercent = response.discount_percent;
-                            $('#hiddenCouponCode').val(code);
-                            $('#couponStatus').removeClass().addClass('text-success').text(response.message).show();
-                            recalculatePrices();
-                        } else {
-                            discountPercent = 0;
-                            $('#hiddenCouponCode').val('');
-                            $('#couponStatus').removeClass().addClass('text-danger').text(response.message).show();
-                            recalculatePrices();
-                        }
-                    },
-                    error: function() {
-                        $('#couponStatus').removeClass().addClass('text-danger').text('Error validating promo code.').show();
-                    }
-                });
-            });
-
-            // Recalculate when parameters change
-            $('#adultsInput, #childrenInput, #mealPlanSelect').change(function() {
-                recalculatePrices();
-            });
-
-            function recalculatePrices() {
-                var checkIn = $('#checkInDate').val();
-                var checkOut = $('#checkOutDate').val();
-                var adults = parseInt($('#adultsInput').val()) || 2;
-                var children = parseInt($('#childrenInput').val()) || 0;
-                var childAges = [];
-                $('.child-age-input').each(function() {
-                    childAges.push($(this).val());
-                });
-                var mealPlan = $('#mealPlanSelect').val() || 'EP';
-                var roomId = <?= intval($room['id']) ?>;
-
-                if (!checkIn || !checkOut) return;
-
-                $.ajax({
-                    url: 'checkout.php',
-                    method: 'POST',
-                    data: {
-                        action: 'get_pricing',
-                        check_in: checkIn,
-                        check_out: checkOut,
-                        adults: adults,
-                        children: children,
-                        child_ages: childAges,
-                        room_id: roomId
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            var nights = response.nights;
-                            var basePrice = 0;
-                            var ratePerNight = 0;
-
-                            if (mealPlan === 'CP') {
-                                basePrice = response.cp_base_price;
-                                ratePerNight = response.cp_average_rate;
-                            } else if (mealPlan === 'MAP') {
-                                basePrice = response.map_base_price;
-                                ratePerNight = response.map_average_rate;
-                            } else {
-                                basePrice = response.ep_base_price;
-                                ratePerNight = response.ep_average_rate;
+                            var checkOutVal = $('#checkOutDate').val();
+                            if (!checkOutVal || checkOutVal <= checkInVal) {
+                                $('#checkOutDate').val(minCheckoutDate);
+                                updated = true;
                             }
-
-                            $('#labelNights').text(nights);
-                            $('#ratePerNight').text(ratePerNight.toFixed(2));
-                            $('#basePrice').text(basePrice.toFixed(2));
-
-                            updateTotals(basePrice);
                         }
+                        return updated;
                     }
-                });
-            }
 
-            function updateTotals(basePrice) {
-                var discountAmount = 0;
-                if (discountPercent > 0) {
-                    discountAmount = (basePrice * discountPercent) / 100;
-                    $('#couponPercent').text(discountPercent);
-                    $('#discountAmount').text(discountAmount.toFixed(2));
-                    $('#couponDiscountRow').show();
-                } else {
-                    $('#couponDiscountRow').hide();
-                }
+                    // Set min date on page load
+                    updateCheckoutMinDate();
 
-                var subtotal = basePrice - discountAmount;
-                $('#subtotalPrice').text(subtotal.toFixed(2));
+                    // Set Check-out date min attribute dynamically based on check-in date choice
+                    $('#checkInDate').change(function() {
+                        var wasUpdated = updateCheckoutMinDate();
+                        if (wasUpdated) {
+                            $('#checkOutDate').trigger('change');
+                        } else {
+                            if ($('#hiddenCouponCode').val() || $('#couponInput').val().trim()) {
+                                $('#btnApplyCoupon').click();
+                            } else {
+                                recalculatePrices();
+                            }
+                        }
+                    });
 
-                var taxAmount = subtotal * 0.05; // 5% GST
-                var grandTotal = subtotal + taxAmount;
+                    $('#checkOutDate').change(function() {
+                        if ($('#hiddenCouponCode').val() || $('#couponInput').val().trim()) {
+                            $('#btnApplyCoupon').click();
+                        } else {
+                            recalculatePrices();
+                        }
+                    });
 
-                $('#taxAmount').text(taxAmount.toFixed(2));
-                $('#grandTotal').text(grandTotal.toFixed(2));
-            }
+                    // Handle coupon apply button clicks via AJAX
+                    $('#btnApplyCoupon').click(function() {
+                        var code = $('#couponInput').val().trim();
+                        if (!code) {
+                            $('#couponStatus').removeClass().addClass('text-danger').text('Please enter a coupon code.').show();
+                            return;
+                        }
 
-            // Payment method dynamic text toggle helper
-            function updateSubmitButton() {
-                var payOffline = document.getElementById('pay_offline');
-                var btnPayment = document.querySelector('.btn-payment');
-                var gatewayLogos = document.querySelector('.online-payment-gateways');
-                if (payOffline && payOffline.checked) {
-                    btnPayment.innerHTML = `
+                        $.ajax({
+                            url: 'checkout.php',
+                            method: 'POST',
+                            data: {
+                                action: 'apply_coupon',
+                                code: code,
+                                check_in: $('#checkInDate').val(),
+                                check_out: $('#checkOutDate').val()
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    discountPercent = response.discount_percent;
+                                    $('#hiddenCouponCode').val(code);
+                                    $('#couponStatus').removeClass().addClass('text-success').text(response.message).show();
+                                    recalculatePrices();
+                                } else {
+                                    discountPercent = 0;
+                                    $('#hiddenCouponCode').val('');
+                                    $('#couponStatus').removeClass().addClass('text-danger').text(response.message).show();
+                                    recalculatePrices();
+                                }
+                            },
+                            error: function() {
+                                $('#couponStatus').removeClass().addClass('text-danger').text('Error validating promo code.').show();
+                            }
+                        });
+                    });
+
+                    // Recalculate when parameters change
+                    $('#adultsInput, #childrenInput, #mealPlanSelect').change(function() {
+                        recalculatePrices();
+                    });
+
+                    function recalculatePrices() {
+                        var checkIn = $('#checkInDate').val();
+                        var checkOut = $('#checkOutDate').val();
+                        var adults = parseInt($('#adultsInput').val()) || 2;
+                        var children = parseInt($('#childrenInput').val()) || 0;
+                        var childAges = [];
+                        $('.child-age-input').each(function() {
+                            childAges.push($(this).val());
+                        });
+                        var mealPlan = $('#mealPlanSelect').val() || 'EP';
+                        var roomId = <?= intval($room['id']) ?>;
+
+                        if (!checkIn || !checkOut) return;
+
+                        $.ajax({
+                            url: 'checkout.php',
+                            method: 'POST',
+                            data: {
+                                action: 'get_pricing',
+                                check_in: checkIn,
+                                check_out: checkOut,
+                                adults: adults,
+                                children: children,
+                                child_ages: childAges,
+                                room_id: roomId
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    var nights = response.nights;
+                                    var basePrice = 0;
+                                    var ratePerNight = 0;
+
+                                    if (mealPlan === 'CP') {
+                                        basePrice = response.cp_base_price;
+                                        ratePerNight = response.cp_average_rate;
+                                    } else if (mealPlan === 'MAP') {
+                                        basePrice = response.map_base_price;
+                                        ratePerNight = response.map_average_rate;
+                                    } else {
+                                        basePrice = response.ep_base_price;
+                                        ratePerNight = response.ep_average_rate;
+                                    }
+
+                                    $('#labelNights').text(nights);
+                                    $('#ratePerNight').text(ratePerNight.toFixed(2));
+                                    $('#basePrice').text(basePrice.toFixed(2));
+
+                                    updateTotals(basePrice);
+                                }
+                            }
+                        });
+                    }
+
+                    function updateTotals(basePrice) {
+                        var discountAmount = 0;
+                        if (discountPercent > 0) {
+                            discountAmount = (basePrice * discountPercent) / 100;
+                            $('#couponPercent').text(discountPercent);
+                            $('#discountAmount').text(discountAmount.toFixed(2));
+                            $('#couponDiscountRow').show();
+                        } else {
+                            $('#couponDiscountRow').hide();
+                        }
+
+                        var subtotal = basePrice - discountAmount;
+                        $('#subtotalPrice').text(subtotal.toFixed(2));
+
+                        var taxAmount = subtotal * 0.05; // 5% GST
+                        var grandTotal = subtotal + taxAmount;
+
+                        $('#taxAmount').text(taxAmount.toFixed(2));
+                        $('#grandTotal').text(grandTotal.toFixed(2));
+                    }
+
+                    // Payment method dynamic text toggle helper
+                    function updateSubmitButton() {
+                        var payOffline = document.getElementById('pay_offline');
+                        var btnPayment = document.querySelector('.btn-payment');
+                        var gatewayLogos = document.querySelector('.online-payment-gateways');
+                        if (payOffline && payOffline.checked) {
+                            btnPayment.innerHTML = `
                                                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
                                                 Confirm Booking (Pay at Hotel)
                                             `;
-                    if (gatewayLogos) gatewayLogos.style.display = 'none';
-                } else {
-                    btnPayment.innerHTML = `
+                            if (gatewayLogos) gatewayLogos.style.display = 'none';
+                        } else {
+                            btnPayment.innerHTML = `
                                                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:middle; margin-right:4px;">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                                 </svg>
                                                 Proceed to Online Payment
                                             `;
-                    if (gatewayLogos) gatewayLogos.style.display = 'flex';
-                }
-            }
-
-            $(document).on('change', 'input[name="payment_method"]', updateSubmitButton);
-
-            // Dynamically populate child age fields (0-17 years old)
-            function updateChildAgesFields() {
-                var numChildren = parseInt($('#childrenInput').val()) || 0;
-                var wrapper = $('#childAgesWrapper');
-                var fieldsContainer = $('#childAgesFields');
-                
-                if (numChildren > 0) {
-                    var prefilledAges = <?= json_encode($child_ages_param) ?>;
-                    
-                    // Preserve any current user-selected child age values
-                    var currentSelectedAges = [];
-                    $('.child-age-input').each(function() {
-                        currentSelectedAges.push($(this).val());
-                    });
-                    
-                    fieldsContainer.empty();
-                    for (var i = 1; i <= numChildren; i++) {
-                        var val = currentSelectedAges[i - 1] || prefilledAges[i - 1] || '5'; // default to 5 years (free)
-                        var fieldHtml = `
-                            <div class="col-md-3 col-6">
-                                <div class="form-group mb-2">
-                                    <label class="form-label-custom" style="font-size:11px;">Child ${i} Age</label>
-                                    <select class="form-control-custom child-age-input" name="child_ages[]" style="height:36px; padding: 0 10px; font-size:12px;">
-                                        ${Array.from({length: 18}, (_, k) => k).map(age => `
-                                            <option value="${age}" ${age == val ? 'selected' : ''}>${age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''))}</option>
-                                        `).join('')}
-                                    </select>
-                                </div>
-                            </div>
-                        `;
-                        fieldsContainer.append(fieldHtml);
+                            if (gatewayLogos) gatewayLogos.style.display = 'flex';
+                        }
                     }
+
+                    $(document).on('change', 'input[name="payment_method"]', updateSubmitButton);
+
+                    // Dynamically populate child age fields (0-17 years old)
+                    function updateChildAgesFields() {
+                        var numChildren = parseInt($('#childrenInput').val()) || 0;
+                        var wrapper = $('#childAgesWrapper');
+                        var fieldsContainer = $('#childAgesFields');
+
+                        if (numChildren > 0) {
+                            var prefilledAges = <?= json_encode($child_ages_param) ?>;
+
+                            // Preserve any current user-selected child age values
+                            var currentSelectedAges = [];
+                            $('.child-age-input').each(function() {
+                                currentSelectedAges.push($(this).val());
+                            });
+
+                            fieldsContainer.empty();
+                            for (var i = 1; i <= numChildren; i++) {
+                                var val = currentSelectedAges[i - 1] || prefilledAges[i - 1] || '5'; // default to 5 years (free)
+                                var optionsHtml = '';
+                                for (var age = 0; age <= 17; age++) {
+                                    var label = age === 0 ? '0 years (Infant)' : (age + ' year' + (age > 1 ? 's' : ''));
+                                    optionsHtml += `<option value="${age}" ${age == val ? 'selected' : ''}>${label}</option>`;
+                                }
+                                var fieldHtml = `
+                                    <div class="col-md-3 col-6">
+                                        <div class="form-group mb-2">
+                                            <label class="form-label-custom" style="font-size:11px;">Child ${i} Age</label>
+                                            <select class="form-control-custom child-age-input" name="child_ages[]" style="height:38px; width:100%; padding: 0 10px; font-size:12.5px;">
+                                                ${optionsHtml}
+                                            </select>
+                                        </div>
+                                    </div>
+                                `;
+                                fieldsContainer.append(fieldHtml);
+                            }
                     wrapper.show();
                     // Bind change listener to new inputs to recalculate pricing and check occupancy warnings
                     $('.child-age-input').off('change').on('change', function() {
@@ -1416,14 +1462,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
             function checkEffectiveOccupancy() {
                 var adults = parseInt($('#adultsInput').val()) || 1;
                 var totalChildren = parseInt($('#childrenInput').val()) || 0;
-                
+
                 var errorMsg = '';
                 if (adults > 3) {
                     errorMsg = 'Maximum room capacity is 3 adults.';
+                } else if (totalChildren > 2) {
+                    errorMsg = 'Maximum 2 children are allowed per room.';
                 } else if (adults === 3 && totalChildren > 0) {
                     errorMsg = 'Children are not allowed when reserving for 3 adults in a single room.';
                 }
-                
+
                 if (errorMsg) {
                     $('#occupancyWarning').text(errorMsg).show();
                     $('.btn-payment').prop('disabled', true).addClass('opacity-50');
@@ -1442,7 +1490,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
                     $('#adultsInput').val(3);
                     $('#childrenInput').val(0).attr('max', 0);
                 } else {
-                    $('#childrenInput').attr('max', 4);
+                    if (children > 2) {
+                        $('#childrenInput').val(2);
+                    }
+                    $('#childrenInput').attr('max', 2);
                 }
                 updateChildAgesFields();
                 recalculatePrices();

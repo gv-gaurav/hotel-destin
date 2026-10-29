@@ -102,12 +102,20 @@ $category_names = [
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
     <meta name="template-color" content="#0E0E0E">
-    <meta name="description" content="Explore the premium gallery of our luxury hotel, banquet halls, and fine dining restaurants.">
-    <meta name="keywords" content="gallery, hotel room gallery, banquet images, restaurant gallery, travila">
-    <meta name="author" content="">
+    <title>Photo Gallery | Hotel Destin Gwalior - Rooms, Banquet & Dining</title>
+    <meta name="description" content="View official photo gallery of Hotel Destin Gwalior. Explore pictures of our luxury rooms, suites, Banquet Oh Saathi Re, rooftop cafe, and hotel premises.">
+    <meta name="keywords" content="Hotel Destin Gwalior photos, Gwalior hotel gallery, banquet hall photos Gwalior, room images Hotel Destin">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/gallery">
+    <meta property="og:title" content="Photo Gallery | Hotel Destin Gwalior - Rooms, Banquet & Dining">
+    <meta property="og:description" content="View official photo gallery of Hotel Destin Gwalior. Explore pictures of our luxury rooms, suites, Banquet Oh Saathi Re, rooftop cafe, and hotel premises.">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Photo Gallery | Hotel Destin Gwalior - Rooms, Banquet & Dining">
+    <meta name="twitter:description" content="View official photo gallery of Hotel Destin Gwalior. Explore pictures of our luxury rooms, suites, Banquet Oh Saathi Re, rooftop cafe, and hotel premises.">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Gallery - Premium Hotel Booking & Events</title>
 
     <style>
         /* Custom Modern Gallery Styling */

@@ -122,7 +122,6 @@ try {
         LIMIT 10
     ");
     $recent_bookings = $recent_stmt->fetchAll();
-
 } catch (Exception $e) {
     error_log("Dashboard analytics failed to calculate: " . $e->getMessage());
 }
@@ -159,15 +158,17 @@ try {
         <h1 class="panel-title mb-5" style="font-size: 28px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px;">Hotel Destin Control Console</h1>
         <p class="text-sm text-neutral-500 mb-0" style="font-size: 14px; color: #64748b; font-weight: 500;">Real-time resort parameters monitoring.</p>
     </div>
-    <div>
+
+    <!-- <div>
         <a href="dashboard.php?action=reset" onclick="return confirm('WARNING: This will permanently wipe all booking and reservation transaction logs. Proceed?');" class="btn d-flex align-items-center gap-2" style="background-color: #ef4444; color: #ffffff; border-radius: 8px; font-size: 13.5px; font-weight: 700; padding: 10px 20px; border: none; transition: background 0.2s ease;" onmouseover="this.style.backgroundColor='#dc2626';" onmouseout="this.style.backgroundColor='#ef4444';">
-            <!-- Trash Icon -->
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
             </svg>
             Reset Booking Data
         </a>
-    </div>
+    </div> -->
+
+
 </div>
 
 <!-- Analytics Filter Bar -->
@@ -300,7 +301,7 @@ try {
             <tbody>
                 <?php if (count($recent_bookings) > 0): ?>
                     <?php foreach ($recent_bookings as $b): ?>
-                        <?php 
+                        <?php
                         $check_in_fmt = date('d M', strtotime($b['check_in']));
                         $check_out_fmt = date('d M', strtotime($b['check_out']));
                         $nights_fmt = $b['total_nights'] . ' N';
@@ -335,7 +336,7 @@ try {
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                         </svg>
                                     </a>
-                                    
+
                                     <?php if (is_developer()): ?>
                                         <form action="dashboard.php" method="POST" onsubmit="return confirm('DEVELOPER ACTION: Are you sure you want to permanently delete this booking?');" style="margin: 0; display: inline;">
                                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">

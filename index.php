@@ -9,7 +9,18 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
   <link href="assets/css/stylee209.css?v=1.0.1" rel="stylesheet">
-  <title>Welcome to Hotel Destin</title>
+  <title>Hotel Destin Gwalior | Luxury Boutique Stay, Banquet & Restaurant</title>
+  <meta name="description" content="Experience premier boutique hospitality at Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Luxury AC rooms, Banquet Oh Saathi Re, rooftop cafe, and 24-hour service. Book direct for best rates.">
+  <meta name="keywords" content="Hotel Destin Gwalior, hotel in Gwalior, best hotel in Gwalior, luxury hotel Gwalior, hotel near Gwalior railway station, banquet hall Gwalior, rooftop restaurant Gwalior">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hoteldestin.in/">
+  <meta property="og:title" content="Hotel Destin Gwalior | Luxury Boutique Stay, Banquet & Restaurant">
+  <meta property="og:description" content="Experience premier boutique hospitality at Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Luxury AC rooms, Banquet Oh Saathi Re, rooftop cafe, and 24-hour service.">
+  <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hotel Destin Gwalior | Luxury Boutique Stay, Banquet & Restaurant">
+  <meta name="twitter:description" content="Experience premier boutique hospitality at Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Luxury AC rooms, Banquet Oh Saathi Re, rooftop cafe, and 24-hour service.">
+  <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
   <style>
     .list-ticks-green {
       list-style: none;
@@ -570,7 +581,14 @@
         <div class="box-swiper position-relative">
           <div class="swiper-container swiper-group-rooms-custom">
             <div class="swiper-wrapper">
-              <?php foreach ($rooms_for_home as $room): ?>
+              <?php foreach ($rooms_for_home as $room):
+                $room_link = 'room-detail.php?room=' . urlencode($room['id']);
+                if (!empty($search_checkin) && !empty($search_checkout)) {
+                  $room_link .= '&checkin=' . urlencode($search_checkin) . '&checkout=' . urlencode($search_checkout);
+                  if ($search_adults > 2) $room_link .= '&adults=' . $search_adults;
+                  if ($search_children > 0) $room_link .= '&children=' . $search_children;
+                }
+              ?>
                 <div class="swiper-slide">
                   <div class="card-room-destin">
                     <div class="image-box">
@@ -591,7 +609,7 @@
                       <?php endif; ?>
 
                       <!-- Sliding images wrapper -->
-                      <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>" class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: 100%;">
+                      <a href="<?= $room_link ?>" class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: 100%;">
                         <?php foreach ($room['images'] as $img_path): ?>
                           <img src="<?= htmlspecialchars($img_path) ?>" alt="<?= htmlspecialchars($room['name']) ?>" style="flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; transition: none;">
                         <?php endforeach; ?>
@@ -599,7 +617,7 @@
                     </div>
                     <div class="content-box">
                       <div class="title-row">
-                        <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>"><?= htmlspecialchars($room['name']) ?></a>
+                        <a href="<?= $room_link ?>"><?= htmlspecialchars($room['name']) ?></a>
                       </div>
 
                       <div class="meta-row">
@@ -648,7 +666,7 @@
                         <?php if (isset($room['available_count']) && $room['available_count'] <= 0): ?>
                           <button class="book-btn" disabled style="background-color: #cbd5e1 !important; color: #64748b !important; border: none; cursor: not-allowed; padding: 10px 20px !important;">Sold Out</button>
                         <?php else: ?>
-                          <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>" class="book-btn">Book Room</a>
+                          <a href="<?= $room_link ?>" class="book-btn">Book Room</a>
                         <?php endif; ?>
                       </div>
                     </div>
@@ -1560,7 +1578,7 @@
                   </button>
                 </h5>
                 <div class="accordion-collapse collapse show" id="collapseOne" aria-labelledby="headingOne" data-bs-parent="#accordionFAQ">
-                  <div class="accordion-body">Our standard check-in time is from 12:00 PM, and check-out time is until 11:00 AM. Early check-in or late check-out is subject to room availability and may incur nominal charges.</div>
+                  <div class="accordion-body">Our standard check-in time is from 11:00 AM, and check-out time is until 10:00 AM. Early check-in or late check-out is subject to room availability and may incur nominal charges.</div>
                 </div>
               </div>
               <div class="accordion-item wow fadeInUp">
@@ -2017,6 +2035,39 @@
               slidesPerView: 1
             }
           }
+        });
+      }
+
+      // Date synchronizer logic
+      var checkinDateInput = document.getElementById('checkin_date');
+      var checkoutDateInput = document.getElementById('checkout_date');
+
+      function updateCheckoutMinDateIndex() {
+        var checkInVal = checkinDateInput.value;
+        if (checkInVal) {
+          var parts = checkInVal.split('-');
+          var checkInDate = new Date(parts[0], parts[1] - 1, parts[2]);
+          checkInDate.setDate(checkInDate.getDate() + 1);
+
+          var yyyy = checkInDate.getFullYear();
+          var mm = String(checkInDate.getMonth() + 1).padStart(2, '0');
+          var dd = String(checkInDate.getDate()).padStart(2, '0');
+          var minCheckoutDate = yyyy + '-' + mm + '-' + dd;
+
+          checkoutDateInput.setAttribute('min', minCheckoutDate);
+
+          var checkOutVal = checkoutDateInput.value;
+          if (!checkOutVal || checkOutVal <= checkInVal) {
+            checkoutDateInput.value = minCheckoutDate;
+            $(checkoutDateInput).trigger('change');
+          }
+        }
+      }
+
+      if (checkinDateInput && checkoutDateInput) {
+        updateCheckoutMinDateIndex();
+        checkinDateInput.addEventListener('change', function() {
+          updateCheckoutMinDateIndex();
         });
       }
 

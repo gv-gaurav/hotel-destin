@@ -248,11 +248,20 @@ usort($rooms, function ($a, $b) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
     <meta name="template-color" content="#0E0E0E">
-    <meta name="description" content="Explore Gwalior\'s finest rooms and suites at Hotel Destin Gwalior. Premium amenities, 5% GST taxes, tea kettle trays, and flexible EP/CP/MAP pricing plans.">
-    <meta name="keywords" content="hotel destin rooms, standard room, executive room, premium suite Gwalior, rooms tariff, room booking Gwalior">
+    <title>Rooms & Suites Tariff | Hotel Destin Gwalior - Book Online</title>
+    <meta name="description" content="Explore Gwalior's finest luxury rooms and suites at Hotel Destin. Premium AC accommodation, free high-speed Wi-Fi, 24-hr room service, and flexible EP/CP/MAP tariff plans.">
+    <meta name="keywords" content="Hotel Destin rooms, standard room Gwalior, executive room Gwalior, premium suite Gwalior, room booking Gwalior, hotels in Gwalior">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/rooms">
+    <meta property="og:title" content="Rooms & Suites Tariff | Hotel Destin Gwalior - Book Online">
+    <meta property="og:description" content="Explore Gwalior's finest luxury rooms and suites at Hotel Destin. Premium AC accommodation, free high-speed Wi-Fi, 24-hr room service, and flexible EP/CP/MAP tariff plans.">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Rooms & Suites Tariff | Hotel Destin Gwalior - Book Online">
+    <meta name="twitter:description" content="Explore Gwalior's finest luxury rooms and suites at Hotel Destin. Premium AC accommodation, free high-speed Wi-Fi, 24-hr room service, and flexible EP/CP/MAP tariff plans.">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Rooms & Suites - Hotel Destin Gwalior</title>
 
     <style>
         /* Custom Premium Rooms Styles */
@@ -1078,7 +1087,15 @@ usort($rooms, function ($a, $b) {
 
                 <!-- Responsive Grid: stacks on mobile, 2 cols on tablets, 3 cols on desktop -->
                 <div class="row g-4">
-                    <?php foreach ($rooms as $room): ?>
+                    <?php foreach ($rooms as $room): 
+                        $room_link = 'room-detail.php?room=' . urlencode($room['id']);
+                        if (!empty($search_checkin) && !empty($search_checkout)) {
+                            $room_link .= '&checkin=' . urlencode($search_checkin) . '&checkout=' . urlencode($search_checkout);
+                            if ($search_adults > 2) $room_link .= '&adults=' . $search_adults;
+                            if ($search_children > 0) $room_link .= '&children=' . $search_children;
+                            if (!empty($search_child_ages)) $room_link .= '&child_ages=' . urlencode($search_child_ages);
+                        }
+                    ?>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card-room-destin wow fadeInUp" style="margin-bottom: 0;">
                                 <div class="image-box">
@@ -1099,7 +1116,7 @@ usort($rooms, function ($a, $b) {
                                     <?php endif; ?>
 
                                     <!-- Sliding images wrapper -->
-                                    <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>&child_ages=<?= urlencode($search_child_ages) ?>" class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: 100%;">
+                                    <a href="<?= $room_link ?>" class="card-images-wrapper" data-current-index="0" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); height: 100%; width: 100%;">
                                         <?php foreach ($room['images'] as $img_path): ?>
                                             <img src="<?= htmlspecialchars($img_path) ?>" alt="<?= htmlspecialchars($room['name']) ?>" style="flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; transition: none;">
                                         <?php endforeach; ?>
@@ -1107,7 +1124,7 @@ usort($rooms, function ($a, $b) {
                                 </div>
                                 <div class="content-box">
                                     <div class="title-row">
-                                        <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>&child_ages=<?= urlencode($search_child_ages) ?>"><?= htmlspecialchars($room['name']) ?></a>
+                                        <a href="<?= $room_link ?>"><?= htmlspecialchars($room['name']) ?></a>
                                     </div>
 
                                     <div class="meta-row">
@@ -1156,7 +1173,7 @@ usort($rooms, function ($a, $b) {
                                         <?php if (isset($room['available_count']) && $room['available_count'] <= 0): ?>
                                             <button class="book-btn" disabled style="background-color: #cbd5e1 !important; color: #64748b !important; border: none; cursor: not-allowed; padding: 10px 20px !important;">Sold Out</button>
                                         <?php else: ?>
-                                            <a href="room-detail.php?room=<?= urlencode($room['id']) ?>&checkin=<?= urlencode($search_checkin) ?>&checkout=<?= urlencode($search_checkout) ?>&adults=<?= $search_adults ?>&children=<?= $search_children ?>&child_ages=<?= urlencode($search_child_ages) ?>" class="book-btn">Book Room</a>
+                                            <a href="<?= $room_link ?>" class="book-btn">Book Room</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -1786,12 +1803,43 @@ usort($rooms, function ($a, $b) {
                 $menuNextSibling = null;
             });
 
-            // Reposition on scroll/resize while open
             $(window).on('scroll resize orientationchange', function() {
                 if ($guestsBtn.attr('aria-expanded') === 'true' && isMobileView()) {
                     $guestsBtn.trigger('shown.bs.dropdown');
                 }
             });
+
+            // Date synchronizer logic
+            var checkInInput = $('input[name="checkin"]');
+            var checkOutInput = $('input[name="checkout"]');
+
+            function updateCheckoutMinDateRooms() {
+                var checkInVal = checkInInput.val();
+                if (checkInVal) {
+                    var parts = checkInVal.split('-');
+                    var checkInDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                    checkInDate.setDate(checkInDate.getDate() + 1);
+                    
+                    var yyyy = checkInDate.getFullYear();
+                    var mm = String(checkInDate.getMonth() + 1).padStart(2, '0');
+                    var dd = String(checkInDate.getDate()).padStart(2, '0');
+                    var minCheckoutDate = yyyy + '-' + mm + '-' + dd;
+                    
+                    checkOutInput.attr('min', minCheckoutDate);
+                    
+                    var checkOutVal = checkOutInput.val();
+                    if (!checkOutVal || checkOutVal <= checkInVal) {
+                        checkOutInput.val(minCheckoutDate).trigger('change');
+                    }
+                }
+            }
+
+            if (checkInInput.length && checkOutInput.length) {
+                updateCheckoutMinDateRooms();
+                checkInInput.change(function() {
+                    updateCheckoutMinDateRooms();
+                });
+            }
 
         });
 

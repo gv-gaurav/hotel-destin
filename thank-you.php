@@ -30,6 +30,7 @@ if (!$booking) {
 
 $check_in_formatted = date('D, d M Y', strtotime($booking['check_in']));
 $check_out_formatted = date('D, d M Y', strtotime($booking['check_out']));
+$page_robots = 'noindex, nofollow';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
@@ -37,9 +38,10 @@ $check_out_formatted = date('D, d M Y', strtotime($booking['check_out']));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Reservation Confirmed | Hotel Destin Gwalior</title>
+    <meta name="description" content="Thank you for choosing Hotel Destin Gwalior. Your room reservation is confirmed. We look forward to welcoming you to Gwalior.">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Reservation Confirmed - Hotel Destin Gwalior</title>
 
     <style>
         body {
@@ -385,7 +387,7 @@ $check_out_formatted = date('D, d M Y', strtotime($booking['check_out']));
                             Check-In Guidelines
                         </h4>
                         <ul class="guideline-list">
-                            <li>Standard check-in commences at 2:00 PM; check-out is before 11:00 AM.</li>
+                            <li>Standard check-in commences at 11:00 AM; check-out is before 10:00 AM.</li>
                             <li>Please bring a valid government photo identification card for verification at the reception desk.</li>
                             <li>To customize airport shuttle pickups, call our desk 24 hours prior to flight arrival.</li>
                         </ul>

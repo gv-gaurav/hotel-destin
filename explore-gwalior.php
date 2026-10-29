@@ -5,13 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="msapplication-TileColor" content="#0E0E0E">
-    <meta name="template-color" content="#0E0E0E">
-    <meta name="description" content="Discover Gwalior's iconic tourist destinations near Hotel Destin Gwalior. Explore Gwalior Fort, Jai Vilas Palace, Sun Temple, Tansen Tomb, and Sasbahu Temple with custom local guidance.">
-    <meta name="keywords" content="Explore Gwalior, Gwalior Fort, Jai Vilas Palace, Sun Temple Gwalior, Tansen Tomb Gwalior, Sasbahu Temple Gwalior, Hotel Destin local attractions, Gwalior sightseeing">
+    <title>Top Places to Visit in Gwalior | Sightseeing Guide - Hotel Destin</title>
+    <meta name="description" content="Explore top Gwalior tourist attractions near Hotel Destin: Gwalior Fort, Jai Vilas Palace, Sun Temple, Tansen Tomb & Sasbahu Temple. Complete local travel guide.">
+    <meta name="keywords" content="places to visit in Gwalior, Gwalior sightseeing, Gwalior Fort, Jai Vilas Palace, Sun Temple Gwalior, Tansen Tomb, Sasbahu Temple, Gwalior tourism, hotel in Gwalior">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hoteldestin.in/explore-gwalior">
+    <meta property="og:title" content="Top Places to Visit in Gwalior | Sightseeing Guide - Hotel Destin">
+    <meta property="og:description" content="Explore top Gwalior tourist attractions near Hotel Destin: Gwalior Fort, Jai Vilas Palace, Sun Temple, Tansen Tomb & Sasbahu Temple. Complete local travel guide.">
+    <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/gwalior_fort.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Top Places to Visit in Gwalior | Sightseeing Guide - Hotel Destin">
+    <meta name="twitter:description" content="Explore top Gwalior tourist attractions near Hotel Destin: Gwalior Fort, Jai Vilas Palace, Sun Temple, Tansen Tomb & Sasbahu Temple. Complete local travel guide.">
+    <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/gwalior_fort.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
-    <title>Explore Gwalior Local Attractions - Hotel Destin Gwalior</title>
 
     <style>
         /* Custom Explore Page Styles */
