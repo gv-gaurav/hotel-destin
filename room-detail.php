@@ -67,7 +67,18 @@ try {
 if (empty($images)) {
     $images = [$room['image_path']];
 }
-$page_canonical = 'https://hoteldestin.in/room-detail?room=' . urlencode(!empty($room['slug']) ? $room['slug'] : $room_slug);
+$page_canonical = 'https://hoteldestin.in/rooms/' . urlencode(!empty($room['slug']) ? $room['slug'] : $room_slug);
+
+// 301 Redirect legacy /room-detail?room=slug to clean /rooms/slug when no search dates are present
+if (empty($checkin) && empty($checkout) && !empty($room['slug'])) {
+    $req_uri = $_SERVER['REQUEST_URI'] ?? '';
+    if (strpos($req_uri, 'room-detail') !== false) {
+        $base_redir = defined('SITE_URL') ? SITE_URL : '';
+        header("HTTP/1.1 301 Moved Permanently");
+        header("Location: " . $base_redir . '/rooms/' . urlencode($room['slug']));
+        exit;
+    }
+}
 
 $room_seo_title = htmlspecialchars($room['title']) . " Booking in Gwalior | Hotel Destin Tariff & Amenities";
 $room_seo_desc = !empty($room['meta_description']) 
@@ -80,6 +91,7 @@ $room_seo_img = !empty($images[0]) ? (strpos($images[0], 'http') === 0 ? $images
 <html lang="en" data-bs-theme="light">
 
 <head>
+    <base href="<?= (defined('SITE_URL') ? SITE_URL : '') ?>/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $room_seo_title ?></title>

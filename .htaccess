@@ -4,7 +4,6 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
 
     # 1. Redirect www to non-www canonical (https://hoteldestin.in)
     RewriteCond %{HTTP_HOST} ^www\.hoteldestin\.in$ [NC]
@@ -21,10 +20,14 @@
     RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index(\.php)?[?\s] [NC]
     RewriteRule ^index(\.php)?$ / [R=301,L]
 
-    # 4. Support Clean Extensionless URLs (internally maps /page to page.php)
+    # 4. Clean Room Detail URLs: /rooms/deluxe-room -> room-detail.php?room=deluxe-room
+    RewriteRule ^rooms/assets/(.*)$ assets/$1 [L]
+    RewriteRule ^rooms/([a-zA-Z0-9_-]+)/?$ room-detail.php?room=$1 [QSA,L]
+
+    # 5. Support Clean Extensionless URLs (internally maps /page to page.php)
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME}.php -f
-    RewriteRule ^([^/]+)/?$ $1.php [QSA,L]
+    RewriteCond %{REQUEST_FILENAME}\.php -f
+    RewriteRule ^(.*)$ $1.php [QSA,L]
 </IfModule>
 
 # Security: Prevent Access to Sensitive Files (.sql, .log, .env, etc.)

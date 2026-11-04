@@ -48,19 +48,19 @@
 
     <!-- Clean Room Categories / Accommodation Details -->
     <url>
-        <loc>https://hoteldestin.in/room-detail?room=deluxe-room</loc>
+        <loc>https://hoteldestin.in/rooms/deluxe-room</loc>
         <lastmod>2026-10-28</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://hoteldestin.in/room-detail?room=executive-room</loc>
+        <loc>https://hoteldestin.in/rooms/executive-room</loc>
         <lastmod>2026-10-28</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://hoteldestin.in/room-detail?room=premium-room</loc>
+        <loc>https://hoteldestin.in/rooms/premium-room</loc>
         <lastmod>2026-10-28</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>

@@ -1094,7 +1094,7 @@ usort($rooms, function ($a, $b) {
                 <!-- Responsive Grid: stacks on mobile, 2 cols on tablets, 3 cols on desktop -->
                 <div class="row g-4">
                     <?php foreach ($rooms as $room): 
-                        $room_link = 'room-detail.php?room=' . urlencode($room['id']);
+                        $room_link = 'rooms/' . urlencode($room['id']);
                         if (!empty($search_checkin) && !empty($search_checkout)) {
                             $room_link .= '&checkin=' . urlencode($search_checkin) . '&checkout=' . urlencode($search_checkout);
                             if ($search_adults > 2) $room_link .= '&adults=' . $search_adults;
