@@ -62,7 +62,7 @@ try {
         $stmt->bindValue(2, $offset, PDO::PARAM_INT);
         $stmt->execute();
         $db_posts = $stmt->fetchAll();
-        
+
         foreach ($db_posts as $b) {
             $blog_posts[] = [
                 'id' => $b['id'],
@@ -120,7 +120,7 @@ $trending_posts = [];
 try {
     $trending_stmt = $pdo->query("SELECT * FROM blogs ORDER BY id DESC LIMIT 4");
     $trending_db = $trending_stmt->fetchAll();
-    
+
     if (count($trending_db) > 0) {
         foreach ($trending_db as $t) {
             $trending_posts[] = [
@@ -141,6 +141,7 @@ try {
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -188,16 +189,16 @@ try {
             background: #ffffff;
             border-radius: 16px;
             overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.04);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             margin-bottom: 30px;
         }
 
         .blog-post-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-            border-color: rgba(14,14,14,0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            border-color: rgba(14, 14, 14, 0.08);
         }
 
         .post-img-wrapper {
@@ -230,7 +231,7 @@ try {
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             z-index: 2;
         }
 
@@ -305,18 +306,18 @@ try {
         /* Sidebar Widgets */
         .sidebar-widget-box {
             background-color: #ffffff;
-            border: 1px solid rgba(0,0,0,0.04);
+            border: 1px solid rgba(0, 0, 0, 0.04);
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
         }
 
         .sidebar-widget-title {
             font-size: 16px;
             font-weight: 600;
             color: var(--neutral-1000, #0E0E0E);
-            border-bottom: 1px solid rgba(0,0,0,0.06);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             padding-bottom: 10px;
             margin-bottom: 15px;
         }
@@ -398,7 +399,7 @@ try {
             border-radius: 30px;
             text-decoration: none;
             transition: all 0.25s ease;
-            border: 1px solid rgba(0,0,0,0.03);
+            border: 1px solid rgba(0, 0, 0, 0.03);
         }
 
         .tag-pill:hover {
@@ -467,9 +468,11 @@ try {
             .blog-banner {
                 padding: 30px 0;
             }
+
             .blog-banner-title {
                 font-size: 28px;
             }
+
             .py-tight {
                 padding-top: 30px !important;
                 padding-bottom: 30px !important;
@@ -478,6 +481,7 @@ try {
     </style>
     <?php include("include/head-scripts.php"); ?>
 </head>
+
 <body>
 
     <!-- Header Include -->
@@ -489,7 +493,9 @@ try {
         <section class="blog-banner wow fadeIn">
             <div class="container">
                 <ul class="breadcrumbs mb-10" style="padding: 0; background: transparent; display: flex;">
-                    <li><a href="./">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
+                    <li><a href="./">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+                                <path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg></span></li>
                     <li><span class="text-breadcrumb">Blog</span></li>
                 </ul>
                 <h1 class="blog-banner-title">Hotel Destin Blog</h1>
@@ -501,11 +507,11 @@ try {
         <section class="section-box background-body py-tight">
             <div class="container">
                 <div class="row g-5">
-                    
+
                     <!-- Left Column: Blog Grid -->
                     <div class="col-lg-8 col-12">
                         <div class="row g-4">
-                            <?php foreach ($blog_posts as $post): 
+                            <?php foreach ($blog_posts as $post):
                                 $detail_link = !empty($post['slug']) ? 'blog-detail.php?slug=' . urlencode($post['slug']) : 'blog-detail.php?id=' . $post['id'];
                             ?>
                                 <div class="col-md-6 col-12">
@@ -515,32 +521,43 @@ try {
                                                 <img src="<?php echo $post['image']; ?>" alt="<?php echo htmlspecialchars($post['title']); ?>" loading="lazy">
                                             </a>
                                         </div>
-                                        
+
                                         <div class="post-info-box">
                                             <div class="post-meta-details">
                                                 <span class="post-meta-item">
                                                     <!-- Calendar Icon -->
-                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                                    </svg>
                                                     <?php echo $post['date']; ?>
                                                 </span>
                                                 <span class="post-meta-item">
                                                     <!-- Clock Icon -->
-                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <circle cx="12" cy="12" r="10" />
+                                                        <polyline points="12 6 12 12 16 14" />
+                                                    </svg>
                                                     <?php echo $post['read_time']; ?>
                                                 </span>
                                             </div>
-                                            
+
                                             <h3 class="post-title">
                                                 <a href="<?php echo $detail_link; ?>"><?php echo htmlspecialchars($post['title']); ?></a>
                                             </h3>
-                                            
+
                                             <p class="post-excerpt"><?php echo htmlspecialchars($post['excerpt']); ?></p>
-                                            
+
                                             <div class="post-footer-area">
                                                 <a class="keep-reading-link" href="<?php echo $detail_link; ?>">
                                                     Keep Reading
                                                     <!-- Right Arrow Icon -->
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                                        <polyline points="12 5 19 12 12 19" />
+                                                    </svg>
                                                 </a>
                                             </div>
                                         </div>
@@ -557,11 +574,11 @@ try {
                                         <?php if ($page > 1): ?>
                                             <li class="page-item"><a class="page-link" href="blog.php?page=<?= $page - 1 ?>" style="width: auto; padding: 0 15px; border-radius: 20px !important;">Prev</a></li>
                                         <?php endif; ?>
-                                        
+
                                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                                             <li class="page-item"><a class="page-link <?= $i === $page ? 'active' : '' ?>" href="blog.php?page=<?= $i ?>"><?= $i ?></a></li>
                                         <?php endfor; ?>
-                                        
+
                                         <?php if ($page < $total_pages): ?>
                                             <li class="page-item"><a class="page-link" href="blog.php?page=<?= $page + 1 ?>" style="width: auto; padding: 0 15px; border-radius: 20px !important;">Next</a></li>
                                         <?php endif; ?>
@@ -577,7 +594,7 @@ try {
                         <!-- Trending Posts Widget -->
                         <div class="sidebar-widget-box wow fadeInUp" data-wow-delay="0.05s">
                             <h4 class="sidebar-widget-title">Trending Articles</h4>
-                            <?php foreach ($trending_posts as $trend): 
+                            <?php foreach ($trending_posts as $trend):
                                 $trend_link = !empty($trend['slug']) ? 'blog-detail.php?slug=' . urlencode($trend['slug']) : 'blog-detail.php?id=' . $trend['id'];
                             ?>
                                 <div class="trending-post-item">
@@ -633,4 +650,5 @@ try {
     <!-- Custom template script -->
     <script src="assets/js/maine209.js?v=1.0.0"></script>
 </body>
+
 </html>
