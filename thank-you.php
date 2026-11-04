@@ -387,7 +387,7 @@ $page_robots = 'noindex, nofollow';
                             Check-In Guidelines
                         </h4>
                         <ul class="guideline-list">
-                            <li>Standard check-in commences at 10:00 AM; check-out is before 11:00 AM.</li>
+                            <li>Check-in starts at 12:00 PM, and check-out is by 11:00 AM. Early check-in and late check-out are subject to availability and additional charges. Our front desk is open 24 hours.</li>
                             <li>Please bring a valid government photo identification card for verification at the reception desk.</li>
                             <li>To customize airport shuttle pickups, call our desk 24 hours prior to flight arrival.</li>
                         </ul>

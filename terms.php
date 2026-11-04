@@ -304,11 +304,11 @@ require_once __DIR__ . '/db.php';
                                     The standard hotel timings are:
                                 </p>
                                 <ul class="policy-list">
-                                    <li><strong>Check-in:</strong> 10:00 AM onwards.</li>
-                                    <li><strong>Check-out:</strong> Until 11:00 AM.</li>
+                                    <li><strong>Check-in:</strong> Starts at 12:00 PM.</li>
+                                    <li><strong>Check-out:</strong> By 11:00 AM.</li>
                                 </ul>
                                 <p class="policy-text mb-0">
-                                    Early check-in and late check-out requests are subject to room availability and may involve additional charges. Guests may be required to present valid government-issued identification at check-in.
+                                    Early check-in and late check-out are subject to availability and additional charges. Our front desk is open 24 hours. Guests are required to present valid government-issued photo identification upon check-in.
                                 </p>
                             </div>
 
@@ -349,7 +349,7 @@ require_once __DIR__ . '/db.php';
                                     <span>Cancellation and Modifications</span>
                                 </h2>
                                 <p class="policy-text">
-                                    Free cancellation is offered up to 48 hours prior to check-in (10:00 AM). Cancellations made within 48 hours of check-in will incur a charge equal to the first night's room tariff. No-shows are charged the full first night. Reservations confirmed under special promotional discount codes are non-refundable. Approved refunds are processed within 5 to 7 working days to the original payment method.
+                                    Free cancellation is offered up to 48 hours prior to check-in (12:00 PM). Cancellations made within 48 hours of check-in will incur a charge equal to the first night's room tariff. No-shows are charged the full first night. Reservations confirmed under special promotional discount codes are non-refundable. Approved refunds are processed within 5 to 7 working days to the original payment method.
                                 </p>
                                 <p class="policy-text mb-0">
                                     Please refer to our <a href="refund-policy.php" class="policy-contact-link">Refund Policy</a> for further information.

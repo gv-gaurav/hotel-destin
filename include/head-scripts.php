@@ -47,7 +47,7 @@ echo '<link rel="canonical" href="' . htmlspecialchars($page_canonical) . '">' .
   "priceRange": "₹1,500 - ₹5,000",
   "currenciesAccepted": "INR",
   "paymentAccepted": "Cash, Credit Card, Debit Card, UPI, Net Banking",
-  "checkinTime": "10:00",
+  "checkinTime": "12:00",
   "checkoutTime": "11:00",
   "hasMap": "https://maps.google.com/?cid=16081290616905586481",
   "aggregateRating": {

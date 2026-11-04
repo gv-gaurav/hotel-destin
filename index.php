@@ -1605,7 +1605,7 @@
                   </button>
                 </h5>
                 <div class="accordion-collapse collapse show" id="collapseOne" aria-labelledby="headingOne" data-bs-parent="#accordionFAQ">
-                  <div class="accordion-body">Check-in time is from 10:00 AM, and check-out time is until 11:00 AM. Early check-in or late check-out requests are subject to room availability and prior confirmation with our front desk.</div>
+                  <div class="accordion-body">Check-in starts at 12:00 PM, and check-out is by 11:00 AM. Early check-in and late check-out are subject to availability and additional charges. Our front desk is open 24 hours.</div>
                 </div>
               </div>
               <div class="accordion-item wow fadeInUp">
