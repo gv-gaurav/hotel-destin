@@ -342,7 +342,7 @@
         <section class="explore-banner wow fadeIn">
             <div class="container">
                 <ul class="breadcrumbs mb-15 justify-content-center" style="padding: 0; background: transparent; display: flex; list-style: none;">
-                    <li><a href="index.php" style="color: rgba(255,255,255,0.8); text-decoration: none;">Home</a><span class="arrow-right" style="color: rgba(255,255,255,0.5); margin: 0 8px;"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
+                    <li><a href="./" style="color: rgba(255,255,255,0.8); text-decoration: none;">Home</a><span class="arrow-right" style="color: rgba(255,255,255,0.5); margin: 0 8px;"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
                     <li><span style="color: #ffffff;">Explore Gwalior</span></li>
                 </ul>
                 <h1 class="explore-title">Explore Gwalior from DESTIN</h1>

@@ -3,6 +3,7 @@ require_once __DIR__ . '/db.php';
 
 // Parse query parameters
 $room_slug = isset($_GET['room']) ? trim($_GET['room']) : '';
+if ($room_slug === 'standard-room') { $room_slug = 'executive-room'; }
 $checkin = isset($_GET['checkin']) ? trim($_GET['checkin']) : '';
 $checkout = isset($_GET['checkout']) ? trim($_GET['checkout']) : '';
 $adults = isset($_GET['adults']) ? intval($_GET['adults']) : 2;
@@ -12,7 +13,7 @@ $child_ages = !empty($child_ages_param) ? explode(',', $child_ages_param) : [];
 
 $room = null;
 try {
-    $stmt = $pdo->prepare("SELECT * FROM rooms WHERE slug = ? OR id = ? AND status = 'active'");
+    $stmt = $pdo->prepare("SELECT * FROM rooms WHERE (slug = ? OR id = ?) AND status = 'active'");
     $stmt->execute([$room_slug, $room_slug]);
     $room = $stmt->fetch();
 } catch (Exception $e) {
@@ -33,9 +34,9 @@ if (!$room) {
     // If no room is found, use a default fallback to prevent 404
     $room = [
         'id' => 1,
-        'slug' => 'standard-room',
-        'title' => 'Standard Room - Hotel Destin',
-        'type' => 'Standard',
+        'slug' => 'executive-room',
+        'title' => 'Executive Room - Hotel Destin',
+        'type' => 'Executive',
         'price' => 2000.00,
         'struck_price' => 4000.00,
         'discount' => '50% off',
@@ -80,10 +81,9 @@ $room_seo_img = !empty($images[0]) ? (strpos($images[0], 'http') === 0 ? $images
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $room_seo_title ?></title>
     <meta name="description" content="<?= $room_seo_desc ?>">
-    <meta name="keywords" content="<?= $room_seo_keywords ?>">
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?= htmlspecialchars($page_canonical) ?>">
     <meta property="og:title" content="<?= $room_seo_title ?>">
@@ -558,13 +558,13 @@ $room_seo_img = !empty($images[0]) ? (strpos($images[0], 'http') === 0 ? $images
                             <?= htmlspecialchars($room['title']) ?>
                         </h1>
                         <p class="neutral-500 mb-0" style="font-size: 14px; font-weight: 600; color: #64748b;">
-                            📍 Hotel destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior
+                            📍 Hotel Destin, Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011
                         </p>
                     </div>
                     <div class="col-lg-4 col-12 text-lg-end mt-20 mt-lg-0">
                         <div class="rating-info-badge d-inline-flex align-items-center gap-2" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 30px;">
                             <span style="color:#d97706; font-size:15px;">★</span>
-                            <span style="font-weight: 700; font-size:13px; color: var(--charcoal);">G 4.8 / 5 Rating</span>
+                            <?php $disp_rating = !empty($room['rating']) ? str_replace(['G', '★', ' '], '', $room['rating']) : '4.4'; ?><span style="font-weight: 700; font-size:13px; color: var(--charcoal);">Google <?= htmlspecialchars($disp_rating) ?> / 5 Rating</span>
                         </div>
                     </div>
                 </div>
@@ -745,6 +745,10 @@ $room_seo_img = !empty($images[0]) ? (strpos($images[0], 'http') === 0 ? $images
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
                                     </svg>
                                 </button>
+                                <div class="mt-12 text-center" style="font-size: 12px; color: #64748b; line-height: 1.5;">
+                                    <span class="d-inline-flex align-items-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2.5" class="me-1"><polyline points="20 6 9 17 4 12"></polyline></svg> Free cancellation up to 48 hours</span><br>
+                                    <span class="d-inline-flex align-items-center mt-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2.5" class="me-1"><polyline points="20 6 9 17 4 12"></polyline></svg> Instant confirmation on WhatsApp &amp; Email</span>
+                                </div>
                             </form>
                         </div>
                     </div>

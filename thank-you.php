@@ -18,7 +18,7 @@ if (!empty($booking_id)) {
 if (!$booking) {
     $booking = [
         'booking_id' => !empty($booking_id) ? $booking_id : 'GV-' . date('Ymd') . '-EA9171',
-        'room_title' => 'Standard Room - Hotel Destin',
+        'room_title' => 'Executive Room - Hotel Destin',
         'check_in' => date('Y-m-d'),
         'check_out' => date('Y-m-d', strtotime('+1 day')),
         'adults' => 2,
@@ -387,7 +387,7 @@ $page_robots = 'noindex, nofollow';
                             Check-In Guidelines
                         </h4>
                         <ul class="guideline-list">
-                            <li>Standard check-in commences at 11:00 AM; check-out is before 10:00 AM.</li>
+                            <li>Standard check-in commences at 10:00 AM; check-out is before 11:00 AM.</li>
                             <li>Please bring a valid government photo identification card for verification at the reception desk.</li>
                             <li>To customize airport shuttle pickups, call our desk 24 hours prior to flight arrival.</li>
                         </ul>
@@ -395,7 +395,7 @@ $page_robots = 'noindex, nofollow';
 
                     <!-- Actions Buttons -->
                     <div class="buttons-row">
-                        <a href="index.php" class="btn-gold-grad">Return Home</a>
+                        <a href="./" class="btn-gold-grad">Return Home</a>
 
                         <?php if ($booking['payment_method'] === 'Pay at Hotel'): ?>
                             <a href="javascript:void(0);" onclick="window.print();" class="btn-outlined-custom">

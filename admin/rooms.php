@@ -377,7 +377,7 @@ try {
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="form-label-custom">Card Rating Text</label>
-                        <input id="roomRating" class="form-control-custom" type="text" name="rating" placeholder="e.g. G 4.8 ★">
+                        <input id="roomRating" class="form-control-custom" type="text" name="rating" placeholder="e.g. 4.4">
                     </div>
                 </div>
 
@@ -575,7 +575,7 @@ try {
         // Clear dynamic fields
         document.getElementById('roomFacilities').value = '';
         document.getElementById('roomStatusBadge').value = 'POPULAR';
-        document.getElementById('roomRating').value = 'G 4.8 ★';
+        document.getElementById('roomRating').value = '4.4';
         document.getElementById('roomPriceSingleEP').value = '';
         document.getElementById('roomPriceSingleCP').value = '';
         document.getElementById('roomPriceSingleMAP').value = '';
@@ -620,7 +620,7 @@ try {
         // Set dynamic fields
         document.getElementById('roomFacilities').value = (room.facilities || []).join(', ');
         document.getElementById('roomStatusBadge').value = room.status_badge || 'POPULAR';
-        document.getElementById('roomRating').value = room.rating || 'G 4.8 ★';
+        document.getElementById('roomRating').value = room.rating || '4.4';
         document.getElementById('roomPriceSingleEP').value = room.price_single_ep || '';
         document.getElementById('roomPriceSingleCP').value = room.price_single_cp || '';
         document.getElementById('roomPriceSingleMAP').value = room.price_single_map || '';

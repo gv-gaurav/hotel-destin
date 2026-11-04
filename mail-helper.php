@@ -456,7 +456,7 @@ function execute_booking_notification($booking_id, $type)
 
             <p><strong>Special Request:</strong> " . (!empty($booking['special_request']) ? htmlspecialchars($booking['special_request']) : 'None') . "</p>
             <p style='border-top: 1px solid #e9ecf2; padding-top: 15px; text-align: center; color: #777; font-size: 12px;'>
-                Hotel Destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior. For queries call +91 9203509944.
+                Hotel Destin, Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011. For queries call +91 9203509944.
             </p>
         </div>";
 

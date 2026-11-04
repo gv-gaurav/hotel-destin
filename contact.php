@@ -54,20 +54,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
     <title>Contact Hotel Destin Gwalior | Phone Number, Address & Location Map</title>
-    <meta name="description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
-    <meta name="keywords" content="contact Hotel Destin Gwalior, Hotel Destin phone number, hotel in Govindpuri Gwalior address, hotel destin booking enquiry, Gwalior hotel contact">
+    <meta name="description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://hoteldestin.in/contact">
     <meta property="og:title" content="Contact Hotel Destin Gwalior | Phone Number, Address & Location Map">
-    <meta property="og:description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
+    <meta property="og:description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
     <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Contact Hotel Destin Gwalior | Phone Number, Address & Location Map">
-    <meta name="twitter:description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
+    <meta name="twitter:description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
     <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
@@ -352,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <section class="contact-banner wow fadeIn">
             <div class="container">
                 <ul class="breadcrumbs mb-10" style="padding: 0; background: transparent; display: flex;">
-                    <li><a href="index.php">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
+                    <li><a href="./">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
                     <li><span class="text-breadcrumb">Contact Us</span></li>
                 </ul>
                 <h1 class="contact-title">Get in Touch</h1>
@@ -375,7 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 <h3 class="contact-card-title">Our Location</h3>
                                 <p class="contact-card-text">
-                                    <?= htmlspecialchars(get_setting('hotel_address') ?: 'Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior') ?>
+                                    <?= htmlspecialchars(get_setting('hotel_address') ?: 'Hotel Destin, Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011') ?>
                                 </p>
                             </div>
                             <a class="contact-card-link" href="#map">View On Google Maps</a>

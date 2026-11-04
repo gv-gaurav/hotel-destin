@@ -98,7 +98,9 @@ if (count($trending_posts) === 0) {
 
 // Calculate canonical link tag dynamically
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
-$canonical_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'], '?') . (!empty($post['slug']) ? '?slug=' . urlencode($post['slug']) : '?id=' . $post['id']);
+$clean_blog_path = preg_replace('/\.php$/i', '', strtok($_SERVER['REQUEST_URI'] ?? '/blog-detail', '?'));
+$page_canonical = 'https://hoteldestin.in' . $clean_blog_path . (!empty($post['slug']) ? '?slug=' . urlencode($post['slug']) : '?id=' . $post['id']);
+$canonical_url = $page_canonical;
 
 $b_title = !empty($post['meta_title']) ? $post['meta_title'] : $post['title'];
 if (stripos($b_title, 'Hotel Destin') === false) {
@@ -322,7 +324,7 @@ $b_img = !empty($post['image_path']) ? (strpos($post['image_path'], 'http') === 
             <div class="container">
                 <!-- Breadcrumbs -->
                 <ul class="breadcrumbs mb-20" style="padding: 0; background: transparent; display: flex;">
-                    <li><a href="index.php">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
+                    <li><a href="./">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
                     <li><a href="blog.php">Blog</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
                     <li><span class="text-breadcrumb">Article Details</span></li>
                 </ul>

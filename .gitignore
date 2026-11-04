@@ -1,4 +1,6 @@
 config.php
 scratch/
 uploads/*
-new-latest-*.zip
+*.zip
+*.log
+*.env

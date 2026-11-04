@@ -352,7 +352,7 @@ $category_names = [
         <section class="box-section box-breadcrumb background-100">
             <div class="container">
                 <ul class="breadcrumbs">
-                    <li> <a href="index.php">Home</a><span class="arrow-right">
+                    <li> <a href="./">Home</a><span class="arrow-right">
                             <svg width="7" height="12" viewbox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M1 11L6 6L1 1" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg></span></li>

@@ -24,7 +24,7 @@ if (!$booking) {
     echo "<div style='font-family: Arial, sans-serif; text-align: center; padding: 50px;'>";
     echo "<h2 style='color:#dc2626;'>Error: Reservation invoice record not found.</h2>";
     echo "<p>Please verify your reference number or contact support.</p>";
-    echo "<p><a href='index.php' style='color:#9c6047; text-decoration:none; font-weight:bold;'>Return to Home</a></p>";
+    echo "<p><a href='./' style='color:#9c6047; text-decoration:none; font-weight:bold;'>Return to Home</a></p>";
     echo "</div>";
     exit;
 }
@@ -33,7 +33,7 @@ if (!$booking) {
 $hotel_name = get_setting('hotel_name') ?: 'Hotel Destin';
 $hotel_phone = get_setting('hotel_phone') ?: '+91 70000 00000';
 $hotel_email = get_setting('hotel_email') ?: 'info@hoteldestin.in';
-$hotel_address = get_setting('hotel_address') ?: 'Hotel destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior';
+$hotel_address = get_setting('hotel_address') ?: 'Hotel Destin, Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -172,7 +172,7 @@ $hotel_address = get_setting('hotel_address') ?: 'Hotel destin Gwalior Sachin Te
 <body>
 
     <div class="no-print" style="max-width: 800px; margin: 0 auto 8px auto; display: flex; justify-content: space-between; align-items: center; padding: 0 5px;">
-        <a href="index.php" style="color: #5d3f23; text-decoration: none; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 5px;">
+        <a href="./" style="color: #5d3f23; text-decoration: none; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 5px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="19" y1="12" x2="5" y2="12" />
                 <polyline points="12 19 5 12 12 5" />
@@ -510,7 +510,7 @@ $hotel_address = get_setting('hotel_address') ?: 'Hotel destin Gwalior Sachin Te
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                     <circle cx="12" cy="10" r="3" />
                 </svg>
-                <span>Hotel Destin, Sachin Tendulkar road, Near Ram Vatika marriage garden, Govindpuri, Gwalior</span>
+                <span>Hotel Destin, Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011</span>
             </div>
             <span style="color: #e0b070;">|</span>
             <div style="display: flex; align-items: center; gap: 3px;">
@@ -519,7 +519,7 @@ $hotel_address = get_setting('hotel_address') ?: 'Hotel destin Gwalior Sachin Te
                     <line x1="2" y1="12" x2="22" y2="12" />
                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                 </svg>
-                <a href="https://www.hoteldestin.in" target="_blank" style="color: #faf7f2; text-decoration: none; font-weight: 500;">www.hoteldestin.in</a>
+                <a href="https://hoteldestin.in" target="_blank" style="color: #faf7f2; text-decoration: none; font-weight: 500;">www.hoteldestin.in</a>
             </div>
         </div>
     </div>

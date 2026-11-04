@@ -489,7 +489,7 @@ try {
         <section class="blog-banner wow fadeIn">
             <div class="container">
                 <ul class="breadcrumbs mb-10" style="padding: 0; background: transparent; display: flex;">
-                    <li><a href="index.php">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
+                    <li><a href="./">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
                     <li><span class="text-breadcrumb">Blog</span></li>
                 </ul>
                 <h1 class="blog-banner-title">Hotel Destin Blog</h1>

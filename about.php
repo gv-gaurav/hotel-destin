@@ -4,20 +4,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
     <title>About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road</title>
-    <meta name="description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Govindpuri. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
-    <meta name="keywords" content="about Hotel Destin Gwalior, boutique hotel in Gwalior, luxury stay Govindpuri Gwalior, hotels near Sachin Tendulkar road, Hotel Destin story">
+    <meta name="description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Kailash Nagar, Ramanuj Nagar. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://hoteldestin.in/about">
     <meta property="og:title" content="About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road">
-    <meta property="og:description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Govindpuri. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
+    <meta property="og:description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Kailash Nagar, Ramanuj Nagar. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
     <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road">
-    <meta name="twitter:description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Govindpuri. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
+    <meta name="twitter:description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Kailash Nagar, Ramanuj Nagar. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
     <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
     <link href="assets/css/stylee209.css?v=1.0.0" rel="stylesheet">
@@ -437,7 +436,7 @@
         <section class="about-banner wow fadeIn">
             <div class="container">
                 <ul class="breadcrumbs mb-15 justify-content-center" style="padding: 0; background: transparent; display: flex;">
-                    <li><a href="index.php" style="color: rgba(255,255,255,0.8);">Home</a><span class="arrow-right" style="color: rgba(255,255,255,0.5);"><svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+                    <li><a href="./" style="color: rgba(255,255,255,0.8);">Home</a><span class="arrow-right" style="color: rgba(255,255,255,0.5);"><svg width="7" height="12" viewBox="0 0 7 12" fill="none">
                                 <path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg></span></li>
                     <li><span style="color: #ffffff;">About Us</span></li>
@@ -448,7 +447,7 @@
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                         <circle cx="12" cy="10" r="3"></circle>
                     </svg>
-                    Hotel destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior
+                    Hotel Destin, Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011
                     <span style="text-decoration: underline; font-weight: 600; margin-left: 5px;">View on map</span>
                 </a>
             </div>

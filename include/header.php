@@ -57,11 +57,11 @@
       <div class="container-fluid header-color">
         <div class="main-header">
           <div class="header-left">
-            <div class="header-logo"><a class="d-flex" href="index.php"><img class="light-mode" alt="Hotel Destin" src="assets/imgs/template/logo-destin.png" style="max-height: 80px; width: auto;"><img class="dark-mode" alt="Hotel Destin" src="assets/imgs/template/logo-destin.png" style="max-height: 80px; width: auto;"></a></div>
+            <div class="header-logo"><a class="d-flex" href="./"><img class="light-mode" alt="Hotel Destin" src="assets/imgs/template/logo-destin.png" style="max-height: 80px; width: auto;"><img class="dark-mode" alt="Hotel Destin" src="assets/imgs/template/logo-destin.png" style="max-height: 80px; width: auto;"></a></div>
             <div class="header-nav">
               <nav class="nav-main-menu">
                 <ul class="main-menu">
-                  <li><a class="active" href="index.php">Home</a></li>
+                  <li><a class="<?= ($current_file === 'index.php') ? 'active' : '' ?>" href="./">Home</a></li>
                   <li><a href="about.php">About Us</a></li>
                   <li><a href="rooms.php">Rooms</a></li>
                   <li><a href="banquet.php">Banquet & Events</a></li>
@@ -106,7 +106,7 @@
     <div class="mobile-header-active mobile-header-wrapper-style perfect-scrollbar">
       <div class="mobile-header-wrapper-inner">
         <div class="mobile-header-logo">
-          <a class="d-flex" href="index.php">
+          <a class="d-flex" href="./">
             <img class="light-mode" alt="Hotel Destin" src="assets/imgs/template/logo-destin.png" style="max-height: 48px; width: auto;">
             <img class="dark-mode" alt="Hotel Destin" src="assets/imgs/template/logo-destin.png" style="max-height: 48px; width: auto;">
           </a>
@@ -121,7 +121,7 @@
                   <?php
                   $current_page = basename($_SERVER['PHP_SELF']);
                   ?>
-                  <li><a class="<?= ($current_page === 'index.php') ? 'active' : '' ?>" href="index.php">Home</a></li>
+                  <li><a class="<?= ($current_page === 'index.php') ? 'active' : '' ?>" href="./">Home</a></li>
                   <li><a class="<?= ($current_page === 'about.php') ? 'active' : '' ?>" href="about.php">About Us</a></li>
                   <li><a class="<?= ($current_page === 'rooms.php' || $current_page === 'room-detail.php') ? 'active' : '' ?>" href="rooms.php">Rooms</a></li>
                   <li><a class="<?= ($current_page === 'banquet.php') ? 'active' : '' ?>" href="banquet.php">Banquet & Events</a></li>

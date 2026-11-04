@@ -1,25 +1,25 @@
-<?php require_once __DIR__ . '/config.php'; ?>
+<?php require_once __DIR__ . '/config.php'; require_once __DIR__ . '/db.php'; ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+ <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
   <link href="assets/css/stylee209.css?v=1.0.1" rel="stylesheet">
-  <title>Hotel Destin Gwalior | Luxury Boutique Stay, Banquet & Restaurant</title>
-  <meta name="description" content="Experience premier boutique hospitality at Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Luxury AC rooms, Banquet Oh Saathi Re, rooftop cafe, and 24-hour service. Book direct for best rates.">
-  <meta name="keywords" content="Hotel Destin Gwalior, hotel in Gwalior, best hotel in Gwalior, luxury hotel Gwalior, hotel near Gwalior railway station, banquet hall Gwalior, rooftop restaurant Gwalior">
+  <title>Hotel Destin Gwalior | Luxury Hotel, Banquet & Dining</title>
+  <meta name="description" content="Stay at Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Luxury AC rooms, banquet hall, Cafe By Soul rooftop cafe, and 24/7 service. Book direct for best rates.">
+
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://hoteldestin.in/">
-  <meta property="og:title" content="Hotel Destin Gwalior | Luxury Boutique Stay, Banquet & Restaurant">
-  <meta property="og:description" content="Experience premier boutique hospitality at Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Luxury AC rooms, Banquet Oh Saathi Re, rooftop cafe, and 24-hour service.">
+  <meta property="og:title" content="Hotel Destin Gwalior | Luxury Hotel, Banquet & Dining">
+  <meta property="og:description" content="Stay at Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Luxury AC rooms, banquet hall, Cafe By Soul rooftop cafe, and 24/7 service. Book direct for best rates.">
   <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Hotel Destin Gwalior | Luxury Boutique Stay, Banquet & Restaurant">
-  <meta name="twitter:description" content="Experience premier boutique hospitality at Hotel Destin Gwalior on Sachin Tendulkar Road, Govindpuri. Luxury AC rooms, Banquet Oh Saathi Re, rooftop cafe, and 24-hour service.">
+  <meta name="twitter:title" content="Hotel Destin Gwalior | Luxury Hotel, Banquet & Dining">
+  <meta name="twitter:description" content="Stay at Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Luxury AC rooms, banquet hall, Cafe By Soul rooftop cafe, and 24/7 service. Book direct for best rates.">
   <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
   <style>
     .list-ticks-green {
@@ -408,6 +408,33 @@
                 </div>
               </div>
             </form>
+            <div class="text-center mt-3 d-flex flex-wrap align-items-center justify-content-center">
+              <div class="d-inline-flex flex-wrap align-items-center justify-content-center gap-2 gap-md-3 px-3 py-2" style="background: rgba(10, 15, 26, 0.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); font-size: 13px; font-weight: 600; color: #ffffff;">
+                <span class="d-inline-flex align-items-center" style="color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="me-1 flex-shrink-0">
+                    <circle cx="12" cy="12" r="11" fill="#22c55e"/>
+                    <path d="M7 12.5L10 15.5L17 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Free cancellation up to 48 hours
+                </span>
+                <span class="d-none d-sm-inline" style="color: rgba(255, 255, 255, 0.4);">|</span>
+                <span class="d-inline-flex align-items-center" style="color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="me-1 flex-shrink-0">
+                    <circle cx="12" cy="12" r="11" fill="#22c55e"/>
+                    <path d="M7 12.5L10 15.5L17 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Instant confirmation on WhatsApp &amp; Email
+                </span>
+                <span class="d-none d-sm-inline" style="color: rgba(255, 255, 255, 0.4);">|</span>
+                <span class="d-inline-flex align-items-center" style="color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="me-1 flex-shrink-0">
+                    <circle cx="12" cy="12" r="11" fill="#22c55e"/>
+                    <path d="M7 12.5L10 15.5L17 8.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Best direct booking rates
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -483,7 +510,7 @@
 
         $type_badge = strtoupper($r['type']);
         $status_badge = $r['status_badge'] ?: 'POPULAR';
-        $rating = $r['rating'] ?: 'G 4.8 ★';
+        $rating = $r['rating'] ?: '4.4';
 
         $tags = [];
         if (count($facilities) > 0) {
@@ -548,7 +575,7 @@
 
       // Standardize sorting order: Standard, Executive, Premium
       usort($rooms_for_home, function ($a, $b) {
-        $order = ['standard' => 1, 'executive' => 2, 'premium' => 3];
+        $order = ['executive' => 1, 'deluxe' => 2, 'premium' => 3];
         $typeA = strtolower($a['type_badge'] ?? '');
         $typeB = strtolower($b['type_badge'] ?? '');
         $valA = isset($order[$typeA]) ? $order[$typeA] : 99;
@@ -761,7 +788,7 @@
               </div>
               <div class="card-text-side">
                 <h6 class="text-md-bold neutral-1000 mb-1" style="font-size: 15px;">Restaurant & Dining</h6>
-                <p class="text-xs neutral-500 mb-0" style="font-size: 12px; line-height: 1.4;">Delicious in-room dining & restaurant choices nearby.</p>
+                <p class="text-xs neutral-500 mb-0" style="font-size: 12px; line-height: 1.4;">In-house dining and Cafe By Soul rooftop cafe serving freshly prepared delicacies.</p>
               </div>
             </div>
           </div>
@@ -793,7 +820,7 @@
           <div class="col-lg-3 col-md-6 col-sm-6 mb-20 wow fadeInUp">
             <div class="card-amenity-compact d-flex align-items-center p-3 background-card rounded-4 border hover-up">
               <div class="card-icon-circle p-2 rounded-circle me-3 d-flex align-items-center justify-content-center background-4" style="width: 48px; height: 48px; min-width: 48px;">
-                <img src="assets/imgs/page/room/safety-box.svg" alt="Parking" style="width: 24px; height: 24px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a17a42" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>
               </div>
               <div class="card-text-side">
                 <h6 class="text-md-bold neutral-1000 mb-1" style="font-size: 15px;">Secure Parking</h6>
@@ -817,7 +844,7 @@
           <div class="col-lg-3 col-md-6 col-sm-6 mb-20 wow fadeInUp">
             <div class="card-amenity-compact d-flex align-items-center p-3 background-card rounded-4 border hover-up">
               <div class="card-icon-circle p-2 rounded-circle me-3 d-flex align-items-center justify-content-center background-6" style="width: 48px; height: 48px; min-width: 48px;">
-                <img src="assets/imgs/page/room/safety-box.svg" alt="Security" style="width: 24px; height: 24px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a17a42" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
               <div class="card-text-side">
                 <h6 class="text-md-bold neutral-1000 mb-1" style="font-size: 15px;">CCTV & Guards</h6>
@@ -935,9 +962,9 @@
     }
 
     if ($coupon_banner_status === 'active' && count($active_coupons) > 0):
-      $coupon_banner_title = get_setting('coupon_banner_title', 'Flat ₹500 Cashback on bookings above ₹5,000!');
-      $coupon_banner_subtitle = get_setting('coupon_banner_subtitle', 'Celebrate your stay at Hotel Destin with exclusive savings. Use the coupon code below at checkout.');
-      $coupon_banner_terms = get_setting('coupon_banner_terms', '*Terms & conditions apply. Valid for standard, executive, and premium room reservations.');
+      $coupon_banner_title = get_setting('coupon_banner_title', 'Exclusive Direct Booking Privileges');
+      $coupon_banner_subtitle = get_setting('coupon_banner_subtitle', 'Book directly on our official website for the guaranteed best rates, flexible cancellation, and dedicated guest support.');
+      $coupon_banner_terms = get_setting('coupon_banner_terms', '*Terms & conditions apply. Valid for Executive, Deluxe, and Premium room reservations.');
     ?>
       <style>
         .coupon-card-dynamic {
@@ -1430,7 +1457,7 @@
                                   <path d="M4.06 10.86A5.4 5.4 0 0 1 3.75 9c0-.65.11-1.29.31-1.86L1.13 4.9C.41 6.3 0 7.89 0 9.5c0 1.61.41 3.2 1.13 4.6l2.93-2.24z" fill="#FBBC05" />
                                   <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.8 11.43 0 9 0 5.58 0 2.61 2 1.13 4.9l2.93 2.24C4.75 5.13 6.7 3.58 9 3.58z" fill="#EA4335" />
                                 </svg>
-                                <span style="font-size: 10px; font-weight: 700; color: #5f6368; line-height: 1;">Google Review</span>
+                                <span style="font-size: 10px; font-weight: 700; color: #5f6368; line-height: 1;">4.4 ★ on Google</span>
                               </div>
                             </div>
                             <div class="testimonial-text-wrapper mb-20">
@@ -1471,11 +1498,11 @@
                                 <path d="M4.06 10.86A5.4 5.4 0 0 1 3.75 9c0-.65.11-1.29.31-1.86L1.13 4.9C.41 6.3 0 7.89 0 9.5c0 1.61.41 3.2 1.13 4.6l2.93-2.24z" fill="#FBBC05" />
                                 <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.8 11.43 0 9 0 5.58 0 2.61 2 1.13 4.9l2.93 2.24C4.75 5.13 6.7 3.58 9 3.58z" fill="#EA4335" />
                               </svg>
-                              <span style="font-size: 10px; font-weight: 700; color: #5f6368; line-height: 1;">Google Review</span>
+                              <span style="font-size: 10px; font-weight: 700; color: #5f6368; line-height: 1;">4.4 ★ on Google</span>
                             </div>
                           </div>
                           <div class="testimonial-text-wrapper mb-20">
-                            <p class="neutral-500 testimonial-text mb-0">"We stayed at Hotel Destin for a family trip to Gwalior. The rooms were clean, the Wi-Fi was fast, and the staff was extremely polite. We got flat ₹500 cashback too! Gwalior Fort is very close by."</p>
+                            <p class="neutral-500 testimonial-text mb-0">"We stayed at Hotel Destin for a family trip to Gwalior. The rooms were clean, comfortable, and the staff was extremely polite and helpful. The location is very convenient with easy access to Gwalior Fort and the railway station."</p>
                             <a class="read-more-toggle d-none" onclick="toggleTestimonialText(this); return false;">Read more</a>
                           </div>
                         </div>
@@ -1578,7 +1605,7 @@
                   </button>
                 </h5>
                 <div class="accordion-collapse collapse show" id="collapseOne" aria-labelledby="headingOne" data-bs-parent="#accordionFAQ">
-                  <div class="accordion-body">Our standard check-in time is from 11:00 AM, and check-out time is until 10:00 AM. Early check-in or late check-out is subject to room availability and may incur nominal charges.</div>
+                  <div class="accordion-body">Check-in time is from 10:00 AM, and check-out time is until 11:00 AM. Early check-in or late check-out requests are subject to room availability and prior confirmation with our front desk.</div>
                 </div>
               </div>
               <div class="accordion-item wow fadeInUp">
@@ -1589,40 +1616,71 @@
                   </button>
                 </h5>
                 <div class="accordion-collapse collapse" id="collapseTwo" aria-labelledby="headingTwo" data-bs-parent="#accordionFAQ">
-                  <div class="accordion-body">Hotel Destin is located at Sachin Tendulkar Road, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011. We are situated in a prime area with easy access to railway stations, shopping areas, and major historical monuments.</div>
+                  <div class="accordion-body">Hotel Destin is located at Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011. We are situated in a prime area with convenient access to Gwalior Railway Station, Rajmata Vijaya Raje Scindia Airport, and city landmarks.</div>
                 </div>
               </div>
               <div class="accordion-item wow fadeInUp">
                 <h5 class="accordion-header" id="headingThree">
                   <button class="accordion-button text-heading-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                     <h3>03</h3>
-                    <p>What is the child booking policy at your hotel?</p>
+                    <p>What is the cancellation and refund policy?</p>
                   </button>
                 </h5>
                 <div class="accordion-collapse collapse" id="collapseThree" aria-labelledby="headingThree" data-bs-parent="#accordionFAQ">
-                  <div class="accordion-body">Complimentary stay is provided for children under 5 years of age sharing the room with parents without an extra bed. For older children or extra beds, standard adult/child charges will apply.</div>
+                  <div class="accordion-body">
+                    We maintain clear and transparent booking terms:
+                    <ul class="mt-2 ps-3" style="line-height: 1.8;">
+                      <li><strong>Free cancellation</strong> up to 48 hours before check-in.</li>
+                      <li><strong>Within 48 hours:</strong> One night's room charge applies.</li>
+                      <li><strong>No-shows:</strong> Full first night charged.</li>
+                      <li><strong>Promotional bookings:</strong> Special promotional offers or discounted codes are non-refundable and clearly indicated at booking.</li>
+                      <li><strong>Refunds:</strong> Approved refunds are credited within 5–7 working days to the original payment source.</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
               <div class="accordion-item wow fadeInUp">
                 <h5 class="accordion-header" id="headingFour">
                   <button class="accordion-button text-heading-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                     <h3>04</h3>
-                    <p>Is high-speed Wi-Fi and parking free for guests?</p>
+                    <p>Do I need to pay in advance to confirm my booking?</p>
                   </button>
                 </h5>
                 <div class="accordion-collapse collapse" id="collapseFour" aria-labelledby="headingFour" data-bs-parent="#accordionFAQ">
-                  <div class="accordion-body">Yes! High-speed Wi-Fi internet access and private parking are completely free for all registered hotel guests.</div>
+                  <div class="accordion-body">To confirm your room reservation, an advance payment is required. You will receive an instant written confirmation on WhatsApp and email stating your room category, dates, inclusions, and advance received. The balance is payable at check-in.</div>
                 </div>
               </div>
               <div class="accordion-item wow fadeInUp">
                 <h5 class="accordion-header" id="headingFive">
                   <button class="accordion-button text-heading-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                     <h3>05</h3>
-                    <p>What is the cancellation policy for room bookings?</p>
+                    <p>What is the child booking policy?</p>
                   </button>
                 </h5>
                 <div class="accordion-collapse collapse" id="collapseFive" aria-labelledby="headingFive" data-bs-parent="#accordionFAQ">
-                  <div class="accordion-body">Cancellation policies vary depending on the booking channel and the selected rate plan. Please review the booking terms during checkout. Bookings made with special promotional codes or discounts are generally non-refundable.</div>
+                  <div class="accordion-body">Children under 5 years of age stay free of charge when sharing existing bedding with parents. An extra bed or mattress can be arranged upon request per standard tariff. Children aged 5 and above are accommodated as per the standard room tariff.</div>
+                </div>
+              </div>
+              <div class="accordion-item wow fadeInUp">
+                <h5 class="accordion-header" id="headingSix">
+                  <button class="accordion-button text-heading-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    <h3>06</h3>
+                    <p>Are high-speed Wi-Fi and parking free for guests?</p>
+                  </button>
+                </h5>
+                <div class="accordion-collapse collapse" id="collapseSix" aria-labelledby="headingSix" data-bs-parent="#accordionFAQ">
+                  <div class="accordion-body">Yes! High-speed Wi-Fi internet connectivity across the entire hotel and secure on-site vehicle parking are 100% complimentary for all registered guests.</div>
+                </div>
+              </div>
+              <div class="accordion-item wow fadeInUp">
+                <h5 class="accordion-header" id="headingSeven">
+                  <button class="accordion-button text-heading-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                    <h3>07</h3>
+                    <p>How do I book the banquet hall or organize an event?</p>
+                  </button>
+                </h5>
+                <div class="accordion-collapse collapse" id="collapseSeven" aria-labelledby="headingSeven" data-bs-parent="#accordionFAQ">
+                  <div class="accordion-body">Event bookings at Oh Saathi Re banquet hall require a customized written quotation covering hall charges, catering menu, d&eacute;cor, and applicable taxes. Please contact our team or submit an enquiry to review and confirm all details in writing prior to advance payment.</div>
                 </div>
               </div>
             </div>
@@ -1901,94 +1959,8 @@
   </main>
 
   <?php include('include/footer.php'); ?>
-
-  <div class="popup-signin">
-    <div class="popup-container">
-      <div class="popup-content"> <a class="close-popup-signin"></a>
-        <div class="d-flex gap-2 align-items-center"><a href="#"><img src="assets/imgs/template/popup/logo.svg" alt="Travila"></a>
-          <h4 class="neutral-1000">Hello there !</h4>
-        </div>
-        <div class="box-button-logins"> <a class="btn btn-login btn-google mr-10" href="#"><img src="assets/imgs/template/popup/google.svg" alt="Travila"><span class="text-sm-bold">Sign in with Google</span></a><a class="btn btn-login mr-10" href="#"><img src="assets/imgs/template/popup/facebook.svg" alt="Travila"></a><a class="btn btn-login" href="#"><img src="assets/imgs/template/popup/apple.svg" alt="Travila"></a></div>
-        <div class="form-login">
-          <form action="#">
-            <div class="form-group">
-              <label class="text-sm-medium">User name</label>
-              <input class="form-control username" type="text" placeholder="Email / Username">
-            </div>
-            <div class="form-group">
-              <label class="text-sm-medium">Password</label>
-              <input class="form-control password" type="password" placeholder="">
-            </div>
-            <div class="form-group">
-              <div class="box-remember-forgot">
-                <div class="remeber-me">
-                  <label class="text-xs-medium neutral-500">
-                    <input class="cb-remember" type="checkbox">Remember me
-                  </label>
-                </div>
-                <div class="forgotpass"> <a class="text-xs-medium neutral-500" href="#">Forgot password?</a></div>
-              </div>
-            </div>
-            <div class="form-group mt-45 mb-30"> <a class="btn btn-black-lg" href="#">Login
-                <svg width="16" height="16" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 15L15 8L8 1M15 8L1 8" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg></a></div>
-            <p class="text-sm-medium neutral-500">Don’t have an account? <a class="neutral-1000 btn-signup" href="#">Register Here !</a></p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="popup-signup">
-    <div class="popup-container">
-      <div class="popup-content"> <a class="close-popup-signup"></a>
-        <div class="d-flex gap-2 align-items-center"><a href="#"><img src="assets/imgs/template/popup/logo.svg" alt="Travila"></a>
-          <h4 class="neutral-1000">Register</h4>
-        </div>
-        <div class="box-button-logins"> <a class="btn btn-login btn-google mr-10" href="#"><img src="assets/imgs/template/popup/google.svg" alt="Travila"><span class="text-sm-bold">Sign up with Google</span></a><a class="btn btn-login mr-10" href="#"><img src="assets/imgs/template/popup/facebook.svg" alt="Travila"></a><a class="btn btn-login" href="#"><img src="assets/imgs/template/popup/apple.svg" alt="Travila"></a></div>
-        <div class="form-login">
-          <form action="#">
-            <div class="form-group">
-              <label class="text-sm-medium">Username *</label>
-              <input class="form-control username" type="text" placeholder="Email / Username">
-            </div>
-            <div class="form-group">
-              <label class="text-sm-medium">Your email *</label>
-              <input class="form-control email" type="text" placeholder="Email / Username">
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <div class="form-group">
-                  <label class="text-sm-medium">Password *</label>
-                  <input class="form-control password" type="password" placeholder="***********">
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="form-group">
-                  <label class="text-sm-medium">Confirm Password *</label>
-                  <input class="form-control password" type="password" placeholder="***********">
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="box-remember-forgot">
-                <div class="remeber-me">
-                  <label class="text-xs-medium neutral-500">
-                    <input class="cb-remember" type="checkbox">I agree to term and conditions
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group mt-45 mb-30"> <a class="btn btn-black-lg" href="#">Create New Account
-                <svg width="16" height="16" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 15L15 8L8 1M15 8L1 8" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg></a></div>
-            <p class="text-sm-medium neutral-500">Already have an account <a class="neutral-1000 btn-signin" href="#">Login Here !</a></p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+  
+  
   <!--Vendors Scripts-->
   <script src="assets/js/vendor/jquery-3.7.1.min.js"></script>
   <script src="assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>

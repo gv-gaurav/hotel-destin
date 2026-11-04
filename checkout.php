@@ -146,8 +146,8 @@ try {
 if (!$room) {
     $room = [
         'id' => 1,
-        'slug' => 'standard-room',
-        'title' => 'Standard Room - Hotel Destin',
+        'slug' => 'executive-room',
+        'title' => 'Executive Room - Hotel Destin',
         'price' => 1690.00,
         'struck_price' => 4000.00,
         'discount' => '58% off',
@@ -369,7 +369,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 
                     <p><strong>Special Request:</strong> " . (!empty($special_request) ? htmlspecialchars($special_request) : 'None') . "</p>
                     <p style='border-top: 1px solid #e9ecf2; padding-top: 15px; text-align: center; color: #777; font-size: 12px;'>
-                        Hotel Destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior. For queries call +91 9203509944.
+                        Hotel Destin, Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011. For queries call +91 9203509944.
                     </p>
                 </div>";
 

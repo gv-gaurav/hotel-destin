@@ -32,7 +32,7 @@ try {
 
     // Ensure the default settings address value is updated
     try {
-        $pdo->exec("UPDATE `settings` SET `val_content` = 'Hotel  destin Gwalior Sachin Tendulkar road Near Ram Vatika marriage garden Govindpuri Gwalior' WHERE `key_name` = 'hotel_address'");
+        $pdo->exec("UPDATE `settings` SET `val_content` = 'Hotel Destin, Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar, Gwalior, Madhya Pradesh 474011' WHERE `key_name` = 'hotel_address'");
     } catch (Exception $settings_e) {
         error_log("Migration error (settings hotel_address): " . $settings_e->getMessage());
     }
@@ -56,6 +56,30 @@ try {
         error_log("Migration error (restaurant settings to cafe): " . $settings_e->getMessage());
     }
 
+    // Ensure room categories, slugs and ratings match Executive, Deluxe, Premium
+    try {
+        $pdo->exec("UPDATE `rooms` SET `title` = 'Deluxe Room - Hotel Destin', `slug` = 'deluxe-room', `type` = 'Deluxe', `rating` = '4.4' WHERE `id` = 2 AND (`slug` != 'deluxe-room' OR `rating` != '4.4')");
+        $pdo->exec("UPDATE `rooms` SET `title` = 'Executive Room - Hotel Destin', `slug` = 'executive-room', `type` = 'Executive', `rating` = '4.4' WHERE `id` = 1 AND (`slug` != 'executive-room' OR `rating` != '4.4')");
+        $pdo->exec("UPDATE `rooms` SET `title` = 'Premium Room - Hotel Destin', `slug` = 'premium-room', `type` = 'Premium', `rating` = '4.4' WHERE `id` = 3 AND (`slug` != 'premium-room' OR `rating` != '4.4')");
+    } catch (Exception $r_e) {
+        error_log("Migration error (room slugs): " . $r_e->getMessage());
+    }
+
+    // Ensure authentic testimonial text (remove ₹500 cashback claim)
+    try {
+        $pdo->exec("UPDATE `testimonials` SET `review_text` = 'We stayed at Hotel Destin for a family trip to Gwalior. The rooms were clean and spacious, the Wi-Fi was fast, and the staff was extremely polite and helpful. Gwalior Fort and city attractions are easily accessible from here.' WHERE `id` = 1 AND `review_text` LIKE '%cashback%'");
+    } catch (Exception $t_e) {
+        error_log("Migration error (testimonials): " . $t_e->getMessage());
+    }
+
+    // Ensure staggered blog publication dates
+    try {
+        $pdo->exec("UPDATE `blogs` SET `date` = '15 Jul 2026' WHERE `id` = 1 AND `date` = '18 Sep 2026'");
+        $pdo->exec("UPDATE `blogs` SET `date` = '10 Aug 2026' WHERE `id` = 2 AND `date` = '18 Sep 2026'");
+    } catch (Exception $b_e) {
+        error_log("Migration error (blogs): " . $b_e->getMessage());
+    }
+
     // Ensure start_date column exists in coupons table
     try {
         $col_check = $pdo->query("SHOW COLUMNS FROM `coupons` LIKE 'start_date'");
@@ -70,7 +94,9 @@ try {
 } catch (PDOException $e) {
     // Write error logs to file securely (avoid printing details to users)
     error_log("Database connection error: " . $e->getMessage());
-    http_response_code(500);
+    if (!headers_sent()) {
+        http_response_code(500);
+    }
     exit("<h2>500 Internal Server Error</h2><p>Database connection failure. Please try again later.</p>");
 }
 

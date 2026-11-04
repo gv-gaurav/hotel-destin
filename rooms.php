@@ -16,11 +16,11 @@ $has_search_dates = (!empty($search_checkin) && !empty($search_checkout));
 // Static Fallback Room Categories (if DB connection has no table records yet)
 $static_rooms = [
     [
-        'id' => 'standard',
-        'name' => 'Standard Room - Hotel Destin',
-        'type_badge' => 'STANDARD',
+        'id' => 'deluxe',
+        'name' => 'Deluxe Room - Hotel Destin',
+        'type_badge' => 'DELUXE',
         'status_badge' => 'BEST SELLER',
-        'rating' => 'G 4.8 ★',
+        'rating' => '4.4',
         'location' => 'Hotel Destin - Gwalior',
         'tags' => [
             ['text' => 'Free Wi-Fi', 'style' => 'orange'],
@@ -46,7 +46,7 @@ $static_rooms = [
         'name' => 'Executive Room - Hotel Destin',
         'type_badge' => 'EXECUTIVE',
         'status_badge' => 'POPULAR',
-        'rating' => 'G 4.8 ★',
+        'rating' => '4.4',
         'location' => 'Hotel Destin - Gwalior',
         'tags' => [
             ['text' => 'Free Wi-Fi', 'style' => 'orange'],
@@ -72,7 +72,7 @@ $static_rooms = [
         'name' => 'Premium Room - Hotel Destin',
         'type_badge' => 'PREMIUM',
         'status_badge' => 'LUXURY CHOICE',
-        'rating' => 'G 4.9 ★',
+        'rating' => '4.4',
         'location' => 'Hotel Destin - Gwalior',
         'tags' => [
             ['text' => 'Free Wi-Fi', 'style' => 'orange'],
@@ -158,7 +158,7 @@ try {
 
             $type_badge = strtoupper($r['type']);
             $status_badge = $r['status_badge'] ?: 'POPULAR';
-            $rating = $r['rating'] ?: 'G 4.8 ★';
+            $rating = $r['rating'] ?: '4.4';
 
             $tags = [];
             if (count($facilities) > 0) {
@@ -230,7 +230,7 @@ try {
 
 // Standardize sorting order: Standard, Executive, Premium
 usort($rooms, function ($a, $b) {
-    $order = ['standard' => 1, 'executive' => 2, 'premium' => 3];
+    $order = ['executive' => 1, 'deluxe' => 2, 'premium' => 3];
     $typeA = strtolower($a['type_badge'] ?? '');
     $typeB = strtolower($b['type_badge'] ?? '');
     $valA = isset($order[$typeA]) ? $order[$typeA] : 99;
@@ -244,13 +244,12 @@ usort($rooms, function ($a, $b) {
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
     <meta name="template-color" content="#0E0E0E">
     <title>Rooms & Suites Tariff | Hotel Destin Gwalior - Book Online</title>
     <meta name="description" content="Explore Gwalior's finest luxury rooms and suites at Hotel Destin. Premium AC accommodation, free high-speed Wi-Fi, 24-hr room service, and flexible EP/CP/MAP tariff plans.">
-    <meta name="keywords" content="Hotel Destin rooms, standard room Gwalior, executive room Gwalior, premium suite Gwalior, room booking Gwalior, hotels in Gwalior">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://hoteldestin.in/rooms">
     <meta property="og:title" content="Rooms & Suites Tariff | Hotel Destin Gwalior - Book Online">
@@ -1074,6 +1073,13 @@ usort($rooms, function ($a, $b) {
                                     </div>
                                 </div>
                             </form>
+                            <div class="text-center mt-3 d-flex flex-wrap align-items-center justify-content-center gap-3" style="font-size: 13.5px; font-weight: 600; color: #1e293b;">
+                                <span class="d-inline-flex align-items-center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2.5" class="me-1"><polyline points="20 6 9 17 4 12"></polyline></svg> Free cancellation up to 48 hours</span>
+                                <span class="text-muted d-none d-sm-inline">•</span>
+                                <span class="d-inline-flex align-items-center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2.5" class="me-1"><polyline points="20 6 9 17 4 12"></polyline></svg> Instant confirmation on WhatsApp &amp; Email</span>
+                                <span class="text-muted d-none d-sm-inline">•</span>
+                                <span class="d-inline-flex align-items-center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2.5" class="me-1"><polyline points="20 6 9 17 4 12"></polyline></svg> Best direct booking rates</span>
+                            </div>
                         </div>
                     </div>
                     <?php if ($has_search_dates): ?>
