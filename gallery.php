@@ -94,7 +94,6 @@ $category_names = [
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 
 <head>
     <meta charset="UTF-8">

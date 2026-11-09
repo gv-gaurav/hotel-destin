@@ -1,7 +1,6 @@
 <?php require_once __DIR__ . '/config.php'; require_once __DIR__ . '/db.php'; ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 
 <head>
  <meta charset="UTF-8">
