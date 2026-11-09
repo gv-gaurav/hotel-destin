@@ -80,7 +80,8 @@ if (empty($checkin) && empty($checkout) && !empty($room['slug'])) {
     }
 }
 
-$room_seo_title = htmlspecialchars($room['title']) . " Booking in Gwalior | Hotel Destin Tariff & Amenities";
+$clean_room_name = trim(preg_replace('/\s*-\s*Hotel\s*Destin.*/i', '', $room['title']));
+$room_seo_title = htmlspecialchars($clean_room_name) . " Booking in Gwalior | Hotel Destin";
 $room_seo_desc = !empty($room['meta_description']) 
     ? htmlspecialchars($room['meta_description']) 
     : 'Book ' . htmlspecialchars($room['title']) . ' at Hotel Destin Gwalior. Features luxury king bed, AC, high-speed Wi-Fi, 24/7 room service & modern bath. Best direct price guaranteed.';

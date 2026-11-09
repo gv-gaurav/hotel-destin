@@ -155,16 +155,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
-    <title>Cafe By Soul | Best Rooftop Restaurant & Cafe in Gwalior - Hotel Destin</title>
+    <title>Cafe By Soul | Best Rooftop Restaurant in Gwalior</title>
     <meta name="description" content="Dine at Cafe By Soul, Gwalior's top rooftop restaurant & cafe at Hotel Destin. Savor delectable veg & non-veg multi-cuisine delicacies, mocktails & stunning skyline views.">
     <meta name="keywords" content="rooftop cafe Gwalior, best restaurant in Gwalior, Cafe By Soul Gwalior, rooftop dining Gwalior, fine dining restaurant Govindpuri, family restaurant Gwalior">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://hoteldestin.in/restaurant">
-    <meta property="og:title" content="Cafe By Soul | Best Rooftop Restaurant & Cafe in Gwalior - Hotel Destin">
+    <meta property="og:title" content="Cafe By Soul | Best Rooftop Restaurant in Gwalior">
     <meta property="og:description" content="Dine at Cafe By Soul, Gwalior's top rooftop restaurant & cafe at Hotel Destin. Savor delectable veg & non-veg multi-cuisine delicacies, mocktails & stunning skyline views.">
     <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Cafe By Soul | Best Rooftop Restaurant & Cafe in Gwalior - Hotel Destin">
+    <meta name="twitter:title" content="Cafe By Soul | Best Rooftop Restaurant in Gwalior">
     <meta name="twitter:description" content="Dine at Cafe By Soul, Gwalior's top rooftop restaurant & cafe at Hotel Destin. Savor delectable veg & non-veg multi-cuisine delicacies, mocktails & stunning skyline views.">
     <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">

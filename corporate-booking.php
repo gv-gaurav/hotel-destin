@@ -65,16 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Corporate Meeting & Conference Hall in Gwalior | Hotel Destin</title>
+    <title>Corporate Meeting & Event Hall | Hotel Destin</title>
     <meta name="description" content="Host corporate conferences, seminars, business meetings & dealer meets at Hotel Destin Gwalior. Equipped with high-speed Wi-Fi, audio-visual support & executive dining.">
     <meta name="keywords" content="corporate event venue Gwalior, conference hall Gwalior, meeting room Gwalior, business hotel Gwalior, corporate stay packages Gwalior, seminars venue Gwalior">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://hoteldestin.in/corporate-booking">
-    <meta property="og:title" content="Corporate Meeting & Conference Hall in Gwalior | Hotel Destin">
+    <meta property="og:title" content="Corporate Meeting & Event Hall | Hotel Destin">
     <meta property="og:description" content="Host corporate conferences, seminars, business meetings & dealer meets at Hotel Destin Gwalior. Equipped with high-speed Wi-Fi, audio-visual support & executive dining.">
     <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Corporate Meeting & Conference Hall in Gwalior | Hotel Destin">
+    <meta name="twitter:title" content="Corporate Meeting & Event Hall | Hotel Destin">
     <meta name="twitter:description" content="Host corporate conferences, seminars, business meetings & dealer meets at Hotel Destin Gwalior. Equipped with high-speed Wi-Fi, audio-visual support & executive dining.">
     <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">

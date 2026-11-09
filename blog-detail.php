@@ -104,7 +104,15 @@ $canonical_url = $page_canonical;
 
 $b_title = !empty($post['meta_title']) ? $post['meta_title'] : $post['title'];
 if (stripos($b_title, 'Hotel Destin') === false) {
-    $b_title .= ' | Hotel Destin Gwalior';
+    if (mb_strlen($b_title . ' | Hotel Destin') <= 60) {
+        $b_title .= ' | Hotel Destin';
+    }
+}
+if (mb_strlen($b_title) > 60) {
+    $b_title = trim(preg_replace('/\s*[-|]\s*Hotel\s*Destin.*$/i', '', $b_title));
+    if (mb_strlen($b_title) > 60) {
+        $b_title = mb_substr($b_title, 0, 57) . '...';
+    }
 }
 $b_desc = !empty($post['meta_description']) 
     ? $post['meta_description'] 

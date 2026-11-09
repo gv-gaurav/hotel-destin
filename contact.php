@@ -57,15 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
-    <title>Contact Hotel Destin Gwalior | Phone Number, Address & Location Map</title>
+    <title>Contact Hotel Destin Gwalior | Address & Phone</title>
     <meta name="description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://hoteldestin.in/contact">
-    <meta property="og:title" content="Contact Hotel Destin Gwalior | Phone Number, Address & Location Map">
+    <meta property="og:title" content="Contact Hotel Destin Gwalior | Address & Phone">
     <meta property="og:description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
     <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Contact Hotel Destin Gwalior | Phone Number, Address & Location Map">
+    <meta name="twitter:title" content="Contact Hotel Destin Gwalior | Address & Phone">
     <meta name="twitter:description" content="Contact Hotel Destin Gwalior on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Call +91 9203509944 or email info@hoteldestin.in for 24/7 room reservations & banquet inquiries.">
     <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">

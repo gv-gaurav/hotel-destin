@@ -101,16 +101,16 @@ $category_names = [
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
     <meta name="template-color" content="#0E0E0E">
-    <title>Photo Gallery | Hotel Destin Gwalior - Rooms, Banquet & Dining</title>
+    <title>Photo Gallery | Hotel Destin Gwalior</title>
     <meta name="description" content="View official photo gallery of Hotel Destin Gwalior. Explore pictures of our luxury rooms, suites, Banquet Oh Saathi Re, rooftop cafe, and hotel premises.">
     <meta name="keywords" content="Hotel Destin Gwalior photos, Gwalior hotel gallery, banquet hall photos Gwalior, room images Hotel Destin">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://hoteldestin.in/gallery">
-    <meta property="og:title" content="Photo Gallery | Hotel Destin Gwalior - Rooms, Banquet & Dining">
+    <meta property="og:title" content="Photo Gallery | Hotel Destin Gwalior">
     <meta property="og:description" content="View official photo gallery of Hotel Destin Gwalior. Explore pictures of our luxury rooms, suites, Banquet Oh Saathi Re, rooftop cafe, and hotel premises.">
     <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Photo Gallery | Hotel Destin Gwalior - Rooms, Banquet & Dining">
+    <meta name="twitter:title" content="Photo Gallery | Hotel Destin Gwalior">
     <meta name="twitter:description" content="View official photo gallery of Hotel Destin Gwalior. Explore pictures of our luxury rooms, suites, Banquet Oh Saathi Re, rooftop cafe, and hotel premises.">
     <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">

@@ -7,15 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="msapplication-TileColor" content="#0E0E0E">
-    <title>About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road</title>
+    <title>About Hotel Destin Gwalior | Boutique Hotel</title>
     <meta name="description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Kailash Nagar, Ramanuj Nagar. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://hoteldestin.in/about">
-    <meta property="og:title" content="About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road">
+    <meta property="og:title" content="About Hotel Destin Gwalior | Boutique Hotel">
     <meta property="og:description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Kailash Nagar, Ramanuj Nagar. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
     <meta property="og:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="About Hotel Destin Gwalior | Luxury Boutique Stay on Sachin Tendulkar Road">
+    <meta name="twitter:title" content="About Hotel Destin Gwalior | Boutique Hotel">
     <meta name="twitter:description" content="Learn about Hotel Destin, Gwalior's premier boutique hotel situated in Kailash Nagar, Ramanuj Nagar. Committed to genuine Indian hospitality, modern comfort, hygiene & memorable dining.">
     <meta name="twitter:image" content="https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/template/favicon.png">
