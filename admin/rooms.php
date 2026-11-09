@@ -55,6 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $rating = isset($_POST['rating']) ? htmlspecialchars(trim($_POST['rating'])) : 'G 4.8 ★';
             $banner_text = isset($_POST['banner_text']) ? htmlspecialchars(trim($_POST['banner_text'])) : '';
             $extra_adult_price = isset($_POST['extra_adult_price']) ? floatval($_POST['extra_adult_price']) : 1000.00;
+            $meta_title = isset($_POST['meta_title']) ? htmlspecialchars(trim($_POST['meta_title'])) : '';
+            $meta_description = isset($_POST['meta_description']) ? htmlspecialchars(trim($_POST['meta_description'])) : '';
 
             // Build slug from title
             $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
@@ -65,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             } else {
                 if ($action === 'add') {
                     try {
-                        $stmt = $pdo->prepare("INSERT INTO rooms (slug, title, type, price, struck_price, discount, code, inventory, capacity_adults, capacity_children, description, status, price_single_ep, price_single_cp, price_single_map, price_double_ep, price_double_cp, price_double_map, price_triple_ep, price_triple_cp, price_triple_map, status_badge, rating, banner_text, extra_adult_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmt->execute([$slug, $title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $price_triple_ep, $price_triple_cp, $price_triple_map, $status_badge, $rating, $banner_text, $extra_adult_price]);
+                        $stmt = $pdo->prepare("INSERT INTO rooms (slug, title, type, price, struck_price, discount, code, inventory, capacity_adults, capacity_children, description, status, price_single_ep, price_single_cp, price_single_map, price_double_ep, price_double_cp, price_double_map, price_triple_ep, price_triple_cp, price_triple_map, status_badge, rating, banner_text, extra_adult_price, meta_title, meta_description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->execute([$slug, $title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $price_triple_ep, $price_triple_cp, $price_triple_map, $status_badge, $rating, $banner_text, $extra_adult_price, $meta_title, $meta_description]);
 
                         // Get last inserted room ID to add facilities
                         $new_room_id = $pdo->lastInsertId();
@@ -136,8 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 } else if ($action === 'edit') {
                     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
                     try {
-                        $stmt = $pdo->prepare("UPDATE rooms SET title = ?, type = ?, price = ?, struck_price = ?, discount = ?, code = ?, inventory = ?, capacity_adults = ?, capacity_children = ?, description = ?, status = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_double_ep = ?, price_double_cp = ?, price_double_map = ?, price_triple_ep = ?, price_triple_cp = ?, price_triple_map = ?, status_badge = ?, rating = ?, banner_text = ?, extra_adult_price = ? WHERE id = ?");
-                        $stmt->execute([$title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $price_triple_ep, $price_triple_cp, $price_triple_map, $status_badge, $rating, $banner_text, $extra_adult_price, $id]);
+                        $stmt = $pdo->prepare("UPDATE rooms SET title = ?, type = ?, price = ?, struck_price = ?, discount = ?, code = ?, inventory = ?, capacity_adults = ?, capacity_children = ?, description = ?, status = ?, price_single_ep = ?, price_single_cp = ?, price_single_map = ?, price_double_ep = ?, price_double_cp = ?, price_double_map = ?, price_triple_ep = ?, price_triple_cp = ?, price_triple_map = ?, status_badge = ?, rating = ?, banner_text = ?, extra_adult_price = ?, meta_title = ?, meta_description = ? WHERE id = ?");
+                        $stmt->execute([$title, $type, $price, $struck_price, $discount, $code, $inventory, $adults, $children, $description, $status, $price_single_ep, $price_single_cp, $price_single_map, $price_double_ep, $price_double_cp, $price_double_map, $price_triple_ep, $price_triple_cp, $price_triple_map, $status_badge, $rating, $banner_text, $extra_adult_price, $meta_title, $meta_description, $id]);
 
                         // Process amenities update
                         if (isset($_POST['facilities'])) {
@@ -461,6 +463,20 @@ try {
                     </div>
                 </div>
 
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label-custom">SEO Meta Title (Max 60 chars)</label>
+                        <input id="roomMetaTitle" class="form-control-custom" type="text" name="meta_title" maxlength="60" placeholder="e.g. Deluxe Room Booking in Gwalior | Hotel Destin">
+                        <span style="font-size:11px; color:#666;">Recommended: under 60 chars for Google search snippet</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label-custom">SEO Meta Description</label>
+                        <input id="roomMetaDescription" class="form-control-custom" type="text" name="meta_description" placeholder="Short description for search engine results...">
+                    </div>
+                </div>
+
                 <div class="col-md-12">
                     <div class="form-group">
                         <label class="form-label-custom">Description Summary</label>
@@ -562,6 +578,8 @@ try {
         document.getElementById('roomDiscount').value = '';
         document.getElementById('roomCode').value = 'DESTIN';
         document.getElementById('roomBannerText').value = '';
+        document.getElementById('roomMetaTitle').value = '';
+        document.getElementById('roomMetaDescription').value = '';
         document.getElementById('roomExtraAdultPrice').value = '1000.00';
         document.getElementById('roomInventory').value = '1';
         document.getElementById('roomAdults').value = '2';
@@ -607,6 +625,8 @@ try {
         document.getElementById('roomDiscount').value = room.discount;
         document.getElementById('roomCode').value = room.code;
         document.getElementById('roomBannerText').value = room.banner_text || '';
+        document.getElementById('roomMetaTitle').value = room.meta_title || '';
+        document.getElementById('roomMetaDescription').value = room.meta_description || '';
         document.getElementById('roomExtraAdultPrice').value = room.extra_adult_price || '1000.00';
         document.getElementById('roomInventory').value = room.inventory;
         document.getElementById('roomAdults').value = room.capacity_adults;
