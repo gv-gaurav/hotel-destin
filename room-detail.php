@@ -554,7 +554,7 @@ $room_seo_img = !empty($images[0]) ? (strpos($images[0], 'http') === 0 ? $images
         <!-- Hero Title Banner Section -->
         <section class="room-detail-hero-box mb-20">
             <div class="container">
-                <a href="rooms.php" class="back-link mb-10">
+                <a href="rooms" class="back-link mb-10">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin-right:6px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>

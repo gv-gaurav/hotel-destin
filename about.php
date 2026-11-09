@@ -442,7 +442,7 @@
                     <li><span style="color: #ffffff;">About Us</span></li>
                 </ul>
                 <h1 class="about-title">Hotel Destin</h1>
-                <a href="contact.php#map" class="about-location-link">
+                <a href="contact#map" class="about-location-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                         <circle cx="12" cy="10" r="3"></circle>
@@ -578,7 +578,7 @@
                                 </ul>
                             </div>
                             <div>
-                                <a class="btn btn-black-lg w-100 text-center" href="restaurant.php" style="border-radius: 8px; font-weight: 700; padding: 12px 24px; text-decoration: none;">Explore Restaurant & Menu ➔</a>
+                                <a class="btn btn-black-lg w-100 text-center" href="restaurant" style="border-radius: 8px; font-weight: 700; padding: 12px 24px; text-decoration: none;">Explore Restaurant & Menu ➔</a>
                             </div>
                         </div>
                     </div>
@@ -629,7 +629,7 @@
                                 </ul>
                             </div>
                             <div>
-                                <a class="btn btn-black-lg w-100 text-center" href="banquet.php" style="border-radius: 8px; font-weight: 700; padding: 12px 24px; text-decoration: none;">Book Event Venue ➔</a>
+                                <a class="btn btn-black-lg w-100 text-center" href="banquet" style="border-radius: 8px; font-weight: 700; padding: 12px 24px; text-decoration: none;">Book Event Venue ➔</a>
                             </div>
                         </div>
                     </div>

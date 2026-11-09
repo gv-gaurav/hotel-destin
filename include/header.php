@@ -62,11 +62,11 @@
               <nav class="nav-main-menu">
                 <ul class="main-menu">
                   <li><a class="<?= ($current_file === 'index.php') ? 'active' : '' ?>" href="./">Home</a></li>
-                  <li><a href="about.php">About Us</a></li>
-                  <li><a href="rooms.php">Rooms</a></li>
-                  <li><a href="banquet.php">Banquet & Events</a></li>
-                  <li><a href="restaurant.php">Restaurant</a></li>
-                  <li><a href="contact.php">Contact Us</a></li>
+                  <li><a href="about">About Us</a></li>
+                  <li><a href="rooms">Rooms</a></li>
+                  <li><a href="banquet">Banquet & Events</a></li>
+                  <li><a href="restaurant">Restaurant</a></li>
+                  <li><a href="contact">Contact Us</a></li>
                 </ul>
               </nav>
             </div>
@@ -122,11 +122,11 @@
                   $current_page = basename($_SERVER['PHP_SELF']);
                   ?>
                   <li><a class="<?= ($current_page === 'index.php') ? 'active' : '' ?>" href="./">Home</a></li>
-                  <li><a class="<?= ($current_page === 'about.php') ? 'active' : '' ?>" href="about.php">About Us</a></li>
-                  <li><a class="<?= ($current_page === 'rooms.php' || $current_page === 'room-detail.php') ? 'active' : '' ?>" href="rooms.php">Rooms</a></li>
-                  <li><a class="<?= ($current_page === 'banquet.php') ? 'active' : '' ?>" href="banquet.php">Banquet & Events</a></li>
-                  <li><a class="<?= ($current_page === 'restaurant.php') ? 'active' : '' ?>" href="restaurant.php">Restaurant</a></li>
-                  <li><a class="<?= ($current_page === 'contact.php') ? 'active' : '' ?>" href="contact.php">Contact Us</a></li>
+                  <li><a class="<?= ($current_page === 'about.php') ? 'active' : '' ?>" href="about">About Us</a></li>
+                  <li><a class="<?= ($current_page === 'rooms.php' || $current_page === 'room-detail.php') ? 'active' : '' ?>" href="rooms">Rooms</a></li>
+                  <li><a class="<?= ($current_page === 'banquet.php') ? 'active' : '' ?>" href="banquet">Banquet & Events</a></li>
+                  <li><a class="<?= ($current_page === 'restaurant.php') ? 'active' : '' ?>" href="restaurant">Restaurant</a></li>
+                  <li><a class="<?= ($current_page === 'contact.php') ? 'active' : '' ?>" href="contact">Contact Us</a></li>
                 </ul>
               </nav>
             </div>

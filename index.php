@@ -595,7 +595,7 @@
           </div>
           <div class="col-md-6 wow fadeInUp">
             <div class="d-flex justify-content-end align-items-center">
-              <a class="btn btn-black-lg" href="rooms.php">View More
+              <a class="btn btn-black-lg" href="rooms">View More
                 <svg width="16" height="16" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 15L15 8L8 1M15 8L1 8" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
@@ -734,7 +734,7 @@
               <div class="card-custom-content">
                 <h4 class="text-white mb-10">Fine Dining Experience</h4>
                 <p class="text-white mb-20 opacity-75">Savor the finest multi-cuisine dishes prepared by expert chefs in a luxurious ambiance.</p>
-                <a class="btn-explore-custom" href="restaurant.php">EXPLORE RESTAURANT</a>
+                <a class="btn-explore-custom" href="restaurant">EXPLORE RESTAURANT</a>
               </div>
             </div>
           </div>
@@ -744,7 +744,7 @@
               <div class="card-custom-content">
                 <h4 class="text-white mb-10">Banquet & Events</h4>
                 <p class="text-white mb-20 opacity-75">Perfect venues for weddings, corporate events, parties and gatherings of all sizes.</p>
-                <a class="btn-explore-custom" href="banquet.php">EXPLORE BANQUET</a>
+                <a class="btn-explore-custom" href="banquet">EXPLORE BANQUET</a>
               </div>
             </div>
           </div>
@@ -754,7 +754,7 @@
               <div class="card-custom-content">
                 <h4 class="text-white mb-10">Airport & Station Transfer</h4>
                 <p class="text-white mb-20 opacity-75">Luxury pick-up & drop facility from airport or railway station. Safe, reliable & on-time.</p>
-                <a class="btn-explore-custom" href="airport-transfer.php">RESERVE NOW</a>
+                <a class="btn-explore-custom" href="airport-transfer">RESERVE NOW</a>
               </div>
             </div>
           </div>
@@ -1153,7 +1153,7 @@
           <div class="col-lg-4 col-md-6 col-12 attraction-col">
             <div class="attraction-card">
               <div class="attraction-img-wrapper">
-                <a href="explore-gwalior.php#gwalior-fort">
+                <a href="explore-gwalior#gwalior-fort">
                   <img src="assets/imgs/page/gwalior_fort.png" alt="Gwalior Fort near Hotel Destin" loading="lazy">
                 </a>
               </div>
@@ -1164,7 +1164,7 @@
                 </div>
                 <div class="attraction-footer">
                   <p class="attraction-distance">7-8 km from Hotel</p>
-                  <a class="attraction-btn" href="explore-gwalior.php#gwalior-fort">
+                  <a class="attraction-btn" href="explore-gwalior#gwalior-fort">
                     Explore
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12" />
@@ -1180,7 +1180,7 @@
           <div class="col-lg-4 col-md-6 col-12 attraction-col">
             <div class="attraction-card">
               <div class="attraction-img-wrapper">
-                <a href="explore-gwalior.php#jai-vilas-palace">
+                <a href="explore-gwalior#jai-vilas-palace">
                   <img src="assets/imgs/page/jai_vilas_palace.png" alt="Jai Vilas Palace near Hotel Destin" loading="lazy">
                 </a>
               </div>
@@ -1191,7 +1191,7 @@
                 </div>
                 <div class="attraction-footer">
                   <p class="attraction-distance">5-6 km from Hotel</p>
-                  <a class="attraction-btn" href="explore-gwalior.php#jai-vilas-palace">
+                  <a class="attraction-btn" href="explore-gwalior#jai-vilas-palace">
                     Explore
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12" />
@@ -1207,7 +1207,7 @@
           <div class="col-lg-4 col-md-6 col-12 attraction-col">
             <div class="attraction-card">
               <div class="attraction-img-wrapper">
-                <a href="explore-gwalior.php#sun-temple">
+                <a href="explore-gwalior#sun-temple">
                   <img src="assets/imgs/page/sun_temple.png" alt="Sun Temple Gwalior near Hotel Destin" loading="lazy">
                 </a>
               </div>
@@ -1218,7 +1218,7 @@
                 </div>
                 <div class="attraction-footer">
                   <p class="attraction-distance">3-4 km from Hotel</p>
-                  <a class="attraction-btn" href="explore-gwalior.php#sun-temple">
+                  <a class="attraction-btn" href="explore-gwalior#sun-temple">
                     Explore
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12" />
@@ -1234,7 +1234,7 @@
           <div class="col-lg-4 col-md-6 col-12 attraction-col">
             <div class="attraction-card">
               <div class="attraction-img-wrapper">
-                <a href="explore-gwalior.php#tansen-tomb">
+                <a href="explore-gwalior#tansen-tomb">
                   <img src="assets/imgs/page/tansen_tomb.png" alt="Tansen Tomb near Hotel Destin" loading="lazy">
                 </a>
               </div>
@@ -1245,7 +1245,7 @@
                 </div>
                 <div class="attraction-footer">
                   <p class="attraction-distance">5-6 km from Hotel</p>
-                  <a class="attraction-btn" href="explore-gwalior.php#tansen-tomb">
+                  <a class="attraction-btn" href="explore-gwalior#tansen-tomb">
                     Explore
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12" />
@@ -1261,7 +1261,7 @@
           <div class="col-lg-4 col-md-6 col-12 attraction-col">
             <div class="attraction-card">
               <div class="attraction-img-wrapper">
-                <a href="explore-gwalior.php#sasbahu-temple">
+                <a href="explore-gwalior#sasbahu-temple">
                   <img src="assets/imgs/page/sasbahu_temple.png" alt="Sasbahu Temple near Hotel Destin" loading="lazy">
                 </a>
               </div>
@@ -1272,7 +1272,7 @@
                 </div>
                 <div class="attraction-footer">
                   <p class="attraction-distance">7-8 km from Hotel</p>
-                  <a class="attraction-btn" href="explore-gwalior.php#sasbahu-temple">
+                  <a class="attraction-btn" href="explore-gwalior#sasbahu-temple">
                     Explore
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12" />
@@ -1849,7 +1849,7 @@
             <p class="text-md neutral-500 mt-5">Discover local Gwalior travel guides, event tips, and guest stories.</p>
           </div>
           <div class="col-md-4 col-12 text-md-end text-start mt-15 mt-md-0 wow fadeInUp" data-wow-delay="0.1s">
-            <a class="btn btn-default" href="blog.php">
+            <a class="btn btn-default" href="blog">
               View All Articles
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 5px;">
                 <line x1="5" y1="12" x2="19" y2="12" />
@@ -1903,7 +1903,7 @@
         <div class="row g-4 blog-home-container wow fadeInUp" data-wow-delay="0.2s">
           <?php foreach ($home_blogs as $blog):
             $blog_img = !empty($blog['image_path']) ? htmlspecialchars($blog['image_path']) : 'assets/imgs/page/homepage1/news.png';
-            $blog_link = !empty($blog['slug']) ? 'blog-detail.php?slug=' . urlencode($blog['slug']) : 'blog-detail.php?id=' . $blog['id'];
+            $blog_link = !empty($blog['slug']) ? 'blog-detail?slug=' . urlencode($blog['slug']) : 'blog-detail?id=' . $blog['id'];
           ?>
             <div class="col-lg-4 col-md-6 col-12 blog-home-col">
               <div class="home-blog-card">

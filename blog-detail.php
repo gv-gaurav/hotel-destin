@@ -64,7 +64,7 @@ if (!$post) {
 
     if (!$post) {
         // Redirect to blog listing if post is not found
-        header("Location: blog.php");
+        header("Location: blog");
         exit;
     }
 } else {
@@ -325,7 +325,7 @@ $b_img = !empty($post['image_path']) ? (strpos($post['image_path'], 'http') === 
                 <!-- Breadcrumbs -->
                 <ul class="breadcrumbs mb-20" style="padding: 0; background: transparent; display: flex;">
                     <li><a href="./">Home</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
-                    <li><a href="blog.php">Blog</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
+                    <li><a href="blog">Blog</a><span class="arrow-right"><svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 11L6 6L1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></li>
                     <li><span class="text-breadcrumb">Article Details</span></li>
                 </ul>
 
@@ -357,7 +357,7 @@ $b_img = !empty($post['image_path']) ? (strpos($post['image_path'], 'http') === 
                             <h4 class="sidebar-title">Recent Articles</h4>
                             <div class="d-flex flex-column">
                                 <?php foreach ($trending_posts as $t): 
-                                    $t_link = !empty($t['slug']) ? 'blog-detail.php?slug=' . urlencode($t['slug']) : 'blog-detail.php?id=' . $t['id'];
+                                    $t_link = !empty($t['slug']) ? 'blog-detail?slug=' . urlencode($t['slug']) : 'blog-detail?id=' . $t['id'];
                                 ?>
                                     <a href="<?= $t_link ?>" class="trending-item text-decoration-none">
                                         <div class="trending-img">
@@ -375,7 +375,7 @@ $b_img = !empty($post['image_path']) ? (strpos($post['image_path'], 'http') === 
                         <div class="book-promo-card">
                             <h4 class="font-heading">Book Your Stay</h4>
                             <p>Plan a comfortable trip in Gwalior. Explore executive rooms and premium amenities.</p>
-                            <a href="rooms.php" class="book-promo-btn">Book Now</a>
+                            <a href="rooms" class="book-promo-btn">Book Now</a>
                         </div>
                     </div>
                 </div>

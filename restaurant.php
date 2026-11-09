@@ -760,7 +760,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <h3 class="heading-3 mb-10">Reservation Request Received</h3>
                                     <p class="text-md neutral-500 mb-20">Thank you, <strong><?= $name ?></strong>. We have received your booking request for <strong><?= $guests ?> guests</strong> on <strong><?= $date ?></strong> at <strong><?= $time ?></strong>.</p>
                                     <p class="text-sm neutral-400">Our restaurant staff will contact you shortly via email (<?= $email ?>) or phone (<?= $phone ?>) to confirm your seating availability.</p>
-                                    <a href="restaurant.php" class="btn btn-default mt-20" style="width: auto;">Book Another Table</a>
+                                    <a href="restaurant" class="btn btn-default mt-20" style="width: auto;">Book Another Table</a>
                                 </div>
                             <?php else: ?>
                                 <div class="booking-heading" style="text-align: left;">

@@ -512,7 +512,7 @@ try {
                     <div class="col-lg-8 col-12">
                         <div class="row g-4">
                             <?php foreach ($blog_posts as $post):
-                                $detail_link = !empty($post['slug']) ? 'blog-detail.php?slug=' . urlencode($post['slug']) : 'blog-detail.php?id=' . $post['id'];
+                                $detail_link = !empty($post['slug']) ? 'blog-detail?slug=' . urlencode($post['slug']) : 'blog-detail?id=' . $post['id'];
                             ?>
                                 <div class="col-md-6 col-12">
                                     <div class="blog-post-card wow fadeInUp">
@@ -572,15 +572,15 @@ try {
                                 <nav>
                                     <ul class="pagination">
                                         <?php if ($page > 1): ?>
-                                            <li class="page-item"><a class="page-link" href="blog.php?page=<?= $page - 1 ?>" style="width: auto; padding: 0 15px; border-radius: 20px !important;">Prev</a></li>
+                                            <li class="page-item"><a class="page-link" href="blog?page=<?= $page - 1 ?>" style="width: auto; padding: 0 15px; border-radius: 20px !important;">Prev</a></li>
                                         <?php endif; ?>
 
                                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                                            <li class="page-item"><a class="page-link <?= $i === $page ? 'active' : '' ?>" href="blog.php?page=<?= $i ?>"><?= $i ?></a></li>
+                                            <li class="page-item"><a class="page-link <?= $i === $page ? 'active' : '' ?>" href="blog?page=<?= $i ?>"><?= $i ?></a></li>
                                         <?php endfor; ?>
 
                                         <?php if ($page < $total_pages): ?>
-                                            <li class="page-item"><a class="page-link" href="blog.php?page=<?= $page + 1 ?>" style="width: auto; padding: 0 15px; border-radius: 20px !important;">Next</a></li>
+                                            <li class="page-item"><a class="page-link" href="blog?page=<?= $page + 1 ?>" style="width: auto; padding: 0 15px; border-radius: 20px !important;">Next</a></li>
                                         <?php endif; ?>
                                     </ul>
                                 </nav>
@@ -595,7 +595,7 @@ try {
                         <div class="sidebar-widget-box wow fadeInUp" data-wow-delay="0.05s">
                             <h4 class="sidebar-widget-title">Trending Articles</h4>
                             <?php foreach ($trending_posts as $trend):
-                                $trend_link = !empty($trend['slug']) ? 'blog-detail.php?slug=' . urlencode($trend['slug']) : 'blog-detail.php?id=' . $trend['id'];
+                                $trend_link = !empty($trend['slug']) ? 'blog-detail?slug=' . urlencode($trend['slug']) : 'blog-detail?id=' . $trend['id'];
                             ?>
                                 <div class="trending-post-item">
                                     <div class="trending-img-wrapper">

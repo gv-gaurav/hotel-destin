@@ -1085,7 +1085,7 @@ usort($rooms, function ($a, $b) {
                     <?php if ($has_search_dates): ?>
                         <div class="mt-15 text-start text-sm text-neutral-500 d-flex justify-content-between align-items-center">
                             <span>Showing availability for: <strong><?= date('d M Y', strtotime($search_checkin)) ?></strong> to <strong><?= date('d M Y', strtotime($search_checkout)) ?></strong></span>
-                            <a href="rooms.php" class="text-danger" style="text-decoration: underline; font-weight:600;">Clear Dates</a>
+                            <a href="rooms" class="text-danger" style="text-decoration: underline; font-weight:600;">Clear Dates</a>
                         </div>
                     <?php endif; ?>
 

@@ -352,7 +352,7 @@ require_once __DIR__ . '/db.php';
                                     Free cancellation is offered up to 48 hours prior to check-in (12:00 PM). Cancellations made within 48 hours of check-in will incur a charge equal to the first night's room tariff. No-shows are charged the full first night. Reservations confirmed under special promotional discount codes are non-refundable. Approved refunds are processed within 5 to 7 working days to the original payment method.
                                 </p>
                                 <p class="policy-text mb-0">
-                                    Please refer to our <a href="refund-policy.php" class="policy-contact-link">Refund Policy</a> for further information.
+                                    Please refer to our <a href="refund-policy" class="policy-contact-link">Refund Policy</a> for further information.
                                 </p>
                             </div>
 
@@ -425,7 +425,7 @@ require_once __DIR__ . '/db.php';
                                     <span>Privacy</span>
                                 </h2>
                                 <p class="policy-text mb-0">
-                                    Personal information collected through our website and booking services is handled in accordance with our <a href="privacy-policy.php" class="policy-contact-link">Privacy Policy</a>. Please review our Privacy Policy to understand how your information is collected and used.
+                                    Personal information collected through our website and booking services is handled in accordance with our <a href="privacy-policy" class="policy-contact-link">Privacy Policy</a>. Please review our Privacy Policy to understand how your information is collected and used.
                                 </p>
                             </div>
 

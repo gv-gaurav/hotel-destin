@@ -416,7 +416,7 @@ $page_robots = 'noindex, nofollow';
                             </a>
                         <?php endif; ?>
 
-                        <a href="contact.php" class="btn-outlined-custom">Contact Guest Desk</a>
+                        <a href="contact" class="btn-outlined-custom">Contact Guest Desk</a>
                     </div>
                 </div>
             </div>

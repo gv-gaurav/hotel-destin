@@ -1,8 +1,8 @@
 <?php
 // Prevent direct file access if loaded independently
 if (count(get_included_files()) === 1) {
-    http_response_code(403);
-    exit("Direct access not permitted.");
+  http_response_code(403);
+  exit("Direct access not permitted.");
 }
 
 require_once __DIR__ . '/../db.php';
@@ -13,95 +13,94 @@ echo '<meta name="robots" content="' . htmlspecialchars($robots_val) . '">' . "\
 
 // 2. Canonical Tag (Prevents duplicate content issues and consolidates SEO signals)
 if (empty($page_canonical)) {
-    $canonical_base = 'https://hoteldestin.in';
-    $raw_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    $clean_path = '/' . ltrim($raw_path, '/');
-    
-    // Normalize root and remove .php extensions for clean canonical URLs
-    if ($clean_path === '/index.php' || $clean_path === '/index' || $clean_path === '/') {
-        $page_canonical = $canonical_base . '/';
-    } elseif (strpos($clean_path, 'room-detail') !== false && !empty($_GET['room'])) {
-        $page_canonical = $canonical_base . '/room-detail?room=' . urlencode(trim($_GET['room']));
-    } else {
-        $clean_slug = preg_replace('/\.php$/i', '', $clean_path);
-        $page_canonical = $canonical_base . $clean_slug;
-    }
+  $canonical_base = 'https://hoteldestin.in';
+  $raw_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+  $clean_path = '/' . ltrim($raw_path, '/');
+
+  // Normalize root and remove .php extensions for clean canonical URLs
+  if ($clean_path === '/index.php' || $clean_path === '/index' || $clean_path === '/') {
+    $page_canonical = $canonical_base . '/';
+  } elseif (strpos($clean_path, 'room-detail') !== false && !empty($_GET['room'])) {
+    $page_canonical = $canonical_base . '/rooms/' . urlencode(trim($_GET['room']));
+  } else {
+    $clean_slug = preg_replace('/\.php$/i', '', $clean_path);
+    $page_canonical = $canonical_base . $clean_slug;
+  }
 }
 echo '<link rel="canonical" href="' . htmlspecialchars($page_canonical) . '">' . "\n";
 
 // 3. Structured Data / Schema Markup (JSON-LD) for Rich Google Search Snippets
 ?>
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Hotel",
-  "@id": "https://hoteldestin.in/#hotel",
-  "name": "Hotel Destin Gwalior",
-  "alternateName": "Hotel Destin",
-  "url": "https://hoteldestin.in/",
-  "logo": "https://hoteldestin.in/assets/imgs/template/logo-destin.png",
-  "image": "https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png",
-  "description": "Hotel Destin is a premier boutique hotel in Gwalior located on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Offering Executive, Deluxe & Premium rooms, Banquet Oh Saathi Re, Cafe By Soul rooftop cafe, and 24/7 guest services.",
-  "telephone": "+91-9203509944",
-  "email": "info@hoteldestin.in",
-  "priceRange": "₹1,500 - ₹5,000",
-  "currenciesAccepted": "INR",
-  "paymentAccepted": "Cash, Credit Card, Debit Card, UPI, Net Banking",
-  "checkinTime": "12:00",
-  "checkoutTime": "11:00",
-  "hasMap": "https://maps.google.com/?cid=16081290616905586481",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.4",
-    "reviewCount": "128",
-    "bestRating": "5"
-  },
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar",
-    "addressLocality": "Gwalior",
-    "addressRegion": "Madhya Pradesh",
-    "postalCode": "474011",
-    "addressCountry": "IN"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 26.2027048,
-    "longitude": 78.2026527
-  },
-  "amenityFeature": [
-    {
-      "@type": "LocationFeatureSpecification",
-      "name": "Free High-Speed Wi-Fi",
-      "value": true
+  {
+    "@context": "https://schema.org",
+    "@type": "Hotel",
+    "@id": "https://hoteldestin.in/#hotel",
+    "name": "Hotel Destin Gwalior",
+    "alternateName": "Hotel Destin",
+    "url": "https://hoteldestin.in/",
+    "logo": "https://hoteldestin.in/assets/imgs/template/logo-destin.png",
+    "image": "https://hoteldestin.in/assets/imgs/page/hotel/banner-hotel.png",
+    "description": "Hotel Destin is a premier boutique hotel in Gwalior located on Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar. Offering Executive, Deluxe & Premium rooms, Banquet Oh Saathi Re, Cafe By Soul rooftop cafe, and 24/7 guest services.",
+    "telephone": "+91-9203509944",
+    "email": "info@hoteldestin.in",
+    "priceRange": "₹1,500 - ₹5,000",
+    "currenciesAccepted": "INR",
+    "paymentAccepted": "Cash, Credit Card, Debit Card, UPI, Net Banking",
+    "checkinTime": "12:00",
+    "checkoutTime": "11:00",
+    "hasMap": "https://maps.google.com/?cid=16081290616905586481",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.4",
+      "reviewCount": "128",
+      "bestRating": "5"
     },
-    {
-      "@type": "LocationFeatureSpecification",
-      "name": "Air Conditioning",
-      "value": true
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Sachin Tendulkar Rd, Kailash Nagar, Ramanuj Nagar",
+      "addressLocality": "Gwalior",
+      "addressRegion": "Madhya Pradesh",
+      "postalCode": "474011",
+      "addressCountry": "IN"
     },
-    {
-      "@type": "LocationFeatureSpecification",
-      "name": "24-Hour Front Desk",
-      "value": true
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.2027048,
+      "longitude": 78.2026527
     },
-    {
-      "@type": "LocationFeatureSpecification",
-      "name": "Banquet Hall & Event Spaces",
-      "value": true
-    },
-    {
-      "@type": "LocationFeatureSpecification",
-      "name": "Multi-Cuisine Rooftop Restaurant",
-      "value": true
-    },
-    {
-      "@type": "LocationFeatureSpecification",
-      "name": "Airport & Railway Station Transfer",
-      "value": true
-    }
-  ]
-}
+    "amenityFeature": [{
+        "@type": "LocationFeatureSpecification",
+        "name": "Free High-Speed Wi-Fi",
+        "value": true
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Air Conditioning",
+        "value": true
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "24-Hour Front Desk",
+        "value": true
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Banquet Hall & Event Spaces",
+        "value": true
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Multi-Cuisine Rooftop Restaurant",
+        "value": true
+      },
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "Airport & Railway Station Transfer",
+        "value": true
+      }
+    ]
+  }
 </script>
 <?php
 
@@ -111,14 +110,14 @@ $pixel = get_setting('meta_pixel');
 $ga4 = get_setting('google_analytics');
 
 if (!empty($gtm)) {
-    echo "\n<!-- Google Tag Manager -->\n" . $gtm . "\n<!-- End Google Tag Manager -->\n";
+  echo "\n<!-- Google Tag Manager -->\n" . $gtm . "\n<!-- End Google Tag Manager -->\n";
 }
 
 if (!empty($pixel)) {
-    echo "\n<!-- Meta Pixel Code -->\n" . $pixel . "\n<!-- End Meta Pixel Code -->\n";
+  echo "\n<!-- Meta Pixel Code -->\n" . $pixel . "\n<!-- End Meta Pixel Code -->\n";
 }
 
 if (!empty($ga4)) {
-    echo "\n<!-- Google Analytics (GA4) -->\n" . $ga4 . "\n<!-- End Google Analytics (GA4) -->\n";
+  echo "\n<!-- Google Analytics (GA4) -->\n" . $ga4 . "\n<!-- End Google Analytics (GA4) -->\n";
 }
 ?>

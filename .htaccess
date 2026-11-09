@@ -20,22 +20,30 @@
     RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index(\.php)?[?\s] [NC]
     RewriteRule ^index(\.php)?$ / [R=301,L]
 
-    # 4. Clean Room Detail URLs: /rooms/deluxe-room -> room-detail.php?room=deluxe-room
+    # 4. 301 Redirect direct .php requests to clean extensionless URLs (Live domain only, excludes /admin & forms)
+    RewriteCond %{HTTP_HOST} ^(www\.)?hoteldestin\.in$ [NC]
+    RewriteCond %{REQUEST_METHOD} !POST
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([a-zA-Z0-9_-]+)\.php[?\s] [NC]
+    RewriteCond %{REQUEST_URI} !^/admin/ [NC]
+    RewriteCond %{REQUEST_URI} !/(booking-process|payment-callback|submit-|ajax-) [NC]
+    RewriteRule ^([a-zA-Z0-9_-]+)\.php$ https://hoteldestin.in/$1 [R=301,L,QSA]
+
+    # 5. Clean Room Detail URLs: /rooms/deluxe-room -> room-detail.php?room=deluxe-room
     RewriteRule ^rooms/assets/(.*)$ assets/$1 [L]
     RewriteRule ^rooms/([a-zA-Z0-9_-]+)/?$ room-detail.php?room=$1 [QSA,L]
 
-    # 5. Support Clean Extensionless URLs (internally maps /page to page.php)
+    # 6. Support Clean Extensionless URLs (internally maps /page to page.php)
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME}\.php -f
     RewriteRule ^(.*)$ $1.php [QSA,L]
 </IfModule>
 
 # Security: Prevent Access to Sensitive Files (.sql, .log, .env, etc.)
-<FilesMatch "(\.sql|\.log|\.env|\.git)$">
+<FilesMatch "(\.sql|\.log|\.env|\.git|composer\.(json|lock)|package(-lock)?\.json|config\.php)$">
     Require all denied
 </FilesMatch>
 
 # Enable Gzip / Brotli Compression for Fast Page Loads
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript
+    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript application/json image/svg+xml
 </IfModule>

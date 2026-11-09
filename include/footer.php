@@ -256,39 +256,39 @@
       <div class="col-md-2 col-xs-6 footer-2">
         <h6>Our Hotel</h6>
         <ul class="menu-footer">
-          <li><a href="about.php">About Us</a></li>
-          <li><a href="rooms.php">Comfortable Rooms</a></li>
-          <li><a href="restaurant.php">Dining & Restaurant</a></li>
-          <li><a href="banquet.php">Banquet & Events</a></li>
-          <li><a href="gallery.php">Photo Gallery</a></li>
+          <li><a href="about">About Us</a></li>
+          <li><a href="rooms">Comfortable Rooms</a></li>
+          <li><a href="restaurant">Dining & Restaurant</a></li>
+          <li><a href="banquet">Banquet & Events</a></li>
+          <li><a href="gallery">Photo Gallery</a></li>
         </ul>
       </div>
       <div class="col-md-2 col-xs-6 footer-3">
         <h6>Services</h6>
         <ul class="menu-footer">
-          <li><a href="airport-transfer.php">Airport Transfer</a></li>
-          <li><a href="corporate-booking.php">Corporate Booking</a></li>
+          <li><a href="airport-transfer">Airport Transfer</a></li>
+          <li><a href="corporate-booking">Corporate Booking</a></li>
           <!--<li><a href="wedding-banquet.php">Banquet Hall</a></li>-->
-          <li><a href="explore-gwalior.php">Tourist Attractions</a></li>
+          <li><a href="explore-gwalior">Tourist Attractions</a></li>
 
         </ul>
       </div>
       <div class="col-md-2 col-xs-6 footer-4">
         <h6>Information</h6>
         <ul class="menu-footer">
-          <li><a href="blog.php">News & Blog</a></li>
-          <li><a href="contact.php">Contact Us</a></li>
-          <li><a href="contact.php#map">Location & Map</a></li>
-          <li><a href="contact.php">Guest Support</a></li>
+          <li><a href="blog">News & Blog</a></li>
+          <li><a href="contact">Contact Us</a></li>
+          <li><a href="contact#map">Location & Map</a></li>
+          <li><a href="contact">Guest Support</a></li>
         </ul>
       </div>
       <div class="col-md-3 col-xs-6 footer-5">
         <h6>Legal & Policies</h6>
         <ul class="menu-footer">
-          <li><a href="terms.php">Terms of Service</a></li>
-          <li><a href="privacy-policy.php">Privacy Policy</a></li>
+          <li><a href="terms">Terms of Service</a></li>
+          <li><a href="privacy-policy">Privacy Policy</a></li>
           <!--<li><a href="cookies-policy.php">Cookies Policy</a></li>-->
-          <li><a href="refund-policy.php">Refund Policy</a></li>
+          <li><a href="refund-policy">Refund Policy</a></li>
         </ul>
       </div>
     </div>
@@ -299,9 +299,9 @@
         </div>
         <div class="col-md-6 text-md-end text-center mb-20">
           <ul class="menu-bottom-footer">
-            <li><a href="terms.php">Terms</a></li>
-            <li><a href="privacy-policy.php">Privacy Policy</a></li>
-            <li><a href="refund-policy.php">Refund Policy</a></li>
+            <li><a href="terms">Terms</a></li>
+            <li><a href="privacy-policy">Privacy Policy</a></li>
+            <li><a href="refund-policy">Refund Policy</a></li>
             <!--<li><a href="cookies-policy.php">Cookies Policy</a></li>-->
           </ul>
         </div>
@@ -320,7 +320,7 @@
     <span class="nav-label">Home</span>
   </a>
 
-  <a href="rooms.php" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'rooms.php') ? 'active' : '' ?>">
+  <a href="rooms" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'rooms.php') ? 'active' : '' ?>">
     <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
     </svg>
@@ -334,7 +334,7 @@
     <span class="nav-label">Enquire Now</span>
   </a>
 
-  <a href="gallery.php" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'gallery.php') ? 'active' : '' ?>">
+  <a href="gallery" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'gallery.php') ? 'active' : '' ?>">
     <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="3" width="7" height="7"></rect>
       <rect x="14" y="3" width="7" height="7"></rect>
@@ -344,7 +344,7 @@
     <span class="nav-label">Gallery</span>
   </a>
 
-  <a href="contact.php" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">
+  <a href="contact" class="nav-item <?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">
     <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
     </svg>

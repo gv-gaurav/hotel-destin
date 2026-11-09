@@ -375,7 +375,7 @@
                                     Gwalior Fort is built on top of a hill and is one of the best forts in India. It was built by different kings over many years. Inside, you will see Man Mandir Palace, known for its blue tiles and carvings of elephants and peacocks. The fort also has old Jain statues carved into the rocks nearby. From the fort walls, you can see the whole city of Gwalior below. The view looks best at sunrise or sunset. It is a great place for people who enjoy history, old buildings, and photography.
                                 </p>
                                 <div>
-                                    <a class="btn btn-black-lg" href="rooms.php" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
+                                    <a class="btn btn-black-lg" href="rooms" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
                                 </div>
                             </div>
                         </div>
@@ -396,7 +396,7 @@
                                     Jai Vilas Palace was built in 1874 and looks like a grand European palace, with tall pillars and rich decoration. Part of the palace is now the Scindia Museum, where visitors can see the famous Durbar Hall. This hall has two of the biggest crystal chandeliers in the world, hanging from a very high ceiling. The museum also shows old royal cars, weapons, and a small silver train once used to serve food to guests at dinner. It is a wonderful place for anyone who enjoys royal history and beautiful, grand architecture.
                                 </p>
                                 <div>
-                                    <a class="btn btn-black-lg" href="rooms.php" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
+                                    <a class="btn btn-black-lg" href="rooms" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
                                 </div>
                             </div>
                         </div>
@@ -427,7 +427,7 @@
                                     The Sun Temple in Gwalior is designed to look like the famous Sun Temple in Konark, Odisha. It is made of red stone and shaped like a chariot, with carved wheels and horses on the sides. Inside the temple, there is a golden statue of Surya, the Sun God. Around the temple, you will find neat gardens, clean paths, and quiet corners to sit and relax. It is a calm and peaceful place, perfect for a short visit, evening walk, or simply enjoying nature and simple architecture.
                                 </p>
                                 <div>
-                                    <a class="btn btn-black-lg" href="rooms.php" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
+                                    <a class="btn btn-black-lg" href="rooms" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
                                 </div>
                             </div>
                         </div>
@@ -448,7 +448,7 @@
                                     Tansen Tomb is the final resting place of legendary singer Tansen, one of the nine gems of Emperor Akbar's court. Built in elegant Mughal style with beautiful stone screens (jaali work), the tomb lies in a quiet garden next to the tomb of his Sufi mentor, Mohammad Ghaus. Every winter, it hosts the national Tansen Music Festival, drawing classical artists from across India. It is a calm, historic spot to experience Mughal heritage and Gwalior’s musical roots.
                                 </p>
                                 <div>
-                                    <a class="btn btn-black-lg" href="rooms.php" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
+                                    <a class="btn btn-black-lg" href="rooms" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
                                 </div>
                             </div>
                         </div>
@@ -479,7 +479,7 @@
                                     Sasbahu Temple, built in the 11th century inside Gwalior Fort, is a masterpiece of ancient architecture. Originally named Sahastrabahu (Lord Vishnu of a thousand arms), the temple complex features two structures carved entirely of red sandstone. It is famous for its highly detailed pillars, figures, and unique multi-layered roof structures that have stood for nearly a thousand years. It offers a wonderful view of the Gwalior valley below.
                                 </p>
                                 <div>
-                                    <a class="btn btn-black-lg" href="rooms.php" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
+                                    <a class="btn btn-black-lg" href="rooms" style="border-radius: 8px; font-weight: 700; padding: 10px 24px; text-decoration: none;">Book Stay ➔</a>
                                 </div>
                             </div>
                         </div>
